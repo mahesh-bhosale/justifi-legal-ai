@@ -1,6 +1,10 @@
+"use client";
+
 import Button from '../../components/Button';
+import { useRouter } from 'next/navigation';
 
 export default function HeroSection() {
+  const router = useRouter();
   return (
     <section id="hero" className="bg-gradient-to-br from-blue-50 to-indigo-100 py-20 px-4 pt-36">
       <div className="max-w-7xl mx-auto">
@@ -18,6 +22,7 @@ export default function HeroSection() {
                 variant="primary" 
                 size="lg"
                 className="w-full sm:w-auto"
+                onClick={() => router.push('/auth/register')}
               >
                 Get Started for Free
               </Button>

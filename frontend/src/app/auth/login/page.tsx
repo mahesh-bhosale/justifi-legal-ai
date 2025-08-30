@@ -43,10 +43,10 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await api.post('/auth/login', formData);
+      const response = await api.post('/api/auth/login', formData);
       
-      if (response.data.token) {
-        setToken(response.data.token);
+      if (response.data.data && response.data.data.token) {
+        setToken(response.data.data.token);
         router.push('/dashboard');
       } else {
         setError('Login successful but no token received');

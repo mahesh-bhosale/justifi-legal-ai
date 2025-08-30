@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Button from '../../components/Button';
+import { useRouter } from 'next/navigation';
 
 interface DocumentCard {
   id: string;
@@ -36,6 +37,7 @@ const sampleDocuments: DocumentCard[] = [
 ];
 
 export default function InteractiveDemoSection() {
+  const router = useRouter();
   const [selectedDoc, setSelectedDoc] = useState<DocumentCard | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -133,6 +135,10 @@ export default function InteractiveDemoSection() {
                     variant="primary" 
                     size="lg"
                     className="w-full"
+                    onClick={() => {
+                      closeModal();
+                      router.push('/auth/register');
+                    }}
                   >
                     Create Your Free Account to Analyze Your Own Documents
                   </Button>

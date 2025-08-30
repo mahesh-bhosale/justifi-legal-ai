@@ -47,10 +47,10 @@ export default function RegisterPage() {
     setError('');
 
     try {
-      const response = await api.post('/auth/signup', formData);
+      const response = await api.post('/api/auth/signup', formData);
       
-      if (response.data.token) {
-        setToken(response.data.token);
+      if (response.data.data && response.data.data.token) {
+        setToken(response.data.data.token);
         router.push('/dashboard');
       } else {
         setError('Registration successful but no token received');

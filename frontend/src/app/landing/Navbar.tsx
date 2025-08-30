@@ -65,12 +65,14 @@ export default function LandingNavbar() {
               variant="outline" 
               size="sm"
               className="border-gray-300 text-gray-700"
+              onClick={() => router.push('/auth/login')}
             >
               Sign In
             </Button>
             <Button 
               variant="primary" 
               size="sm"
+              onClick={() => router.push('/auth/register')}
             >
               Get Started
             </Button>
@@ -109,10 +111,20 @@ export default function LandingNavbar() {
             ))}
             <div className="pt-4 pb-3 border-t border-gray-200">
               <div className="flex flex-col space-y-2">
-                <Button variant="outline" size="sm" className="w-full">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => router.push('/auth/login')}
+                >
                   Sign In
                 </Button>
-                <Button variant="primary" size="sm" className="w-full">
+                <Button 
+                  variant="primary" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => router.push('/auth/register')}
+                >
                   Get Started
                 </Button>
               </div>
