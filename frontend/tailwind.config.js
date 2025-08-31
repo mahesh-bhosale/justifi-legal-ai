@@ -5,7 +5,14 @@ export default {
     "./src/components/**/*.{ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      width: {
+        '70': '17.5rem', // 280px for expanded sidebar
+      },
+      margin: {
+        '70': '17.5rem', // 280px for expanded sidebar
+      },
+    },
   },
   plugins: [],
 }

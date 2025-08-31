@@ -1,7 +1,7 @@
 import { pgTable, uuid, varchar, boolean, timestamp } from 'drizzle-orm/pg-core';
 
 // Role enum for users
-export const userRoles = ['citizen', 'lawyer'] as const;
+export const userRoles = ['citizen', 'lawyer', 'admin'] as const;
 export type UserRole = typeof userRoles[number];
 
 // Users table schema

@@ -26,12 +26,14 @@ export default function HeroSection() {
               >
                 Get Started for Free
               </Button>
-              <a 
-                href="#video-demo" 
-                className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 rounded-md shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors w-full sm:w-auto"
+              <Button 
+                variant="outline" 
+                size="lg"
+                className="w-full sm:w-auto"
+                onClick={() => router.push('/demo')}
               >
-                Watch Video Demo
-              </a>
+                Try Live Demo
+              </Button>
             </div>
           </div>
           

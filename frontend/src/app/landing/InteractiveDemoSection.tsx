@@ -80,6 +80,16 @@ export default function InteractiveDemoSection() {
           ))}
         </div>
         
+        <div className="text-center mt-12">
+          <Button 
+            variant="outline" 
+            size="lg"
+            onClick={() => router.push('/demo')}
+          >
+            Try Full Demo with All Sample Documents
+          </Button>
+        </div>
+        
         {/* Modal */}
         {isModalOpen && selectedDoc && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -130,9 +140,23 @@ export default function InteractiveDemoSection() {
                 </div>
                 
                 {/* CTA */}
-                <div className="text-center">
+                <div className="text-center space-y-4">
                   <Button 
                     variant="primary" 
+                    size="lg"
+                    className="w-full"
+                    onClick={() => {
+                      closeModal();
+                      router.push('/demo');
+                    }}
+                  >
+                    Try Full Demo with Sample Documents
+                  </Button>
+                  <div className="text-sm text-gray-500">
+                    <p>Or</p>
+                  </div>
+                  <Button 
+                    variant="outline" 
                     size="lg"
                     className="w-full"
                     onClick={() => {
