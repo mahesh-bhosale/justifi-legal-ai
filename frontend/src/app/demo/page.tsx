@@ -364,7 +364,7 @@ export default function DemoPage() {
                           </span>
                           <div className="flex-1">
                             <p className="text-sm text-gray-900 mb-1">
-                              <span className="font-semibold">"{clause.text}"</span>
+                              <span className="font-semibold">&quot;{clause.text}&quot;</span>
                             </p>
                             <p className="text-sm text-gray-600">{clause.explanation}</p>
                           </div>

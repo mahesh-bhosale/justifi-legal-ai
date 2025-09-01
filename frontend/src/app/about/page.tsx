@@ -1,4 +1,4 @@
-import LandingNavbar from '../landing/Navbar';
+// import LandingNavbar from '../landing/Navbar';
 
 export default function AboutPage() {
     const roadmapItems = [

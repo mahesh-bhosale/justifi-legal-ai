@@ -210,7 +210,7 @@ export default function SummarizePage() {
 
           {/* Features Preview */}
           <div className="mt-12 pt-8 border-t border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">What you'll get:</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">What you&apos;ll get:</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="text-center p-4">
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">

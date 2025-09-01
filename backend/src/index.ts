@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes';
 import protectedRoutes from './routes/protected.routes';
+import blogRoutes from './routes/blog.routes';
 
 // Load environment variables
 dotenv.config();
@@ -21,9 +22,10 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/protected', protectedRoutes);
+app.use('/api/blogs', blogRoutes);
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
+app.get('/api/health', (_req, res) => {
   res.json({ 
     status: 'OK', 
     message: 'Server is running',
@@ -32,7 +34,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Root endpoint
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.json({ 
     message: 'Justifi Legal AI Backend API',
     version: '1.0.0'
@@ -48,7 +50,7 @@ app.use('/*', (req, res) => {
 });
 
 // Error handling middleware
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error('Error:', err);
   res.status(err.status || 500).json({
     error: err.message || 'Internal server error',
@@ -62,6 +64,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`📡 Health check: http://localhost:${PORT}/api/health`);
   console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
   console.log(`🛡️ Protected endpoints: http://localhost:${PORT}/api/protected`);
+  console.log(`📝 Blog endpoints: http://localhost:${PORT}/api/blogs`);
 });
 
 server.on('error', (err) => {

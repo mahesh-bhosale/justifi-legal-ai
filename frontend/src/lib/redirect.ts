@@ -5,8 +5,8 @@ import { cookies } from 'next/headers';
  * Server-side redirect utility for Next.js
  * Reads role from cookies and redirects accordingly
  */
-export function redirectBasedOnRole(): never {
-  const cookieStore = cookies();
+export async function redirectBasedOnRole(): Promise<never> {
+  const cookieStore = await cookies();
   const token = cookieStore.get('justifi_token')?.value;
 
   if (!token) {
@@ -37,7 +37,7 @@ export function redirectBasedOnRole(): never {
       default:
         redirect('/auth/login');
     }
-  } catch (error) {
+  } catch (_error) {
     // If token is invalid, redirect to login
     redirect('/auth/login');
   }
@@ -48,8 +48,8 @@ export function redirectBasedOnRole(): never {
  * @param requiredRoles Array of allowed roles
  * @param redirectTo Where to redirect if role check fails
  */
-export function requireRole(requiredRoles: string[], redirectTo: string = '/auth/login'): never {
-  const cookieStore = cookies();
+export async function requireRole(requiredRoles: string[], redirectTo: string = '/auth/login'): Promise<void> {
+  const cookieStore = await cookies();
   const token = cookieStore.get('justifi_token')?.value;
 
   if (!token) {
@@ -74,7 +74,7 @@ export function requireRole(requiredRoles: string[], redirectTo: string = '/auth
 
     // If we reach here, user has required role, so no redirect needed
     return;
-  } catch (error) {
+  } catch (_error) {
     redirect(redirectTo);
   }
 }
