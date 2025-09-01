@@ -52,3 +52,8 @@ export const requireCitizen = requireRole(['citizen']);
  * Middleware to allow both citizen and lawyer roles
  */
 export const requireAnyRole = requireRole(['citizen', 'lawyer']);
+
+/**
+ * Middleware to require admin role specifically
+ */
+export const requireAdmin = requireRole(['admin']);

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import BlogForm from '../../../../../../components/BlogForm';
-import { getBlogById, updateBlogPost, BlogPostDTO } from '../../../../../../lib/blogs';
+import { getBlogById, updateBlogPost } from '../../../../../../lib/blogs';
 
 interface BlogFormData {
   title: string;

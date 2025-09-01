@@ -15,6 +15,20 @@
       "when": 1756655702828,
       "tag": "0001_pretty_prodigy",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1756732518509,
+      "tag": "0002_rapid_thaddeus_ross",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1756733323389,
+      "tag": "0003_fixed_deadpool",
+      "breakpoints": true
     }
   ]
 }

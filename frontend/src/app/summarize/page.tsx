@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { getUserRole } from '../../lib/auth';
 import Button from '../../components/Button';
 
@@ -10,8 +10,14 @@ export default function SummarizePage() {
   const [textContent, setTextContent] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
-  const userRole = getUserRole();
+  useEffect(() => {
+    setIsClient(true);
+    setUserRole(getUserRole());
+  }, []);
+
   const isLoggedIn = !!userRole;
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,7 +67,7 @@ export default function SummarizePage() {
         </div>
 
         {/* Logged in user note */}
-        {isLoggedIn && (
+        {isClient && isLoggedIn && (
           <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
             <div className="flex items-center">
               <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

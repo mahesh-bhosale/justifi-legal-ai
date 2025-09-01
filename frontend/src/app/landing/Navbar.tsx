@@ -8,6 +8,7 @@ const navItems = [
   { label: 'Home', href: '#hero' },
   { label: 'How It Works', href: '#how-it-works' },
   { label: 'Demo', href: '#interactive-demo' },
+  { label: 'Find Lawyers', href: '/lawyers' },
   { label: 'Blog', href: '#blog' },
   { label: 'Contact', href: '#contact' },
   { label: 'About us', href: '/about' } // Changed to path instead of anchor

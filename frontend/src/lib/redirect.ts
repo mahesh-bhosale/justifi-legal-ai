@@ -37,7 +37,7 @@ export async function redirectBasedOnRole(): Promise<never> {
       default:
         redirect('/auth/login');
     }
-  } catch (_error) {
+  } catch {
     // If token is invalid, redirect to login
     redirect('/auth/login');
   }
@@ -74,7 +74,7 @@ export async function requireRole(requiredRoles: string[], redirectTo: string = 
 
     // If we reach here, user has required role, so no redirect needed
     return;
-  } catch (_error) {
+  } catch {
     redirect(redirectTo);
   }
 }

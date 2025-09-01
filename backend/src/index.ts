@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes';
 import protectedRoutes from './routes/protected.routes';
 import blogRoutes from './routes/blog.routes';
+import lawyerProfileRoutes from './routes/lawyer-profile.routes';
 
 // Load environment variables
 dotenv.config();
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/protected', protectedRoutes);
 app.use('/api/blogs', blogRoutes);
+app.use('/api/lawyer-profiles', lawyerProfileRoutes);
 
 // Health check endpoint
 app.get('/api/health', (_req, res) => {
@@ -65,6 +67,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
   console.log(`🛡️ Protected endpoints: http://localhost:${PORT}/api/protected`);
   console.log(`📝 Blog endpoints: http://localhost:${PORT}/api/blogs`);
+  console.log(`⚖️ Lawyer Profile endpoints: http://localhost:${PORT}/api/lawyer-profiles`);
 });
 
 server.on('error', (err) => {

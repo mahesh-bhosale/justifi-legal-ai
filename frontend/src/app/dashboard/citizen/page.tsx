@@ -1,6 +1,31 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Card from '../../../components/Card';
+import LawyerSearch from '../../../components/LawyerSearch';
+import { type LawyerProfile } from '../../../lib/lawyer-profiles';
 
 export default function CitizenDashboard() {
+  const router = useRouter();
+  const [showLawyerSearch, setShowLawyerSearch] = useState(false);
+
+
+  const handleViewLawyerProfile = (profile: LawyerProfile) => {
+    // Navigate to the detailed lawyer profile page
+    router.push(`/lawyers/${profile.id}`);
+  };
+
+  const handleContactLawyer = (profile: LawyerProfile) => {
+    // You can implement contact functionality here (email, messaging, etc.)
+    console.log('Contacting lawyer:', profile);
+    alert(`Contact functionality for ${profile.user?.name} will be implemented soon!`);
+  };
+
+  const navigateToLawyersPage = () => {
+    router.push('/lawyers');
+  };
+
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
@@ -9,7 +34,7 @@ export default function CitizenDashboard() {
           Welcome to Your Legal Dashboard
         </h1>
         <p className="text-gray-600">
-          Access your legal documents, track case progress, and get AI-powered legal assistance.
+          Access your legal documents, track case progress, get AI-powered legal assistance, and find qualified lawyers.
         </p>
       </div>
 
@@ -93,6 +118,30 @@ export default function CitizenDashboard() {
                 <span className="font-medium">AI Legal Assistant</span>
               </div>
             </button>
+            <button 
+              onClick={() => setShowLawyerSearch(!showLawyerSearch)}
+              className="w-full text-left p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-indigo-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span className="font-medium">
+                  {showLawyerSearch ? 'Hide Lawyer Search' : 'Quick Lawyer Search'}
+                </span>
+              </div>
+            </button>
+            <button 
+              onClick={navigateToLawyersPage}
+              className="w-full text-left p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-orange-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span className="font-medium">Browse All Lawyers</span>
+              </div>
+            </button>
           </div>
         </Card>
 
@@ -114,6 +163,25 @@ export default function CitizenDashboard() {
           </div>
         </Card>
       </div>
+
+      {/* Lawyer Search Section */}
+      {showLawyerSearch && (
+        <Card className="p-6">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Quick Lawyer Search</h2>
+            <p className="text-gray-600">
+              Search for qualified lawyers by specialization, location, experience, and more. 
+              Connect with legal experts who can help with your case.
+            </p>
+          </div>
+          
+          <LawyerSearch
+            onViewProfile={handleViewLawyerProfile}
+            onContact={handleContactLawyer}
+            showContactButton={true}
+          />
+        </Card>
+      )}
     </div>
   );
 }

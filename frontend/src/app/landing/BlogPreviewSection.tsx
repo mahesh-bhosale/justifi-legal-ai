@@ -16,7 +16,7 @@ export default function BlogPreviewSection() {
       try {
         const data = await getRecentBlogs();
         setBlogPosts(data);
-      } catch (_err: unknown) {
+      } catch {
         setError('Failed to load recent blog posts');
       } finally {
         setLoading(false);
