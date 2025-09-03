@@ -5,6 +5,11 @@ import authRoutes from './routes/auth.routes';
 import protectedRoutes from './routes/protected.routes';
 import blogRoutes from './routes/blog.routes';
 import lawyerProfileRoutes from './routes/lawyer-profile.routes';
+import lawyersRoutes from './routes/lawyers.routes';
+import casesRoutes from './routes/cases.routes';
+import proposalsRoutes from './routes/proposals.routes';
+import messagesRoutes from './routes/messages.routes';
+import documentsRoutes from './routes/documents.routes';
 
 // Load environment variables
 dotenv.config();
@@ -25,6 +30,11 @@ app.use('/api/auth', authRoutes);
 app.use('/api/protected', protectedRoutes);
 app.use('/api/blogs', blogRoutes);
 app.use('/api/lawyer-profiles', lawyerProfileRoutes);
+app.use('/api/lawyers', lawyersRoutes);
+app.use('/api', proposalsRoutes);
+app.use('/api/cases', casesRoutes);
+app.use('/api', messagesRoutes);
+app.use('/api', documentsRoutes);
 
 // Health check endpoint
 app.get('/api/health', (_req, res) => {
@@ -68,6 +78,11 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`🛡️ Protected endpoints: http://localhost:${PORT}/api/protected`);
   console.log(`📝 Blog endpoints: http://localhost:${PORT}/api/blogs`);
   console.log(`⚖️ Lawyer Profile endpoints: http://localhost:${PORT}/api/lawyer-profiles`);
+  console.log(`🧭 Lawyer search endpoints: http://localhost:${PORT}/api/lawyers/search`);
+  console.log(`📂 Case endpoints: http://localhost:${PORT}/api/cases`);
+  console.log(`📮 Proposals endpoints: http://localhost:${PORT}/api/proposals`);
+  console.log(`✉️ Messages endpoints: http://localhost:${PORT}/api/cases/:caseId/messages`);
+  console.log(`📎 Documents endpoints: http://localhost:${PORT}/api/cases/:caseId/documents`);
 });
 
 server.on('error', (err) => {
