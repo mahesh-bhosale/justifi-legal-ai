@@ -8,6 +8,7 @@ export interface BlogPostDTO {
   content?: string;
   author?: string;
   readTime?: number;
+  status?: string;
   createdAt?: string;
   updatedAt?: string;
 }
