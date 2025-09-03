@@ -1,8 +1,13 @@
-import { pgTable, uuid, varchar, boolean, timestamp, text, integer, serial, numeric, jsonb, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, boolean, timestamp, text, integer, serial, numeric, jsonb, pgEnum, uniqueIndex } from 'drizzle-orm/pg-core';
 
 // Create proper PostgreSQL ENUMs
 export const userRoleEnum = pgEnum('user_role', ['citizen', 'lawyer', 'admin']);
 export const availabilityStatusEnum = pgEnum('availability_status', ['available', 'limited', 'unavailable']);
+
+// Matching & proposal enums
+export const caseStatusEnum = pgEnum('case_status', ['pending','in_progress','resolved','closed']);
+export const proposalStatusEnum = pgEnum('proposal_status', ['pending','accepted','rejected','withdrawn']);
+export const urgencyEnum = pgEnum('urgency_level', ['low','medium','high']);
 
 // Role enum for users (TypeScript types)
 export const userRoles = ['citizen', 'lawyer', 'admin'] as const;
@@ -73,3 +78,102 @@ export const lawyerProfiles = pgTable('lawyer_profiles', {
 // Type for lawyer profile data
 export type LawyerProfile = typeof lawyerProfiles.$inferSelect;
 export type NewLawyerProfile = typeof lawyerProfiles.$inferInsert;
+
+// Cases table
+export const cases = pgTable('cases', {
+  id: serial('id').primaryKey(),
+  citizenId: uuid('citizen_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  lawyerId: uuid('lawyer_id').references(() => users.id, { onDelete: 'set null' }),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description').notNull(),
+  category: varchar('category', { length: 100 }).notNull(),
+  status: caseStatusEnum('status').notNull().default('pending'),
+  urgency: urgencyEnum('urgency').notNull().default('medium'),
+  preferredLanguage: varchar('preferred_language', { length: 50 }),
+  location: varchar('location', { length: 255 }),
+  budget: numeric('budget', { precision: 12, scale: 2 }),
+  nextHearingDate: timestamp('next_hearing_date', { withTimezone: true }),
+  resolution: text('resolution'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Case proposals table
+export const caseProposals = pgTable('case_proposals', {
+  id: serial('id').primaryKey(),
+  caseId: integer('case_id').notNull().references(() => cases.id, { onDelete: 'cascade' }),
+  lawyerId: uuid('lawyer_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  proposalText: text('proposal_text').notNull(),
+  proposedFee: numeric('proposed_fee', { precision: 12, scale: 2 }),
+  estimatedDuration: varchar('estimated_duration', { length: 100 }),
+  status: proposalStatusEnum('status').notNull().default('pending'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => ({
+  uniqueCaseLawyer: uniqueIndex('uq_case_lawyer').on(t.caseId, t.lawyerId)
+}));
+
+// Case documents table
+export const caseDocuments = pgTable('case_documents', {
+  id: serial('id').primaryKey(),
+  caseId: integer('case_id').notNull().references(() => cases.id, { onDelete: 'cascade' }),
+  uploadedBy: uuid('uploaded_by').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  fileUrl: text('file_url').notNull(),
+  fileName: varchar('file_name', { length: 255 }).notNull(),
+  mimeType: varchar('mime_type', { length: 100 }),
+  fileSize: integer('file_size'),
+  description: text('description'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Case messages table
+export const caseMessages = pgTable('case_messages', {
+  id: serial('id').primaryKey(),
+  caseId: integer('case_id').notNull().references(() => cases.id, { onDelete: 'cascade' }),
+  senderId: uuid('sender_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  recipientId: uuid('recipient_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  message: text('message').notNull(),
+  isRead: boolean('is_read').default(false),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Case updates table
+export const caseUpdates = pgTable('case_updates', {
+  id: serial('id').primaryKey(),
+  caseId: integer('case_id').notNull().references(() => cases.id, { onDelete: 'cascade' }),
+  updatedBy: uuid('updated_by').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  updateType: varchar('update_type', { length: 50 }).notNull(),
+  description: text('description').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Reviews table
+export const reviews = pgTable('reviews', {
+  id: serial('id').primaryKey(),
+  caseId: integer('case_id').notNull().unique().references(() => cases.id, { onDelete: 'cascade' }),
+  citizenId: uuid('citizen_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  lawyerId: uuid('lawyer_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  rating: integer('rating').notNull(),
+  comment: text('comment'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Types
+export type Case = typeof cases.$inferSelect;
+export type NewCase = typeof cases.$inferInsert;
+
+export type CaseProposal = typeof caseProposals.$inferSelect;
+export type NewCaseProposal = typeof caseProposals.$inferInsert;
+
+export type CaseDocument = typeof caseDocuments.$inferSelect;
+export type NewCaseDocument = typeof caseDocuments.$inferInsert;
+
+export type CaseMessage = typeof caseMessages.$inferSelect;
+export type NewCaseMessage = typeof caseMessages.$inferInsert;
+
+export type CaseUpdate = typeof caseUpdates.$inferSelect;
+export type NewCaseUpdate = typeof caseUpdates.$inferInsert;
+
+export type Review = typeof reviews.$inferSelect;
+export type NewReview = typeof reviews.$inferInsert;
