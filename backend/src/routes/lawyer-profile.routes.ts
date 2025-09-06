@@ -10,7 +10,6 @@ router.get('/specializations', lawyerProfileController.getSpecializations);
 router.get('/service-areas', lawyerProfileController.getServiceAreas);
 router.get('/languages', lawyerProfileController.getLanguages);
 router.get('/', lawyerProfileController.getProfiles);
-router.get('/:id', lawyerProfileController.getProfile);
 
 // Protected routes (authentication required)
 router.use(verifyToken);
@@ -22,5 +21,8 @@ router.patch('/:id', requireLawyer, lawyerProfileController.updateProfile);
 
 // Admin-only routes
 router.patch('/:id/verify', requireAdmin, lawyerProfileController.verifyProfile);
+
+// Public routes that need to come after protected routes to avoid conflicts
+router.get('/:id', lawyerProfileController.getProfile);
 
 export default router;
