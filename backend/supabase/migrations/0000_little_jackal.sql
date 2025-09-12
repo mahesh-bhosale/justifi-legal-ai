@@ -1,6 +1,51 @@
-CREATE TYPE "public"."case_status" AS ENUM('pending', 'in_progress', 'resolved', 'closed');--> statement-breakpoint
-CREATE TYPE "public"."proposal_status" AS ENUM('pending', 'accepted', 'rejected', 'withdrawn');--> statement-breakpoint
-CREATE TYPE "public"."urgency_level" AS ENUM('low', 'medium', 'high');--> statement-breakpoint
+DO $$
+BEGIN
+    CREATE TYPE "public"."availability_status" AS ENUM('available', 'limited', 'unavailable');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$
+BEGIN
+    CREATE TYPE "public"."case_status" AS ENUM('pending', 'in_progress', 'resolved', 'closed');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$
+BEGIN
+    CREATE TYPE "public"."proposal_status" AS ENUM('pending', 'accepted', 'rejected', 'withdrawn');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$
+BEGIN
+    CREATE TYPE "public"."urgency_level" AS ENUM('low', 'medium', 'high');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$
+BEGIN
+    CREATE TYPE "public"."user_role" AS ENUM('citizen', 'lawyer', 'admin');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+CREATE TABLE "blog_posts" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"title" text NOT NULL,
+	"slug" varchar(255) NOT NULL,
+	"excerpt" text,
+	"content" text,
+	"author" varchar(100),
+	"read_time" integer,
+	"created_at" timestamp with time zone DEFAULT now(),
+	"updated_at" timestamp with time zone DEFAULT now(),
+	CONSTRAINT "blog_posts_slug_unique" UNIQUE("slug")
+);
+--> statement-breakpoint
 CREATE TABLE "case_documents" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"case_id" integer NOT NULL,
@@ -62,6 +107,29 @@ CREATE TABLE "cases" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "lawyer_profiles" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"user_id" uuid NOT NULL,
+	"specializations" text[] NOT NULL,
+	"years_experience" integer NOT NULL,
+	"bio" text NOT NULL,
+	"office_address" varchar(500) NOT NULL,
+	"service_areas" text[] NOT NULL,
+	"languages" text[] NOT NULL,
+	"education" jsonb NOT NULL,
+	"bar_admissions" jsonb NOT NULL,
+	"hourly_rate" integer,
+	"consultation_fee" integer,
+	"availability_status" "availability_status" DEFAULT 'available' NOT NULL,
+	"rating" numeric(3, 2) DEFAULT '0.00',
+	"cases_handled" integer DEFAULT 0,
+	"success_rate" numeric(5, 2) DEFAULT '0.00',
+	"verified" boolean DEFAULT false,
+	"created_at" timestamp with time zone DEFAULT now(),
+	"updated_at" timestamp with time zone DEFAULT now(),
+	CONSTRAINT "lawyer_profiles_user_id_unique" UNIQUE("user_id")
+);
+--> statement-breakpoint
 CREATE TABLE "reviews" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"case_id" integer NOT NULL,
@@ -72,6 +140,17 @@ CREATE TABLE "reviews" (
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "reviews_case_id_unique" UNIQUE("case_id")
+);
+--> statement-breakpoint
+CREATE TABLE "users" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"name" varchar(255) NOT NULL,
+	"email" varchar(255) NOT NULL,
+	"password" varchar(255) NOT NULL,
+	"role" "user_role" DEFAULT 'citizen' NOT NULL,
+	"verified" boolean DEFAULT false,
+	"created_at" timestamp DEFAULT now(),
+	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
 ALTER TABLE "case_documents" ADD CONSTRAINT "case_documents_case_id_cases_id_fk" FOREIGN KEY ("case_id") REFERENCES "public"."cases"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -85,6 +164,7 @@ ALTER TABLE "case_updates" ADD CONSTRAINT "case_updates_case_id_cases_id_fk" FOR
 ALTER TABLE "case_updates" ADD CONSTRAINT "case_updates_updated_by_users_id_fk" FOREIGN KEY ("updated_by") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "cases" ADD CONSTRAINT "cases_citizen_id_users_id_fk" FOREIGN KEY ("citizen_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "cases" ADD CONSTRAINT "cases_lawyer_id_users_id_fk" FOREIGN KEY ("lawyer_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "lawyer_profiles" ADD CONSTRAINT "lawyer_profiles_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_case_id_cases_id_fk" FOREIGN KEY ("case_id") REFERENCES "public"."cases"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_citizen_id_users_id_fk" FOREIGN KEY ("citizen_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_lawyer_id_users_id_fk" FOREIGN KEY ("lawyer_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

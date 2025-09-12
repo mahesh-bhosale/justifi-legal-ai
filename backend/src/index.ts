@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { createServer } from 'http';
 import authRoutes from './routes/auth.routes';
 import protectedRoutes from './routes/protected.routes';
 import blogRoutes from './routes/blog.routes';
@@ -10,6 +11,7 @@ import casesRoutes from './routes/cases.routes';
 import proposalsRoutes from './routes/proposals.routes';
 import messagesRoutes from './routes/messages.routes';
 import documentsRoutes from './routes/documents.routes';
+import socketService from './services/socket.service';
 
 // Load environment variables
 dotenv.config();
@@ -70,9 +72,14 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   });
 });
 
+// Create HTTP server and initialize Socket.IO
+const server = createServer(app);
+socketService.initialize(server);
+
 // Start server
-const server = app.listen(PORT, '0.0.0.0', () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🔌 WebSocket server initialized`);
   console.log(`📡 Health check: http://localhost:${PORT}/api/health`);
   console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
   console.log(`🛡️ Protected endpoints: http://localhost:${PORT}/api/protected`);

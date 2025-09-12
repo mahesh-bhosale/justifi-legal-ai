@@ -25,6 +25,7 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
     "postgres": "^3.4.7",
+    "socket.io": "^4.7.5",
     "zod": "^3.22.4"
   },
   "devDependencies": {
