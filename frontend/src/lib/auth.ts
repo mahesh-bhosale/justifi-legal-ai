@@ -15,31 +15,82 @@ export const removeToken = (): void => {
   Cookies.remove(TOKEN_KEY);
 };
 
-// JWT decoding (safe approach without external dependencies)
-export const decodeUser = (): { role: string; email: string } | null => {
+// Helper function to safely decode base64 URL-safe strings
+const decodeBase64 = (str: string): string => {
+  try {
+    // Convert URL-safe base64 to regular base64
+    let output = str.replace(/-/g, '+').replace(/_/g, '/');
+    
+    // Add padding with '=' if needed
+    switch (output.length % 4) {
+      case 0: break;
+      case 2: output += '=='; break;
+      case 3: output += '='; break;
+      default: throw new Error('Invalid base64 string');
+    }
+    
+    // Decode and handle potential URI component encoding
+    const decoded = atob(output);
+    try {
+      // Try to decode URI components if present
+      return decodeURIComponent(decoded.split('').map(c => {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+    } catch {
+      // If URI component decoding fails, return the original decoded string
+      return decoded;
+    }
+  } catch (error) {
+    console.error('Error in base64 decoding:', error);
+    throw error;
+  }
+};
+
+// JWT decoding with improved error handling
+export const decodeUser = (): { id: string; role: string; email: string } | null => {
   try {
     const token = getToken();
-    if (!token) return null;
-
-    // Split the JWT and get the payload part
-    const parts = token.split('.');
-    if (parts.length !== 3) return null;
-
-    // Decode the base64 payload
-    const payload = parts[1];
-    // Add padding if needed for base64 decoding
-    const paddedPayload = payload + '='.repeat((4 - payload.length % 4) % 4);
+    if (!token) {
+      console.log('No token found');
+      return null;
+    }
     
-    // Decode using atob (safe for client-side)
-    const decoded = atob(paddedPayload);
-    const userData = JSON.parse(decoded);
-
-    return {
-      role: userData.role || 'citizen',
-      email: userData.email || '',
-    };
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      console.error('Invalid token format: expected 3 parts');
+      return null;
+    }
+    
+    try {
+      const decodedPayload = decodeBase64(parts[1]);
+      const userData = JSON.parse(decodedPayload);
+      
+      // Debug log the decoded payload
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Decoded JWT payload:', userData);
+      }
+      
+      // Extract user data with fallbacks
+      const userId = String(userData.sub || userData.userId || userData.id || '').trim();
+      const userRole = String(userData.role || 'citizen').trim();
+      const userEmail = String(userData.email || '').trim();
+      
+      if (!userId) {
+        console.error('No user ID found in token');
+        return null;
+      }
+      
+      return {
+        id: userId,
+        role: userRole,
+        email: userEmail,
+      };
+    } catch (error) {
+      console.error('Error parsing JWT payload:', error);
+      return null;
+    }
   } catch (error) {
-    console.error('Error decoding JWT:', error);
+    console.error('Unexpected error in decodeUser:', error);
     return null;
   }
 };
@@ -61,10 +112,4 @@ export const isAuthenticated = (): boolean => {
 export const getUserRole = (): string | null => {
   const user = decodeUser();
   return user?.role || null;
-};
-
-// Logout function
-export const logout = (): void => {
-  removeToken();
-  window.location.href = '/auth/login';
 };

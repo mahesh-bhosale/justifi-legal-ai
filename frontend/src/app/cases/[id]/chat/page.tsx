@@ -144,7 +144,6 @@ export default function CaseChatPage() {
 
           <ChatWindow
             caseId={caseData.id}
-            currentUserId={currentUser.id}
             recipientId={recipientId}
             recipientName={recipientName}
           />

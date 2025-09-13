@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getUserRole, logout } from '../lib/auth';
+import { getUserRole } from '../lib/auth';
+import { useAuth } from '../contexts/AuthContext';
 
 interface DashboardTopbarProps {
   onMobileMenuToggle: () => void;
@@ -14,6 +15,7 @@ export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarP
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
+  const { logout } = useAuth();
 
   useEffect(() => {
     setIsClient(true);

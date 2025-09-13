@@ -31,15 +31,27 @@ class MessagesController {
         message: body.message.slice(0, 50)
       });
       
+      console.log('Creating message in service...');
       const created = await messagesService.createMessage(caseId, req.user.userId, body.recipientId, body.message);
       if (!created) { 
-        res.status(403).json({ success: false, message: 'Not allowed - you are not a participant in this case' }); 
+        const errorMsg = 'Not allowed - you are not a participant in this case';
+        console.error(errorMsg);
+        res.status(403).json({ success: false, message: errorMsg }); 
         return; 
       }
+      
+      console.log('Message created successfully, emitting WebSocket event...', {
+        caseId,
+        messageId: created.id,
+        senderId: created.senderId,
+        recipientId: created.recipientId
+      });
       
       // Emit WebSocket event for real-time message
       socketService.emitNewMessage(caseId, created);
       
+      // Log after emitting to ensure no errors
+      console.log('WebSocket event emitted, sending response to client');
       res.status(201).json({ success: true, data: created });
     } catch (err: any) {
       if (err instanceof z.ZodError) { 

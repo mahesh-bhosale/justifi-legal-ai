@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useSocket } from '@/hooks/useSocket';
+import { useAuth } from '@/contexts/AuthContext';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
@@ -17,17 +18,17 @@ interface Message {
 
 interface ChatWindowProps {
   caseId: number;
-  currentUserId: string;
   recipientId: string;
   recipientName?: string;
 }
 
 export default function ChatWindow({ 
   caseId, 
-  currentUserId, 
   recipientId, 
   recipientName = 'User' 
 }: ChatWindowProps) {
+  const { user } = useAuth();
+  const currentUserId = user?.id || '';
   console.log('ChatWindow props:', { caseId, currentUserId, recipientId, recipientName });
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -410,7 +411,20 @@ export default function ChatWindow({
         ) : (
           <>
             {messages.map((message, index) => {
-              const isOwnMessage = message.senderId === currentUserId;
+              const senderId = String(message.senderId).trim();
+              const currentId = String(currentUserId).trim();
+              const isOwnMessage = senderId === currentId;
+              
+              // Debug log - can be removed in production
+              if (process.env.NODE_ENV === 'development') {
+                console.log('Message debug:', {
+                  messageId: message.id,
+                  senderId,
+                  currentUserId: currentId,
+                  isOwnMessage,
+                  message
+                });
+              }
               const showDate = index === 0 || 
                 formatDate(messages[index - 1].createdAt) !== formatDate(message.createdAt);
 

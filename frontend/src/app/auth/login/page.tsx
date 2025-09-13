@@ -45,11 +45,19 @@ export default function LoginPage() {
 
     try {
       const response = await api.post('/api/auth/login', formData);
+      console.log('Login response:', response.data);
       
       if (response.data.data && response.data.data.token) {
+        console.log('Setting token and redirecting to dashboard');
         setToken(response.data.data.token);
-        router.push('/dashboard');
+        
+        // Add a small delay to ensure token is set before redirecting
+        setTimeout(() => {
+          router.push('/dashboard');
+          router.refresh(); // Force a refresh to ensure auth state is updated
+        }, 100);
       } else {
+        console.error('No token in response:', response.data);
         setError('Login successful but no token received');
       }
     } catch (err: unknown) {
