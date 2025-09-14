@@ -159,6 +159,58 @@ export const reviews = pgTable('reviews', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
+// Subscription status enum
+export const subscriptionStatusEnum = pgEnum('subscription_status', [
+  'active',
+  'cancelled',
+  'past_due',
+  'expired',
+  'trial',
+]);
+
+// Plans table
+export const plans = pgTable('plans', {
+  id: serial('id').primaryKey(),
+  slug: varchar('slug', { length: 100 }).unique().notNull(),
+  name: varchar('name', { length: 200 }).notNull(),
+  description: text('description'),
+  priceCents: integer('price_cents'),
+  currency: varchar('currency', { length: 10 }).default('INR'),
+  isUnlimited: boolean('is_unlimited').default(false),
+  summarizeLimitPerDay: integer('summarize_limit_per_day').default(0),
+  askLimitPerDay: integer('ask_limit_per_day').default(0),
+  metadata: jsonb('metadata'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
+// Subscriptions table
+export const subscriptions = pgTable('subscriptions', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  planId: integer('plan_id').references(() => plans.id, { onDelete: 'set null' }),
+  status: subscriptionStatusEnum('status').notNull().default('active'),
+  externalSubscriptionId: varchar('external_subscription_id', { length: 255 }),
+  validUntil: timestamp('valid_until', { withTimezone: true }),
+  metadata: jsonb('metadata'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+}, (table) => {
+  return {
+    userPlanIdx: uniqueIndex('subscriptions_user_plan_idx').on(table.userId, table.planId),
+  };
+});
+
+// AI Usage table (update if already exists)
+export const aiUsage = pgTable('ai_usage', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }),
+  ipAddress: varchar('ip_address', { length: 45 }),
+  endpoint: varchar('endpoint', { length: 50 }).notNull(),
+  usageDate: timestamp('usage_date', { withTimezone: true }).defaultNow(),
+  usageCount: integer('usage_count').default(1),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
 // Types
 export type Case = typeof cases.$inferSelect;
 export type NewCase = typeof cases.$inferInsert;
@@ -177,3 +229,12 @@ export type NewCaseUpdate = typeof caseUpdates.$inferInsert;
 
 export type Review = typeof reviews.$inferSelect;
 export type NewReview = typeof reviews.$inferInsert;
+
+export type Plan = typeof plans.$inferSelect;
+export type NewPlan = typeof plans.$inferInsert;
+
+export type Subscription = typeof subscriptions.$inferSelect;
+export type NewSubscription = typeof subscriptions.$inferInsert;
+
+export type AIUsage = typeof aiUsage.$inferSelect;
+export type NewAIUsage = typeof aiUsage.$inferInsert;

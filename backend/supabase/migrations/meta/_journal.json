@@ -8,6 +8,13 @@
       "when": 1757697540032,
       "tag": "0000_little_jackal",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1757830959913,
+      "tag": "0001_fat_rockslide",
+      "breakpoints": true
     }
   ]
 }

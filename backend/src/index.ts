@@ -12,6 +12,7 @@ import proposalsRoutes from './routes/proposals.routes';
 import messagesRoutes from './routes/messages.routes';
 import documentsRoutes from './routes/documents.routes';
 import socketService from './services/socket.service';
+import aiRoutes from './routes/ai.routes';
 
 // Load environment variables
 dotenv.config();
@@ -33,6 +34,7 @@ app.use('/api/protected', protectedRoutes);
 app.use('/api/blogs', blogRoutes);
 app.use('/api/lawyer-profiles', lawyerProfileRoutes);
 app.use('/api/lawyers', lawyersRoutes);
+app.use('/api/ai', aiRoutes);
 app.use('/api', proposalsRoutes);
 app.use('/api/cases', casesRoutes);
 app.use('/api', messagesRoutes);
@@ -87,6 +89,7 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(`⚖️ Lawyer Profile endpoints: http://localhost:${PORT}/api/lawyer-profiles`);
   console.log(`🧭 Lawyer search endpoints: http://localhost:${PORT}/api/lawyers/search`);
   console.log(`📂 Case endpoints: http://localhost:${PORT}/api/cases`);
+  console.log(`🤖 AI endpoints: http://localhost:${PORT}/api/ai`); 
   console.log(`📮 Proposals endpoints: http://localhost:${PORT}/api/proposals`);
   console.log(`✉️ Messages endpoints: http://localhost:${PORT}/api/cases/:caseId/messages`);
   console.log(`📎 Documents endpoints: http://localhost:${PORT}/api/cases/:caseId/documents`);
