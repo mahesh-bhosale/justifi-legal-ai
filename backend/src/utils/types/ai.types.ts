@@ -15,8 +15,15 @@ export interface AISummaryRequest {
     error?: string;
   }
   
+  export interface RateLimitInfo {
+    limit: number;
+    used: number;
+    remaining: number;
+  }
+  
   export interface AIAskResponse {
     answer: string | string[];
+    rateLimit?: RateLimitInfo;
   }
   
   export interface AIUsageParams {
