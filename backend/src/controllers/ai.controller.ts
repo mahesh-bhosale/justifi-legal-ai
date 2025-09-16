@@ -84,7 +84,7 @@ export class AIController {
     }
     try {
       const { text, level } = req.body as AISummaryRequest;
-      const userId = (req as any).user?.id;
+      const userId = (req as any).user?.userId;
       // User role is handled in the subscription service
       const ipAddress = req.ip || 'unknown';
 
@@ -159,7 +159,7 @@ export class AIController {
     }
     try {
       const { question, context } = req.body as AIAskRequest;
-      const userId = (req as any).user?.id;
+      const userId = (req as any).user?.userId;
       // User role is handled in the subscription service
       const ipAddress = req.ip || 'unknown';
       
@@ -239,7 +239,7 @@ export class AIController {
     try {
       const { level } = req.body;
       const file = req.file;
-      const userId = (req as any).user?.id;
+      const userId = (req as any).user?.userId;
       const ipAddress = req.ip || 'unknown';
       
       if (!file) {
@@ -313,7 +313,7 @@ export class AIController {
     try {
       const { question } = req.body;
       const file = req.file;
-      const userId = (req as any).user?.id;
+      const userId = (req as any).user?.userId;
       const ipAddress = req.ip || 'unknown';
 
       if (!file) {
