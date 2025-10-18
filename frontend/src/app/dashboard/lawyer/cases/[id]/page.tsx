@@ -130,7 +130,7 @@ export default function LawyerCaseDetailPage() {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-medium text-gray-900">Case not found</h3>
-        <p className="text-gray-500">The case you're looking for doesn't exist.</p>
+        <p className="text-gray-500">The case you&apos;re looking for doesn&apos;t exist.</p>
         <Button onClick={handleBackToCases} className="mt-4">
           Back to Cases
         </Button>
@@ -214,7 +214,7 @@ export default function LawyerCaseDetailPage() {
                   <div>
                     <dt className="text-sm font-medium text-gray-500">Budget</dt>
                     <dd className="text-sm text-gray-900">
-                      {caseData.budget ? `$${caseData.budget}` : 'Not specified'}
+                      {caseData.budget ? `₹${caseData.budget}` : 'Not specified'}
                     </dd>
                   </div>
                   <div>
@@ -323,7 +323,7 @@ export default function LawyerCaseDetailPage() {
                     <p><strong>Status:</strong> {currentProposal?.status === 'pending' ? 'Pending Review' : currentProposal?.status?.toUpperCase()}</p>
                     <p><strong>Submitted:</strong> {new Date(currentProposal?.createdAt || '').toLocaleDateString()}</p>
                     {currentProposal?.proposedFee && (
-                      <p><strong>Proposed Fee:</strong> ${currentProposal.proposedFee}</p>
+                      <p><strong>Proposed Fee:</strong> ₹{currentProposal.proposedFee}</p>
                     )}
                     {currentProposal?.estimatedDuration && (
                       <p><strong>Estimated Duration:</strong> {currentProposal.estimatedDuration}</p>
@@ -410,7 +410,7 @@ export default function LawyerCaseDetailPage() {
                     
                     <div className="flex items-center space-x-4 text-sm text-gray-600">
                       {proposal.proposedFee && (
-                        <span><strong>Fee:</strong> ${proposal.proposedFee}</span>
+                        <span><strong>Fee:</strong> ₹{proposal.proposedFee}</span>
                       )}
                       {proposal.estimatedDuration && (
                         <span><strong>Duration:</strong> {proposal.estimatedDuration}</span>

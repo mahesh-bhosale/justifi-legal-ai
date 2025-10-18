@@ -78,13 +78,30 @@ export default function SummarizePage() {
     }
   };
 
-  const handleChatMessage = async (message: string, context?: string): Promise<string> => {
+  const handleChatMessage = async (message: string, context?: string | File): Promise<string> => {
     try {
       // If we have a summary context, use that for the question
-      if (context || state.summary?.summary) {
+      if (state.summary?.summary) {
         const response = await askAboutText({
           question: message,
-          context: context || state.summary?.summary || '',
+          context: state.summary.summary,
+        });
+        return response.answer;
+      } else if (context) {
+        // If we have a direct context (text or file), use that
+        let contextText: string;
+        
+        if (context instanceof File) {
+          // If it's a file, we need to read it as text
+          contextText = await context.text();
+        } else {
+          // It's already a string
+          contextText = context;
+        }
+        
+        const response = await askAboutText({
+          question: message,
+          context: contextText,
         });
         return response.answer;
       }

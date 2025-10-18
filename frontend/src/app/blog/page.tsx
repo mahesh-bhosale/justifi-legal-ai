@@ -117,7 +117,7 @@ export default function BlogPage() {
                   
                   <div className="flex items-center justify-between text-sm text-gray-500 mt-4 pt-4 border-t border-gray-100">
                     <time dateTime={post.createdAt || ''}>
-                      {post.createdAt ? new Date(post.createdAt).toLocaleDateString('en-US', { 
+                      {post.createdAt ? new Date(post.createdAt).toLocaleDateString('en-IN', { 
                         month: 'short', 
                         day: 'numeric',
                         year: 'numeric'

@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react';
 import Button from '../../components/Button';
 import { useRouter, usePathname } from 'next/navigation';
-import Link from 'next/link';
 
 const navItems = [
   { label: 'Home', href: '#hero' },
@@ -44,20 +43,66 @@ export default function LandingNavbar() {
   }, []);
 
   const handleNavigation = (href: string) => {
+    // Absolute path -> navigate normally
     if (href.startsWith('/')) {
       router.push(href);
-    } else if (pathname === '/') {
-      // If we're already on the homepage, scroll to section
-      const element = document.querySelector(href);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    } else {
-      // If we're on another page, navigate to homepage first
-      router.push(`/${href}`);
+      setIsMobileMenuOpen(false);
+      return;
     }
+
+    // Anchor/hash navigation (e.g. '#hero')
+    const scrollToAnchor = () => {
+      try {
+        const el = document.querySelector(href);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      } catch {
+        // ignore
+      }
+    };
+
+    if (pathname === '/') {
+      // Already on homepage - smooth scroll directly
+      scrollToAnchor();
+      setIsMobileMenuOpen(false);
+      return;
+    }
+
+    // Not on landing page: store desired anchor and navigate to landing with hash
+    const anchor = href.startsWith('#') ? href : `#${href}`;
+    try {
+      sessionStorage.setItem('landing_scroll', anchor);
+    } catch {
+      // ignore sessionStorage errors in some environments
+    }
+    router.push(`/landing${anchor}`);
     setIsMobileMenuOpen(false);
   };
+
+  // On mount, if there is a requested anchor (from sessionStorage or URL hash), scroll to it
+  useEffect(() => {
+    const scrollTarget = (() => {
+      try {
+        return sessionStorage.getItem('landing_scroll') || window.location.hash || '';
+      } catch {
+        return window.location.hash || '';
+      }
+    })();
+
+    if (scrollTarget) {
+      // small timeout to ensure DOM is hydrated
+      setTimeout(() => {
+        try {
+          const el = document.querySelector(scrollTarget);
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        } catch {
+          // ignore
+        }
+        try { sessionStorage.removeItem('landing_scroll'); } catch { /* ignore */ }
+      }, 60);
+    }
+  }, []);
 
   // Check if a nav item is active
   const isActiveItem = (href: string) => {

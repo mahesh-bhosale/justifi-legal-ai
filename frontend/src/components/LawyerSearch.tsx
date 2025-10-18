@@ -250,14 +250,14 @@ export default function LawyerSearch({
                 <div className="space-y-2">
                   <input
                     type="number"
-                    placeholder="Min rate ($)"
+                    placeholder="Min rate (₹)"
                     value={filters.minHourlyRate || ''}
                     onChange={(e) => handleFilterChange('minHourlyRate', e.target.value ? parseInt(e.target.value) : undefined)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <input
                     type="number"
-                    placeholder="Max rate ($)"
+                    placeholder="Max rate (₹)"
                     value={filters.maxHourlyRate || ''}
                     onChange={(e) => handleFilterChange('maxHourlyRate', e.target.value ? parseInt(e.target.value) : undefined)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"

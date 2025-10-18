@@ -88,7 +88,7 @@ export function SubmitProposalForm({ caseId, onSubmit, isLoading = false }: Subm
                 Proposed Fee (Optional)
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-2 text-gray-500">$</span>
+                <span className="absolute left-3 top-2 text-gray-500">₹</span>
                 <input
                   type="number"
                   id="proposedFee"
@@ -134,7 +134,7 @@ export function SubmitProposalForm({ caseId, onSubmit, isLoading = false }: Subm
               <li>• Explain your specific approach to this case</li>
               <li>• Mention any special qualifications or certifications</li>
               <li>• Be clear about communication and availability</li>
-              <li>• Show understanding of the client's situation</li>
+              <li>• Show understanding of the client&apos;s situation</li>
             </ul>
           </div>
 

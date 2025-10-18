@@ -70,7 +70,7 @@ export default function CitizenCaseDetailPage() {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-medium text-gray-900">Case not found</h3>
-        <p className="text-gray-500">The case you're looking for doesn't exist.</p>
+        <p className="text-gray-500">The case you&apos;re looking for doesn&apos;t exist.</p>
         <Button onClick={handleBackToCases} className="mt-4">
           Back to Cases
         </Button>
@@ -153,7 +153,7 @@ export default function CitizenCaseDetailPage() {
                   <div>
                     <dt className="text-sm font-medium text-gray-500">Budget</dt>
                     <dd className="text-sm text-gray-900">
-                      {caseData.budget ? `$${caseData.budget}` : 'Not specified'}
+                      {caseData.budget ? `₹${caseData.budget}` : 'Not specified'}
                     </dd>
                   </div>
                   <div>

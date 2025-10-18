@@ -94,7 +94,7 @@ export default function BlogDetailPage() {
           </h1>
           
           <time className="text-gray-500 text-sm mb-8 block" dateTime={blogPost.createdAt || ''}>
-            {blogPost.createdAt ? new Date(blogPost.createdAt).toLocaleDateString('en-US', { 
+            {blogPost.createdAt ? new Date(blogPost.createdAt).toLocaleDateString('en-IN', { 
               year: 'numeric',
               month: 'long', 
               day: 'numeric',

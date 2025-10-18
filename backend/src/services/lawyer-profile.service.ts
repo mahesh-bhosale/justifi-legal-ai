@@ -260,80 +260,198 @@ class LawyerProfileService {
    */
   getAvailableSpecializations(): string[] {
     return [
+      // --- Core Legal Fields ---
       'Criminal Law',
       'Civil Law',
-      'Family Law',
       'Corporate Law',
-      'Real Estate Law',
-      'Personal Injury',
-      'Employment Law',
-      'Immigration Law',
-      'Tax Law',
-      'Intellectual Property',
-      'Bankruptcy Law',
-      'Environmental Law',
-      'Healthcare Law',
-      'Entertainment Law',
-      'Sports Law',
-      'International Law',
       'Constitutional Law',
       'Administrative Law',
-      'Labor Law',
-      'Securities Law',
-      'Insurance Law',
-      'Estate Planning',
+      'International Law',
+  
+      // --- Family & Personal Law ---
+      'Family Law',
       'Divorce Law',
       'Child Custody',
-      'DUI/DWI',
-      'Medical Malpractice',
-      'Product Liability',
+      'Adoption Law',
+      'Succession and Inheritance Law',
+      'Estate Planning',
+  
+      // --- Business & Finance ---
+      'Tax Law',
+      'Banking Law',
+      'Securities Law',
+      'Insurance Law',
+      'Bankruptcy Law',
+      'Consumer Protection Law',
+      'Competition (Antitrust) Law',
+  
+      // --- Employment & Labor ---
+      'Labor Law',
+      'Employment Law',
+      'Industrial Relations Law',
       'Workers Compensation',
-      'Social Security',
-      'Veterans Benefits'
+      'Social Security Law',
+  
+      // --- Property & Contracts ---
+      'Real Estate Law',
+      'Contract Law',
+      'Property Law',
+      'Tenancy Law',
+  
+      // --- Technology & Media ---
+      'Cyber Law',
+      'Intellectual Property Law',
+      'Data Protection and Privacy Law',
+      'Information Technology Law',
+      'Media and Broadcasting Law',
+      'Entertainment Law',
+      'Sports Law',
+  
+      // --- Health, Environment & Society ---
+      'Healthcare Law',
+      'Medical Malpractice Law',
+      'Environmental Law',
+      'Human Rights Law',
+      'Animal Welfare Law',
+      'Education Law',
+  
+      // --- Specialized & Emerging Areas ---
+      'Maritime (Admiralty) Law',
+      'Aviation Law',
+      'Energy Law',
+      'Infrastructure Law',
+      'Mining and Natural Resources Law',
+      'Agricultural Law',
+      'Election Law',
+      'Public Interest Litigation (PIL)',
+      'Forensic and Investigative Law',
+  
+      // --- Immigration & International Relations ---
+      'Immigration Law',
+      'Refugee and Asylum Law',
+      'International Trade Law',
+  
+      // --- Tort and Liability ---
+      'Personal Injury Law',
+      'Product Liability Law',
+      'Defamation Law',
+  
+      // --- Specific Practice Areas ---
+      'DUI/DWI Law',
+      'Veterans Benefits Law',
+      'Customs and Excise Law',
+      'Marital Dispute Law',
+  
+      // --- Indian Context Specific ---
+      'Cyber Crime Law',
+      'Service Law (Government Employment)',
+      'Intellectual Property (Patents, Trademarks, Copyrights)',
+      'Alternative Dispute Resolution (ADR)',
+      'Arbitration and Mediation Law',
+      'Public Policy Law'
     ];
   }
+  
 
-  /**
-   * Get available service areas (cities/states)
-   */
   getAvailableServiceAreas(): string[] {
-    return [
-      'New York, NY',
-      'Los Angeles, CA',
-      'Chicago, IL',
-      'Houston, TX',
-      'Phoenix, AZ',
-      'Philadelphia, PA',
-      'San Antonio, TX',
-      'San Diego, CA',
-      'Dallas, TX',
-      'San Jose, CA',
-      'Austin, TX',
-      'Jacksonville, FL',
-      'Fort Worth, TX',
-      'Columbus, OH',
-      'Charlotte, NC',
-      'San Francisco, CA',
-      'Indianapolis, IN',
-      'Seattle, WA',
-      'Denver, CO',
-      'Washington, DC',
-      'Boston, MA',
-      'El Paso, TX',
-      'Nashville, TN',
-      'Detroit, MI',
-      'Oklahoma City, OK',
-      'Portland, OR',
-      'Las Vegas, NV',
-      'Memphis, TN',
-      'Louisville, KY',
-      'Baltimore, MD'
-    ];
-  }
+  return [
+    'Mumbai, MH',
+    'Delhi, DL',
+    'Bengaluru, KA',
+    'Hyderabad, TS',
+    'Chennai, TN',
+    'Kolkata, WB',
+    'Pune, MH',
+    'Ahmedabad, GJ',
+    'Surat, GJ',
+    'Jaipur, RJ',
+    'Lucknow, UP',
+    'Kanpur, UP',
+    'Nagpur, MH',
+    'Indore, MP',
+    'Bhopal, MP',
+    'Patna, BR',
+    'Vadodara, GJ',
+    'Ludhiana, PB',
+    'Agra, UP',
+    'Nashik, MH',
+    'Rajkot, GJ',
+    'Varanasi, UP',
+    'Visakhapatnam, AP',
+    'Coimbatore, TN',
+    'Thiruvananthapuram, KL',
+    'Kochi, KL',
+    'Mangalore, KA',
+    'Chandigarh, CH',
+    'Gurugram, HR',
+    'Noida, UP',
+    'Ghaziabad, UP',
+    'Amritsar, PB',
+    'Ranchi, JH',
+    'Guwahati, AS',
+    'Mysuru, KA',
+    'Madurai, TN',
+    'Raipur, CG',
+    'Dehradun, UK',
+    'Jammu, JK',
+    'Udaipur, RJ'
+  ];
+}
+
 
   /**
    * Get available languages
    */
+  // getAvailableLanguages(): string[] {
+  //   return [
+  //     'English',
+  //     'Spanish',
+  //     'French',
+  //     'German',
+  //     'Italian',
+  //     'Portuguese',
+  //     'Russian',
+  //     'Chinese (Mandarin)',
+  //     'Chinese (Cantonese)',
+  //     'Japanese',
+  //     'Korean',
+  //     'Arabic',
+  //     'Hindi',
+  //     'Urdu',
+  //     'Bengali',
+  //     'Punjabi',
+  //     'Gujarati',
+  //     'Tamil',
+  //     'Telugu',
+  //     'Marathi',
+  //     'Vietnamese',
+  //     'Thai',
+  //     'Indonesian',
+  //     'Malay',
+  //     'Tagalog',
+  //     'Dutch',
+  //     'Swedish',
+  //     'Norwegian',
+  //     'Danish',
+  //     'Finnish',
+  //     'Polish',
+  //     'Czech',
+  //     'Hungarian',
+  //     'Romanian',
+  //     'Bulgarian',
+  //     'Greek',
+  //     'Turkish',
+  //     'Hebrew',
+  //     'Persian',
+  //     'Swahili',
+  //     'Amharic',
+  //     'Yoruba',
+  //     'Igbo',
+  //     'Hausa',
+  //     'Zulu',
+  //     'Afrikaans'
+  //   ];
+  // }
   getAvailableLanguages(): string[] {
     return [
       'English',
@@ -348,14 +466,32 @@ class LawyerProfileService {
       'Japanese',
       'Korean',
       'Arabic',
+  
+      // Indian Languages 🇮🇳
       'Hindi',
       'Urdu',
       'Bengali',
       'Punjabi',
       'Gujarati',
+      'Marathi',
       'Tamil',
       'Telugu',
-      'Marathi',
+      'Kannada',
+      'Malayalam',
+      'Odia',
+      'Assamese',
+      'Konkani',
+      'Sanskrit',
+      'Sindhi',
+      'Manipuri (Meitei)',
+      'Dogri',
+      'Kashmiri',
+      'Maithili',
+      'Santali',
+      'Bodo',
+      'Nepali',
+  
+      // Other Asian & Global Languages
       'Vietnamese',
       'Thai',
       'Indonesian',
@@ -384,6 +520,7 @@ class LawyerProfileService {
       'Afrikaans'
     ];
   }
+  
 }
 
 export default new LawyerProfileService();

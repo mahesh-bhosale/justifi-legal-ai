@@ -171,7 +171,7 @@ IN NO EVENT SHALL LICENSOR BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, OR C
 This Residential Rental Agreement (the "Agreement") is made between [Landlord Name] ("Landlord") and [Tenant Name] ("Tenant") for the property located at [Address].
 
 1. TERM AND RENT
-The term of this lease is twelve (12) months beginning [Start Date]. Monthly rent is $[Amount] due on the 1st of each month. Late fees of $50 will be charged for payments received after the 5th of the month.
+The term of this lease is twelve (12) months beginning [Start Date]. Monthly rent is $[Amount] due on the 1st of each month. Late fees of ₹50 will be charged for payments received after the 5th of the month.
 
 2. SECURITY DEPOSIT
 Tenant shall pay a security deposit of $[Amount] upon signing this Agreement. The deposit will be returned within 30 days of lease termination, less any deductions for damages or unpaid rent.
@@ -180,7 +180,7 @@ Tenant shall pay a security deposit of $[Amount] upon signing this Agreement. Th
 Tenant is responsible for all utilities including electricity, gas, water, and internet. Landlord is responsible for major repairs and structural maintenance. Tenant must report maintenance issues within 24 hours.
 
 4. PET POLICY
-No pets are allowed without written permission from Landlord. Pet deposits of $500 per pet may be required.
+No pets are allowed without written permission from Landlord. Pet deposits of ₹500 per pet may be required.
 
 5. TERMINATION
 Either party may terminate this Agreement with 60 days written notice. Early termination by Tenant requires payment of two months' rent as penalty.`,
@@ -191,7 +191,7 @@ Either party may terminate this Agreement with 60 days written notice. Early ter
         explanation: 'Standard lease term'
       },
       {
-        text: '$50',
+        text: '₹50',
         type: 'risk',
         explanation: 'Late fee may be excessive for minor delays'
       },
@@ -211,12 +211,12 @@ Either party may terminate this Agreement with 60 days written notice. Early ter
         explanation: 'High penalty for early termination'
       }
     ],
-    summary: 'This rental agreement has a 12-month term with $50 late fees and 60-day termination notice. It includes standard utility responsibilities and a high early termination penalty. The pet policy is restrictive with significant deposits.',
+    summary: 'This rental agreement has a 12-month term with ₹50 late fees and 60-day termination notice. It includes standard utility responsibilities and a high early termination penalty. The pet policy is restrictive with significant deposits.',
     riskFlags: [
       {
         level: 'medium',
         description: 'High late fee',
-        impact: '$50 penalty for payments after 5th day'
+        impact: '₹500 penalty for payments after 5th day'
       },
       {
         level: 'high',
@@ -226,7 +226,7 @@ Either party may terminate this Agreement with 60 days written notice. Early ter
       {
         level: 'medium',
         description: 'Restrictive pet policy',
-        impact: '$500 deposit per pet required'
+        impact: '₹500 deposit per pet required'
       }
     ]
   }

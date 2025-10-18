@@ -29,7 +29,7 @@ interface CaseMessagesProps {
 }
 
 const formatTime = (dateString: string) => {
-  return new Date(dateString).toLocaleTimeString('en-US', {
+  return new Date(dateString).toLocaleTimeString('en-IN', {
     hour: '2-digit',
     minute: '2-digit',
   });
@@ -50,7 +50,7 @@ const formatMessageDate = (isoDate: string): string => {
   if (isYesterday) return 'Yesterday';
   
   // For dates older than yesterday, show the full date
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('en-IN', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',

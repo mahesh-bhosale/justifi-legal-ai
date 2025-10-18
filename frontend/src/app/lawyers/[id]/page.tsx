@@ -83,7 +83,7 @@ export default function LawyerDetailPage() {
 
   const formatPrice = (price?: number) => {
     if (!price) return 'Not specified';
-    return `$${price.toLocaleString()}`;
+    return `₹${price.toLocaleString()}`;
   };
 
   if (loading) {

@@ -31,7 +31,7 @@ const getStatusColor = (status: string) => {
 };
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
+  return new Date(dateString).toLocaleDateString('en-IN', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -42,9 +42,9 @@ const formatDate = (dateString: string) => {
 
 const formatCurrency = (amount?: number) => {
   if (!amount) return 'Not specified';
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-IN', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'INR',
   }).format(amount);
 };
 

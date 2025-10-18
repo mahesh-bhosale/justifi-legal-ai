@@ -480,7 +480,7 @@ export default function LawyerProfileForm({
             value={formData.hourlyRate || ''}
             onChange={(e) => handleInputChange('hourlyRate', e.target.value ? parseInt(e.target.value) : undefined)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter hourly rate in USD"
+            placeholder="Enter hourly rate in INR"
           />
           {errors.hourlyRate && (
             <p className="mt-1 text-sm text-red-600">{errors.hourlyRate}</p>
@@ -498,7 +498,7 @@ export default function LawyerProfileForm({
             value={formData.consultationFee || ''}
             onChange={(e) => handleInputChange('consultationFee', e.target.value ? parseInt(e.target.value) : undefined)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter consultation fee in USD"
+            placeholder="Enter consultation fee in INR"
           />
           {errors.consultationFee && (
             <p className="mt-1 text-sm text-red-600">{errors.consultationFee}</p>

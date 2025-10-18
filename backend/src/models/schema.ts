@@ -91,7 +91,7 @@ export const cases = pgTable('cases', {
   urgency: urgencyEnum('urgency').notNull().default('medium'),
   preferredLanguage: varchar('preferred_language', { length: 50 }),
   location: varchar('location', { length: 255 }),
-  budget: numeric('budget', { precision: 12, scale: 2 }),
+  budget: numeric('budget', { precision: 15, scale: 2 }),
   nextHearingDate: timestamp('next_hearing_date', { withTimezone: true }),
   resolution: text('resolution'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
