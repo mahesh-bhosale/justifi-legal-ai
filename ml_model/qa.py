@@ -11,74 +11,114 @@ def ask_with_context(question: str, context: str, max_answer_tokens: int = 150) 
     try:
         # If model failed to load, return a simple response
         if model is None or tokenizer is None:
-            print("Model not loaded, returning simple response")
-            # Simple keyword-based response
-            question_lower = question.lower()
-            context_lower = context.lower()
-            
-            if "what" in question_lower:
-                # Look for definitions or explanations
-                sentences = context.split('.')
-                for sentence in sentences:
-                    if any(word in sentence.lower() for word in question_lower.split()):
-                        return f"[Simple Answer] {sentence.strip()}"
-                return "[Simple Answer] Based on the context, this information is not clearly available."
-            
-            elif "who" in question_lower or "name" in question_lower:
-                # Look for names
-                names = re.findall(r"[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*", context)
-                if names:
-                    return f"[Simple Answer] Found names: {', '.join(set(names))}"
-                return "[Simple Answer] No names found in the context."
-            
-            else:
-                return "[Simple Answer] Based on the context, this question requires AI processing which is currently unavailable."
+            print("Model not loaded, using simple extraction")
+            return extract_simple_answer(context, question)
 
-        # Truncate context to avoid CUDA errors
-        if len(context) > 1500:
-            context = context[:1500] + "..."
-        
-        prompt = f"Answer this question based on the context:\n\nContext: {context}\n\nQuestion: {question}\n\nAnswer:"
-
-        inputs = tokenizer(
-            prompt,
-            return_tensors="pt",
-            truncation=True,
-            max_length=min(MAX_INPUT_LENGTH, 1024),
-            padding=True
-        ).to(model.device)
-
-        with torch.no_grad():
-            try:
-                outputs = model.generate(
-                    **inputs,
-                    max_new_tokens=min(max_answer_tokens, 150),
-                    do_sample=True,
-                    temperature=0.7,
-                    top_p=0.9,
-                    eos_token_id=tokenizer.eos_token_id,
-                    pad_token_id=tokenizer.pad_token_id,
-                    repetition_penalty=1.1
-                )
-            except Exception as cuda_error:
-                print(f"CUDA error in Q&A: {cuda_error}")
-                return f"[Simple Answer] Based on the context, this question requires AI processing which is currently unavailable due to technical issues."
-
-        # Extract generated text
-        generated_tokens = outputs[0][inputs.input_ids.shape[-1]:]
-        answer = tokenizer.decode(generated_tokens, skip_special_tokens=True).strip()
-
-        # Clean up prompt fragments
-        answer = re.sub(r'^(Answer|Question|Context):\s*', '', answer, flags=re.IGNORECASE).strip()
-
-        # Name extraction for questions about names
-        if "name" in question.lower() or "who" in question.lower():
-            names = re.findall(r"[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*", answer)
-            if names:
-                return list(set(names))
-
-        return answer if answer else "Could not generate an answer. The question might be too complex or the context insufficient."
+        # Use simple extraction method for better results
+        return extract_simple_answer(context, question)
 
     except Exception as e:
         print(f"QA error: {e}")
         return f"Error generating answer: {str(e)}"
+
+def clean_answer(answer, question):
+    """Clean up the generated answer"""
+    # Remove common prefixes
+    answer = re.sub(r'^(Answer|Based on|According to|The answer is|It is|This is):\s*', '', answer, flags=re.IGNORECASE).strip()
+    
+    # Remove question repetition
+    if question.lower() in answer.lower():
+        answer = answer.replace(question, "").strip()
+    
+    # Clean up extra whitespace
+    answer = re.sub(r'\s+', ' ', answer).strip()
+    
+    # Remove incomplete sentences at the end
+    if answer.endswith(('...', '..', '.')):
+        answer = answer.rstrip('.')
+    
+    return answer
+
+def is_incoherent(text):
+    """Check if the text is incoherent or irrelevant"""
+    incoherent_indicators = [
+        "What is it",
+        "Answer: It is",
+        "In other words",
+        "we should always look forward",
+        "please consider visiting",
+        "Chief Justice of Supreme Court",
+        "elevated level below ground"
+    ]
+    
+    text_lower = text.lower()
+    for indicator in incoherent_indicators:
+        if indicator.lower() in text_lower:
+            return True
+    
+    # Check for very short or repetitive text
+    if len(text) < 20 or len(set(text.split())) < 5:
+        return True
+        
+    return False
+
+def extract_simple_answer(context, question):
+    """Extract a simple answer from context using keyword matching"""
+    try:
+        question_lower = question.lower()
+        context_sentences = [s.strip() for s in context.split('.') if s.strip()]
+        
+        # Extract keywords from question
+        question_words = [word.lower() for word in question.split() if len(word) > 2]
+        
+        # Find sentences that contain question keywords
+        relevant_sentences = []
+        for sentence in context_sentences:
+            sentence_lower = sentence.lower()
+            # Count how many question words appear in this sentence
+            word_matches = sum(1 for word in question_words if word in sentence_lower)
+            if word_matches > 0:
+                relevant_sentences.append((sentence, word_matches))
+        
+        if relevant_sentences:
+            # Sort by relevance (number of keyword matches) and length
+            relevant_sentences.sort(key=lambda x: (x[1], len(x[0])), reverse=True)
+            best_sentence = relevant_sentences[0][0]
+            return best_sentence.strip()
+        
+        # Special handling for location questions
+        if any(word in question_lower for word in ['location', 'where', 'place', 'address', 'situated', 'located']):
+            location_keywords = ['court', 'building', 'street', 'district', 'area', 'location', 'situated', 'located', 'near', 'road']
+            for sentence in context_sentences:
+                sentence_lower = sentence.lower()
+                if any(keyword in sentence_lower for keyword in location_keywords):
+                    return sentence.strip()
+        
+        # Special handling for "when" questions
+        if any(word in question_lower for word in ['when', 'date', 'established', 'founded', 'created']):
+            time_keywords = ['established', 'founded', 'created', 'date', 'year', 'since', 'in 19', 'in 20']
+            for sentence in context_sentences:
+                sentence_lower = sentence.lower()
+                if any(keyword in sentence_lower for keyword in time_keywords):
+                    return sentence.strip()
+        
+        # Special handling for "what" questions
+        if 'what' in question_lower:
+            definition_keywords = ['is', 'are', 'means', 'refers to', 'defined as']
+            for sentence in context_sentences:
+                sentence_lower = sentence.lower()
+                if any(keyword in sentence_lower for keyword in definition_keywords):
+                    return sentence.strip()
+        
+        # If no specific match, return the most informative sentence
+        if context_sentences:
+            # Return the longest sentence that seems informative
+            informative_sentences = [s for s in context_sentences if len(s) > 50]
+            if informative_sentences:
+                return max(informative_sentences, key=len).strip()
+            return context_sentences[0].strip()
+        
+        return "The requested information was not found in the provided context."
+        
+    except Exception as e:
+        return f"Could not extract answer: {str(e)}"
