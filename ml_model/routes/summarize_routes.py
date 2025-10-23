@@ -9,8 +9,18 @@ router = APIRouter()
 
 @router.post("/pdf")
 async def summarize_pdf(file: UploadFile, level: str = Form("short")):
-    if not file.filename.endswith('.pdf'):
-        raise HTTPException(status_code=400, detail="File must be a PDF")
+    # Check if file is provided
+    if not file or not file.filename:
+        raise HTTPException(status_code=400, detail="No file provided")
+    
+    # Check file extension (case insensitive)
+    if not file.filename.lower().endswith('.pdf'):
+        raise HTTPException(status_code=400, detail="File must be a PDF (.pdf or .PDF)")
+    
+    # Validate level parameter
+    valid_levels = ["short", "medium", "long", "very_long"]
+    if level not in valid_levels:
+        raise HTTPException(status_code=400, detail=f"Level must be one of: {', '.join(valid_levels)}")
     
     temp_path = None
     try:
@@ -21,7 +31,7 @@ async def summarize_pdf(file: UploadFile, level: str = Form("short")):
             raise HTTPException(status_code=400, detail="PDF is empty or unreadable")
             
         result = summarize_text(text, level)
-        return JSONResponse({"summary": result, "level": level})
+        return JSONResponse({"summary": result, "level": level, "filename": file.filename})
         
     except HTTPException:
         raise

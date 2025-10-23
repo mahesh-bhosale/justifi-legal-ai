@@ -4,6 +4,7 @@ import os
 def save_uploaded_file(upload_file) -> str:
     """Save uploaded file to temporary location and return path"""
     try:
+        # Ensure the file has .pdf extension regardless of original case
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
             content = upload_file.file.read()
             tmp.write(content)

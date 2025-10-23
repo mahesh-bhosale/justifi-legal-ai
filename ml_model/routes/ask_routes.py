@@ -9,8 +9,17 @@ router = APIRouter()
 
 @router.post("/pdf")
 async def ask_pdf(file: UploadFile, question: str = Form(...)):
-    if not file.filename.endswith('.pdf'):
-        raise HTTPException(status_code=400, detail="File must be a PDF")
+    # Check if file is provided
+    if not file or not file.filename:
+        raise HTTPException(status_code=400, detail="No file provided")
+    
+    # Check file extension (case insensitive)
+    if not file.filename.lower().endswith('.pdf'):
+        raise HTTPException(status_code=400, detail="File must be a PDF (.pdf or .PDF)")
+    
+    # Check if question is provided
+    if not question or not question.strip():
+        raise HTTPException(status_code=400, detail="Question is required")
     
     temp_path = None
     try:
@@ -21,7 +30,7 @@ async def ask_pdf(file: UploadFile, question: str = Form(...)):
             raise HTTPException(status_code=400, detail="PDF is empty or unreadable")
             
         result = ask_with_context(question, text)
-        return JSONResponse({"answer": result, "question": question})
+        return JSONResponse({"answer": result, "question": question, "filename": file.filename})
         
     except HTTPException:
         raise
