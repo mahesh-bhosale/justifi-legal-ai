@@ -21,7 +21,9 @@ async def root():
             "summarize_pdf": "/summarize/pdf",
             "summarize_text": "/summarize/text", 
             "ask_pdf": "/ask/pdf",
-            "ask_text": "/ask/text"
+            "ask_text": "/ask/text",
+            "diagnose_pdf": "/summarize/pdf-diagnostic",
+            "debug_pdf_qa": "/ask/pdf-debug"
         }
     }
 
