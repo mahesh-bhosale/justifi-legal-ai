@@ -128,7 +128,7 @@ export default function SourceSelector({
                 <input
                   id="pdf-input"
                   type="file"
-                  accept=".pdf,.PDF,application/pdf"
+                  accept=".pdf"
                   onChange={handleFileChange}
                   disabled={disabled}
                   className="hidden"

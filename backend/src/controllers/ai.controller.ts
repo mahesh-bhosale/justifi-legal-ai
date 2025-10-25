@@ -330,7 +330,7 @@ export class AIController {
       }
 
       // Check rate limit
-      const rateLimit = await this.checkRateLimit(
+      const rateLimit = await AIController.checkRateLimit(
         userId, 
         ipAddress, 
         'ask'

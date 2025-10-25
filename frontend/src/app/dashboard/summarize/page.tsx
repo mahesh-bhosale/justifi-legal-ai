@@ -9,6 +9,7 @@ import {
   summarizeText,
   summarizePDF,
   askAboutText,
+  askAboutPDF,
   type SummaryResponse,
 } from '@/lib/ai';
 
@@ -87,30 +88,23 @@ export default function SummarizePage() {
           context: state.summary.summary,
         });
         return response.answer;
+      } else if (context instanceof File) {
+        // If it's a PDF file, use the PDF-specific endpoint
+        const response = await askAboutPDF(context, message);
+        return response.answer;
       } else if (context) {
-        // If we have a direct context (text or file), use that
-        let contextText: string;
-        
-        if (context instanceof File) {
-          // If it's a file, we need to read it as text
-          contextText = await context.text();
-        } else {
-          // It's already a string
-          contextText = context;
-        }
-        
+        // If it's a string context, use the text endpoint
         const response = await askAboutText({
           question: message,
-          context: contextText,
+          context: context,
         });
         return response.answer;
       }
       
-      // For text, use either the provided context or the text input
-      const textContext = typeof context === 'string' ? context : state.textInput;
+      // For text input without context, use the text input as context
       const response = await askAboutText({ 
         question: message, 
-        context: textContext 
+        context: state.textInput 
       });
       return response.answer;
     } catch (error) {

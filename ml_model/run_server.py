@@ -3,7 +3,12 @@
 Simple launcher script for the Legal AI Assistant
 This script avoids import issues by running from the correct directory
 """
+# In run_server.py, use one of these:
+# from summarizer import summarize_text, create_simple_summary_by_level
 
+# OR if that doesn't work:
+# import summarizer
+# from summarizer import summarize_text
 import sys
 import os
 

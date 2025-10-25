@@ -5,7 +5,14 @@ import { requireRole } from '../middleware/role.middleware';
 import multer from 'multer';
 
 const router = Router();
-const upload = multer({ storage: multer.memoryStorage() });
+// Configure multer with increased file size limits (50MB)
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50MB in bytes
+    fieldSize: 50 * 1024 * 1024, // 50MB for field values
+  }
+});
 
 // Public demo route - no authentication required
 router.post('/public/summarize', AIController.summarizeText);

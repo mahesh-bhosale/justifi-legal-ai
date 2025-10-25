@@ -156,7 +156,7 @@ export default function SummarizePage() {
                       id="file-upload"
                       name="file-upload"
                       type="file"
-                      accept=".pdf,.PDF,application/pdf"
+                      accept=".pdf"
                       className="sr-only"
                       onChange={handleFileChange}
                     />

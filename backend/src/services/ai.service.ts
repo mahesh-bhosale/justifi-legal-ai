@@ -1,17 +1,24 @@
 import { AISummaryRequest, AIAskRequest, AISummaryResponse, AIAskResponse } from '../utils/types/ai.types';
 
-const NGROK_BASE_URL = process.env.NGROK_BASE_URL;
+const NGROK_QA = process.env.NGROK_QA;
+const NGROK_SUMMARY = process.env.NGROK_SUMMARY;
 
-if (!NGROK_BASE_URL) {
-  console.warn('NGROK_BASE_URL environment variable is not set. External AI service will not be available.');
+if (!NGROK_QA) {
+  console.warn('NGROK_QA environment variable is not set. Question answering service will not be available.');
 } else {
-  console.log(`Using external AI service at: ${NGROK_BASE_URL}`);
+  console.log(`Using QA service at: ${NGROK_QA}`);
+}
+
+if (!NGROK_SUMMARY) {
+  console.warn('NGROK_SUMMARY environment variable is not set. Summary service will not be available.');
+} else {
+  console.log(`Using Summary service at: ${NGROK_SUMMARY}`);
 }
 
 export class AIService {
   async summarizeText(request: AISummaryRequest): Promise<AISummaryResponse> {
-    if (!NGROK_BASE_URL) {
-      throw new Error('AI service is not configured');
+    if (!NGROK_SUMMARY) {
+      throw new Error('Summary service is not configured');
     }
 
     try {
@@ -19,7 +26,7 @@ export class AIService {
       formData.append('text', request.text);
       formData.append('level', request.level);
 
-      const response = await fetch(`${NGROK_BASE_URL}/summarize/text`, {
+      const response = await fetch(`${NGROK_SUMMARY}/summarize/text`, {
         method: 'POST',
         body: formData,
       });
@@ -43,15 +50,15 @@ export class AIService {
   }
 
   async askQuestion(request: AIAskRequest): Promise<AIAskResponse> {
-    if (!NGROK_BASE_URL) {
-      throw new Error('AI service is not configured');
+    if (!NGROK_QA) {
+      throw new Error('QA service is not configured');
     }
 
     const formData = new FormData();
     formData.append('question', request.question);
     formData.append('text', request.context);
 
-    const response = await fetch(`${NGROK_BASE_URL}/ask/text`, {
+    const response = await fetch(`${NGROK_QA}/ask/text`, {
       method: 'POST',
       body: formData,
     });
@@ -72,8 +79,8 @@ export class AIService {
   }
 
   async summarizePdf(file: Buffer, filename: string, level: 'short' | 'medium' | 'long' = 'short'): Promise<AISummaryResponse> {
-    if (!NGROK_BASE_URL) {
-      throw new Error('AI service is not configured');
+    if (!NGROK_SUMMARY) {
+      throw new Error('Summary service is not configured');
     }
 
     const formData = new FormData();
@@ -84,13 +91,13 @@ export class AIService {
     formData.append('level', level);
 
     try {
-      console.log(`Sending request to: ${NGROK_BASE_URL}/summarize/pdf`);
+      console.log(`Sending request to: ${NGROK_SUMMARY}/summarize/pdf`);
       console.log('Headers:', {
         'Content-Type': 'multipart/form-data',
         'Accept': 'application/json'
       });
       
-      const response = await fetch(`${NGROK_BASE_URL}/summarize/pdf`, {
+      const response = await fetch(`${NGROK_SUMMARY}/summarize/pdf`, {
         method: 'POST',
         body: formData,
         headers: {
@@ -120,8 +127,8 @@ export class AIService {
   }
 
   async askPdfQuestion(file: Buffer, filename: string, question: string): Promise<AIAskResponse> {
-    if (!NGROK_BASE_URL) {
-      throw new Error('AI service is not configured');
+    if (!NGROK_QA) {
+      throw new Error('QA service is not configured');
     }
 
     const formData = new FormData();
@@ -132,13 +139,13 @@ export class AIService {
     formData.append('question', question);
 
     try {
-      console.log(`Sending request to: ${NGROK_BASE_URL}/ask/pdf`);
+      console.log(`Sending request to: ${NGROK_QA}/ask/pdf`);
       console.log('Headers:', {
         'Content-Type': 'multipart/form-data',
         'Accept': 'application/json'
       });
       
-      const response = await fetch(`${NGROK_BASE_URL}/ask/pdf`, {
+      const response = await fetch(`${NGROK_QA}/ask/pdf`, {
         method: 'POST',
         body: formData,
         headers: {
@@ -165,20 +172,27 @@ export class AIService {
     }
   }
 
-  // Health check to verify connection to AI service
+  // Health check to verify connection to both AI services
   async healthCheck(): Promise<boolean> {
-    if (!NGROK_BASE_URL) {
-      console.error('NGROK_BASE_URL is not set');
+    const qaHealthy = await this.checkServiceHealth(NGROK_QA, 'QA');
+    const summaryHealthy = await this.checkServiceHealth(NGROK_SUMMARY, 'Summary');
+    
+    return qaHealthy && summaryHealthy;
+  }
+
+  private async checkServiceHealth(baseUrl: string | undefined, serviceName: string): Promise<boolean> {
+    if (!baseUrl) {
+      console.error(`${serviceName} service URL is not set`);
       return false;
     }
 
     // Ensure the base URL doesn't end with a slash
-    const baseUrl = NGROK_BASE_URL.endsWith('/') 
-      ? NGROK_BASE_URL.slice(0, -1) 
-      : NGROK_BASE_URL;
+    const cleanUrl = baseUrl.endsWith('/') 
+      ? baseUrl.slice(0, -1) 
+      : baseUrl;
 
-    const healthCheckUrl = `${baseUrl}/`;
-    console.log(`Performing health check on: ${healthCheckUrl}`);
+    const healthCheckUrl = `${cleanUrl}/`;
+    console.log(`Performing health check on ${serviceName} service: ${healthCheckUrl}`);
 
     try {
       const response = await fetch(healthCheckUrl, {
@@ -188,15 +202,15 @@ export class AIService {
         }
       });
       
-      console.log(`Health check status: ${response.status} ${response.statusText}`);
+      console.log(`${serviceName} service health check status: ${response.status} ${response.statusText}`);
       if (!response.ok) {
         const errorText = await response.text();
-        console.error(`Health check failed: ${response.status} - ${errorText}`);
+        console.error(`${serviceName} service health check failed: ${response.status} - ${errorText}`);
       }
       
       return response.ok;
     } catch (error) {
-      console.error('AI service health check failed:', error);
+      console.error(`${serviceName} service health check failed:`, error);
       return false;
     }
   }
