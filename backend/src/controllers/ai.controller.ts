@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { AIService } from '../services/ai.service';
 import { getUsageCount, logAIUsage } from '../services/aiUsage.service';
 import { isUserUnlimited, getUserDailyLimits } from '../services/subscription.service';
-import { AISummaryRequest, AIAskRequest, RateLimitCheck } from '../utils/types/ai.types';
+import { AISummaryRequest, AIAskRequest, AIChatRequest, RateLimitCheck } from '../utils/types/ai.types';
 
 const aiService = new AIService();
 
@@ -377,6 +377,80 @@ export class AIController {
       const errorMessage = error instanceof Error ? error.message : 'Failed to get answer';
       console.error('Ask PDF question error:', errorMessage);
       const statusCode = (error as any)?.statusCode || 500;
+      
+      res.status(statusCode).json({ 
+        error: errorMessage,
+        ...(process.env.NODE_ENV === 'development' && {
+          details: error instanceof Error ? error.stack : undefined
+        })
+      });
+    }
+  }
+
+  public static async simpleChat(req: Request, res: Response): Promise<Response | void> {
+    if (!req.body) {
+      res.status(400).json({ error: 'Request body is required' });
+      return;
+    }
+    try {
+      const { message } = req.body as AIChatRequest;
+      const userId = (req as any).user?.userId;
+      const ipAddress = req.ip || 'unknown';
+
+      // Validate request
+      if (!message || !message.trim()) {
+        return res.status(400).json({ error: 'Message cannot be empty' });
+      }
+
+      // Check rate limit for chat (using ask endpoint limits)
+      const rateLimit = await AIController.checkRateLimit(
+        userId,
+        ipAddress,
+        'ask'
+      );
+      
+      if (!rateLimit.allowed) {
+        return res.status(429).json({ 
+          error: 'Rate limit exceeded',
+          limit: rateLimit.limit,
+          used: rateLimit.used,
+          remaining: rateLimit.remaining,
+          reset: new Date(Date.now() + AIController.RATE_LIMIT_WINDOW_MS).toISOString()
+        });
+      }
+
+      // Call AI service
+      const result = await aiService.simpleChat(message);
+      
+      // Log usage asynchronously without awaiting
+      logAIUsage({
+        userId,
+        ipAddress: userId ? undefined : ipAddress,
+        endpoint: 'ask'
+      }).catch(error => {
+        console.error('Failed to log AI usage:', error);
+        // Don't fail the request if logging fails
+      });
+
+      // Add rate limit headers to response
+      res.set({
+        'X-RateLimit-Limit': rateLimit.limit.toString(),
+        'X-RateLimit-Remaining': rateLimit.remaining?.toString() || '0',
+        'X-RateLimit-Reset': new Date(Date.now() + AIController.RATE_LIMIT_WINDOW_MS).toISOString()
+      });
+
+      res.json({
+        ...result,
+        rateLimit: {
+          limit: rateLimit.limit,
+          used: rateLimit.used + 1,
+          remaining: Math.max(0, rateLimit.limit - (rateLimit.used + 1))
+        }
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to process chat message';
+      const statusCode = (error as any)?.statusCode || 500;
+      console.error('Simple chat error:', errorMessage);
       
       res.status(statusCode).json({ 
         error: errorMessage,

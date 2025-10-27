@@ -8,8 +8,6 @@ from transformers import AutoTokenizer, AutoModelForQuestionAnswering, AutoModel
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Use a more appropriate model for question answering
-MODEL_NAME = "distilbert-base-cased-distilled-squad"  # Better for Q&A tasks
 SUMMARIZATION_MODEL_NAME = "pszemraj/led-large-book-summary"  # Better for summarization
 
 os.makedirs("offload_folder", exist_ok=True)
@@ -23,27 +21,6 @@ summarization_model = None
 summarization_tokenizer = None
 device = "cuda" if torch.cuda.is_available() else "cpu"
 logger.info(f"Using device: {device}")
-
-try:
-    # Load QA model
-    logger.info("Loading QA model...")
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-    if tokenizer.pad_token is None:
-        tokenizer.pad_token = tokenizer.eos_token
-    logger.info("✅ QA Tokenizer loaded successfully")
-    
-    model = AutoModelForQuestionAnswering.from_pretrained(
-        MODEL_NAME,
-        torch_dtype=torch.float32 if device == "cpu" else torch.float16,
-        low_cpu_mem_usage=True,
-    )
-    model = model.to(device)
-    logger.info(f"✅ QA Model loaded successfully on: {device.upper()}")
-    
-except Exception as e:
-    logger.error(f"❌ Failed to load QA model: {e}")
-    model = None
-    tokenizer = None
 
 try:
     # Load summarization model

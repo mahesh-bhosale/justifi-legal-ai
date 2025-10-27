@@ -1,4 +1,4 @@
-import { AISummaryRequest, AIAskRequest, AISummaryResponse, AIAskResponse } from '../utils/types/ai.types';
+import { AISummaryRequest, AIAskRequest, AISummaryResponse, AIAskResponse, AIChatResponse } from '../utils/types/ai.types';
 
 const NGROK_QA = process.env.NGROK_QA;
 const NGROK_SUMMARY = process.env.NGROK_SUMMARY;
@@ -169,6 +169,41 @@ export class AIService {
     } catch (error) {
       console.error('Error calling external AI service:', error);
       throw new Error(error instanceof Error ? error.message : 'Failed to process PDF question. Please try again later.');
+    }
+  }
+
+  async simpleChat(message: string): Promise<AIChatResponse> {
+    if (!NGROK_QA) {
+      throw new Error('Chat service is not configured');
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('message', message);
+
+      const response = await fetch(`${NGROK_QA}/chat/simple`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Chat service error:', errorText);
+        throw new Error(errorText || 'Failed to get response from chat service');
+      }
+
+      const result = await response.json();
+      return {
+        reply: result.reply || '',
+        message: result.message || message,
+        status: 'success'
+      };
+    } catch (error) {
+      console.error('Error calling chat service:', error);
+      throw new Error(error instanceof Error ? error.message : 'Chat service is currently unavailable. Please try again later.');
     }
   }
 

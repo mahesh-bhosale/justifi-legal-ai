@@ -14,22 +14,22 @@ const summaryLevels: { value: SummaryLevel; label: string; description: string }
   {
     value: 'short',
     label: 'Short',
-    description: 'Quick overview (1-2 paragraphs)',
+    description: 'Quick overview',
   },
   {
     value: 'medium',
     label: 'Medium',
-    description: 'Balanced summary (3-4 paragraphs)',
+    description: 'Balanced summary',
   },
   {
     value: 'long',
     label: 'Long',
-    description: 'Detailed analysis (5-6 paragraphs)',
+    description: 'Detailed analysis',
   },
   {
     value: 'very_long',
     label: 'Very Long',
-    description: 'Comprehensive breakdown (7+ paragraphs)',
+    description: 'Comprehensive breakdown',
   },
 ];
 

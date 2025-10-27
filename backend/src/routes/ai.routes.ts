@@ -27,4 +27,7 @@ router.post('/ask/pdf', verifyToken, upload.single('file'), AIController.askPdfQ
 router.post('/citizen/summarize', verifyToken, requireRole(['citizen']), AIController.summarizeText);
 router.post('/lawyer/summarize', verifyToken, requireRole(['lawyer']), AIController.summarizeText);
 
+// Chat routes
+router.post('/chat/simple', verifyToken, AIController.simpleChat);
+
 export default router;

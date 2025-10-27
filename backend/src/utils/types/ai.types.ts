@@ -33,11 +33,22 @@ export interface AISummaryRequest {
     usageCount?: number;
   }
   
-  export interface RateLimitCheck {
-    allowed: boolean;
-    limit: number;
-    used: number;
-    remaining?: number;
-    error?: string;
-    resetTime?: string;
-  }
+export interface RateLimitCheck {
+  allowed: boolean;
+  limit: number;
+  used: number;
+  remaining?: number;
+  error?: string;
+  resetTime?: string;
+}
+
+export interface AIChatRequest {
+  message: string;
+}
+
+export interface AIChatResponse {
+  reply: string;
+  message: string;
+  status: 'success' | 'error';
+  error?: string;
+}
