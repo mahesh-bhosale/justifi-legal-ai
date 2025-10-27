@@ -209,6 +209,7 @@ npx drizzle-kit push
 - **Case Matching**: Automatic case-lawyer matching
 - **Analytics**: Profile performance metrics
 - **Notifications**: Real-time updates and alerts
+- Communication before proposal acceptance 
 
 ## 🐛 Troubleshooting
 
