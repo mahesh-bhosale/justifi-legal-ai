@@ -1,0 +1,40 @@
+[
+  {
+    "src": "/images/hero/Ask Questions.png",
+    "title": "Ask Questions",
+    "subtitle": "Conversational legal Q&A built on your documents.",
+    "tags": ["AI-Powered Summaries", "Conversational Answers"]
+  },
+  {
+    "src": "/images/hero/Summarization.png",
+    "title": "Summarization",
+    "subtitle": "Readable summaries with key points and next steps.",
+    "tags": ["Plain-Language Briefs", "Risk Highlights"]
+  },
+  {
+    "src": "/images/hero/create new case by citizen.png",
+    "title": "Create Cases",
+    "subtitle": "File, organize, and track matters in one place.",
+    "tags": ["Smart Filing", "Auto-Organized"]
+  },
+  {
+    "src": "/images/hero/citizen my cases page.png",
+    "title": "Case Overview",
+    "subtitle": "See timelines, status, and documents at a glance.",
+    "tags": ["Status at a Glance", "Secure Vault"]
+  },
+  {
+    "src": "/images/hero/find lowyer page.png",
+    "title": "Find Lawyers",
+    "subtitle": "Match with vetted lawyers in seconds.",
+    "tags": ["Trusted Network", "Instant Matches"]
+  },
+  {
+    "src": "/images/hero/lawyer dashboard.png",
+    "title": "Lawyer Dashboard",
+    "subtitle": "Manage clients, tasks, and files with ease.",
+    "tags": ["Productivity Hub", "Collaboration Ready"]
+  }
+]
+
+
