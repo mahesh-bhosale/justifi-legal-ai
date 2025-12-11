@@ -22,7 +22,12 @@ const PORT = parseInt(process.env.PORT || '3001', 10);
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: [
+    'http://localhost:3000',
+    'https://justifi-legal-fj8ql797y-mahesh-bhosales-projects-4e94489c.vercel.app',
+    'https://justifi-legal-ai.vercel.app',
+    ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : [])
+  ],
   credentials: true,
 }));
 // Increase body size limits for file uploads (50MB for JSON, 50MB for URL-encoded)
