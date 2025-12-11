@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { ChatWindow } from '@/components/chat';
 import axios from 'axios';
-import Cookies from 'js-cookie';
+import { getToken } from '@/lib/auth';
+import { API_BASE_URL } from '@/lib/api';
 
 interface CaseData {
   id: number;
@@ -32,7 +33,7 @@ export default function CaseChatPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const token = Cookies.get('token');
+        const token = getToken();
         if (!token) {
           setError('Authentication required');
           return;
@@ -41,11 +42,11 @@ export default function CaseChatPage() {
         // Load case data and current user in parallel
         const [caseResponse, userResponse] = await Promise.all([
           axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/cases/${caseId}`,
+            `${API_BASE_URL}/api/cases/${caseId}`,
             { headers: { Authorization: `Bearer ${token}` } }
           ),
           axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/protected/profile`,
+            `${API_BASE_URL}/api/protected/profile`,
             { headers: { Authorization: `Bearer ${token}` } }
           )
         ]);

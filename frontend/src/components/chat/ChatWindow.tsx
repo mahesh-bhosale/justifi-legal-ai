@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useSocket } from '@/hooks/useSocket';
 import { useAuth } from '@/contexts/AuthContext';
 import axios from 'axios';
-import Cookies from 'js-cookie';
+import { getToken } from '@/lib/auth';
+import { API_BASE_URL } from '@/lib/api';
 
 interface Message {
   id: number;
@@ -52,8 +53,8 @@ export default function ChatWindow({
   useEffect(() => {
     const loadMessages = async () => {
       try {
-        const token = Cookies.get('token');
-        const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/cases/${caseId}/messages`;
+        const token = getToken();
+        const url = `${API_BASE_URL}/api/cases/${caseId}/messages`;
         const response = await axios.get(url, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -64,7 +65,7 @@ export default function ChatWindow({
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.error('Failed to load messages', {
-            url: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/cases/${caseId}/messages`,
+            url: `${API_BASE_URL}/api/cases/${caseId}/messages`,
             status: error.response?.status,
             data: error.response?.data,
           });
@@ -90,13 +91,13 @@ export default function ChatWindow({
           hasValidRecipient 
         });
         
-        const token = Cookies.get('token');
+        const token = getToken();
         if (!token) {
           console.error('No auth token found');
           return;
         }
         
-        const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/cases/${caseId}`;
+        const url = `${API_BASE_URL}/api/cases/${caseId}`;
         console.log('Fetching case data from:', url);
         
         const response = await axios.get(url, { 
@@ -209,9 +210,9 @@ export default function ChatWindow({
 
       for (const message of unreadMessages) {
         try {
-          const token = Cookies.get('token');
+          const token = getToken();
           await axios.patch(
-            `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/messages/${message.id}/read`,
+            `${API_BASE_URL}/api/messages/${message.id}/read`,
             {},
             {
               headers: { Authorization: `Bearer ${token}` }
@@ -242,8 +243,8 @@ export default function ChatWindow({
     
     // If we still don't have an ID, fetch case details to determine the recipient
     try {
-      const token = Cookies.get('token');
-      const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/cases/${caseId}`;
+      const token = getToken();
+      const url = `${API_BASE_URL}/api/cases/${caseId}`;
       const response = await axios.get(url, { 
         headers: { Authorization: `Bearer ${token}` } 
       });
@@ -309,8 +310,8 @@ export default function ChatWindow({
 
     setSending(true);
     try {
-      const token = Cookies.get('token');
-      const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/cases/${caseId}/messages`;
+      const token = getToken();
+      const url = `${API_BASE_URL}/api/cases/${caseId}/messages`;
       const payload = { recipientId: effectiveRecipientId, message: newMessage.trim() };
       console.log('Sending to recipient:', payload.recipientId, 'Message:', payload.message);
       const response = await axios.post(url, payload, {
@@ -324,7 +325,7 @@ export default function ChatWindow({
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('Failed to send message', {
-          url: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/cases/${caseId}/messages`,
+          url: `${API_BASE_URL}/api/cases/${caseId}/messages`,
           status: error.response?.status,
           data: error.response?.data,
           payload: { recipientId: effectiveRecipientId, message: newMessage.trim().slice(0, 50) }
