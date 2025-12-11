@@ -13,7 +13,7 @@
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
     "lucide-react": "^0.560.0",
-    "next": "15.5.2",
+    "next": "^16.0.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "socket.io-client": "^4.7.5"
@@ -28,7 +28,7 @@
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.21",
     "eslint": "^9",
-    "eslint-config-next": "15.5.2",
+    "eslint-config-next": "^16.0.8",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
