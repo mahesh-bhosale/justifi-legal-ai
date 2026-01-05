@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Card from '@/components/Card';
 import { CaseForm } from '@/components/CaseForm';
 import { createCase, type CreateCaseInput } from '@/lib/cases';
 
-export default function CreateCaseWithLawyerPage() {
+function CreateCaseWithLawyerContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isLoading: authLoading } = useAuth();
@@ -140,6 +140,18 @@ export default function CreateCaseWithLawyerPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function CreateCaseWithLawyerPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    }>
+      <CreateCaseWithLawyerContent />
+    </Suspense>
   );
 }
 
