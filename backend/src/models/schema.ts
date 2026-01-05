@@ -5,7 +5,7 @@ export const userRoleEnum = pgEnum('user_role', ['citizen', 'lawyer', 'admin']);
 export const availabilityStatusEnum = pgEnum('availability_status', ['available', 'limited', 'unavailable']);
 
 // Matching & proposal enums
-export const caseStatusEnum = pgEnum('case_status', ['pending','in_progress','resolved','closed']);
+export const caseStatusEnum = pgEnum('case_status', ['pending','pending_lawyer_acceptance','in_progress','resolved','closed','rejected']);
 export const proposalStatusEnum = pgEnum('proposal_status', ['pending','accepted','rejected','withdrawn']);
 export const urgencyEnum = pgEnum('urgency_level', ['low','medium','high']);
 
@@ -84,6 +84,7 @@ export const cases = pgTable('cases', {
   id: serial('id').primaryKey(),
   citizenId: uuid('citizen_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   lawyerId: uuid('lawyer_id').references(() => users.id, { onDelete: 'set null' }),
+  preferredLawyerId: uuid('preferred_lawyer_id').references(() => users.id, { onDelete: 'set null' }),
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description').notNull(),
   category: varchar('category', { length: 100 }).notNull(),

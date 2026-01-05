@@ -1,20 +1,40 @@
 'use client';
 
-
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import LawyerSearch from '@/components/LawyerSearch';
 import { type LawyerProfile } from '@/lib/lawyer-profiles';
 
 export default function LawyersPage() {
   const router = useRouter();
+  const { user, isLoading } = useAuth();
 
   const handleViewProfile = (profile: LawyerProfile) => {
     router.push(`/lawyers/${profile.id}`);
   };
 
   const handleContact = (profile: LawyerProfile) => {
-    // TODO: Implement contact functionality
-    alert(`Contact functionality for ${profile.user?.name} will be implemented in the case management system`);
+    // Wait for auth to load
+    if (isLoading) {
+      return;
+    }
+
+    if (!user) {
+      router.push('/auth/login');
+      return;
+    }
+
+    // Check role (case-insensitive, trimmed)
+    const userRole = user.role?.toLowerCase().trim();
+    
+    if (userRole !== 'citizen') {
+      // Silently redirect non-citizens to their dashboard
+      router.push('/dashboard');
+      return;
+    }
+
+    // Redirect to case creation with lawyer pre-selection
+    router.push(`/cases/create?lawyerId=${profile.userId}&lawyerName=${encodeURIComponent(profile.user?.name || 'Lawyer')}`);
   };
 
   return (

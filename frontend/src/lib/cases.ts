@@ -4,10 +4,11 @@ export interface Case {
   id: number;
   citizenId: string;
   lawyerId?: string;
+  preferredLawyerId?: string;
   title: string;
   description: string;
   category: string;
-  status: 'pending' | 'in_progress' | 'resolved' | 'closed';
+  status: 'pending' | 'pending_lawyer_acceptance' | 'in_progress' | 'resolved' | 'closed' | 'rejected';
   urgency: 'low' | 'medium' | 'high';
   preferredLanguage?: string;
   location?: string;
@@ -26,6 +27,7 @@ export interface CreateCaseInput {
   preferredLanguage?: string;
   location?: string;
   budget?: number;
+  preferredLawyerId?: string;
 }
 
 export interface UpdateCaseInput {
@@ -96,5 +98,23 @@ export const assignCase = async (id: number, lawyerId: string): Promise<Case> =>
 // Get case statistics (admin only)
 export const getCaseStats = async (): Promise<CaseStats> => {
   const response = await api.get('/api/cases/stats/admin');
+  return response.data.data;
+};
+
+// Get direct contact requests (lawyer only)
+export const getDirectContactRequests = async (): Promise<Case[]> => {
+  const response = await api.get('/api/cases/direct-requests');
+  return response.data.data;
+};
+
+// Accept direct contact request (lawyer only)
+export const acceptDirectContact = async (caseId: number): Promise<Case> => {
+  const response = await api.patch(`/api/cases/${caseId}/accept`);
+  return response.data.data;
+};
+
+// Reject direct contact request (lawyer only)
+export const rejectDirectContact = async (caseId: number): Promise<Case> => {
+  const response = await api.patch(`/api/cases/${caseId}/reject`);
   return response.data.data;
 };

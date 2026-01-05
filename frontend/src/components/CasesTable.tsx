@@ -17,14 +17,37 @@ const getStatusColor = (status: string) => {
   switch (status) {
     case 'pending':
       return 'bg-yellow-100 text-yellow-800';
+    case 'pending_lawyer_acceptance':
+      return 'bg-orange-100 text-orange-800';
     case 'in_progress':
       return 'bg-blue-100 text-blue-800';
     case 'resolved':
       return 'bg-green-100 text-green-800';
     case 'closed':
       return 'bg-gray-100 text-gray-800';
+    case 'rejected':
+      return 'bg-red-100 text-red-800';
     default:
       return 'bg-gray-100 text-gray-800';
+  }
+};
+
+const getStatusLabel = (status: string) => {
+  switch (status) {
+    case 'pending':
+      return 'Pending';
+    case 'pending_lawyer_acceptance':
+      return 'Awaiting Lawyer';
+    case 'in_progress':
+      return 'In Progress';
+    case 'resolved':
+      return 'Resolved';
+    case 'closed':
+      return 'Closed';
+    case 'rejected':
+      return 'Rejected';
+    default:
+      return status;
   }
 };
 
@@ -175,7 +198,7 @@ export function CasesTable({ cases, userRole, onStatusChange, onViewCase }: Case
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(caseItem.status)}`}>
-                    {caseItem.status.replace('_', ' ')}
+                    {getStatusLabel(caseItem.status)}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
