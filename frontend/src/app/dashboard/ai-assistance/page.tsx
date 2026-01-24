@@ -31,7 +31,8 @@ const User = ({ className }: { className?: string }) => (
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
   </svg>
 );
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+import { API_BASE_URL } from '@/lib/api';
+const API_URL = API_BASE_URL;
 
 interface ChatMessage {
   id: string;

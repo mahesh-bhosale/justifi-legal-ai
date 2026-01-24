@@ -87,7 +87,7 @@ export default function BlogPreviewSection() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {blogPosts.map((post, index) => (
+            {blogPosts.slice(0, 3).map((post, index) => (
               <article 
                 key={post.id} 
                 className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group"

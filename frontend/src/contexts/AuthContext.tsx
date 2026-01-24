@@ -50,8 +50,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    // Initialize WebSocket connection - using port 5000 for WebSockets
-    const socket = io('http://localhost:5000', {
+    // Initialize WebSocket connection - use environment variable for production
+    // WebSocket runs on the same server as the REST API
+    const socketUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    const socket = io(socketUrl, {
       auth: { token: getToken() },
       transports: ['websocket', 'polling'],
       reconnection: true,
@@ -62,9 +64,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       autoConnect: true,
       forceNew: true,
       withCredentials: true,
-      extraHeaders: {
-        'Access-Control-Allow-Origin': 'http://localhost:3000',
-      }
     });
 
     // Connection event handlers

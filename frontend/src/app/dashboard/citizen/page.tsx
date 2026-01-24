@@ -2,12 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../../../contexts/AuthContext';
 import Card from '../../../components/Card';
 import LawyerSearch from '../../../components/LawyerSearch';
 import { type LawyerProfile } from '../../../lib/lawyer-profiles';
 
 export default function CitizenDashboard() {
   const router = useRouter();
+  const { user, isLoading: authLoading } = useAuth();
   const [showLawyerSearch, setShowLawyerSearch] = useState(false);
 
 
@@ -17,9 +19,27 @@ export default function CitizenDashboard() {
   };
 
   const handleContactLawyer = (profile: LawyerProfile) => {
-    // You can implement contact functionality here (email, messaging, etc.)
-    console.log('Contacting lawyer:', profile);
-    alert(`Contact functionality for ${profile.user?.name} will be implemented soon!`);
+    // Wait for auth to load
+    if (authLoading) {
+      return;
+    }
+
+    // Check if user is logged in
+    if (!user) {
+      router.push('/auth/login');
+      return;
+    }
+
+    // Check role (case-insensitive, trimmed)
+    const userRole = user.role?.toLowerCase().trim();
+    if (userRole !== 'citizen') {
+      router.push('/dashboard');
+      return;
+    }
+
+    if (!profile?.userId) return;
+    // Redirect to case creation with lawyer pre-selection
+    router.push(`/cases/create?lawyerId=${profile.userId}&lawyerName=${encodeURIComponent(profile.user?.name || 'Lawyer')}`);
   };
 
   const navigateToLawyersPage = () => {

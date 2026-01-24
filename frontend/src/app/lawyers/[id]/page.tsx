@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import { lawyerProfileApi, type LawyerProfile } from '@/lib/lawyer-profiles';
 import Button from '@/components/Button';
 import Card from '@/components/Card';
@@ -9,6 +10,7 @@ import Card from '@/components/Card';
 export default function LawyerDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { user, isLoading: authLoading } = useAuth();
   const [profile, setProfile] = useState<LawyerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,8 +42,28 @@ export default function LawyerDetailPage() {
   };
 
   const handleContact = () => {
-    // TODO: Implement contact functionality
-    alert('Contact functionality will be implemented in the case management system');
+    // Wait for auth to load
+    if (authLoading) {
+      return;
+    }
+
+    if (!user) {
+      router.push('/auth/login');
+      return;
+    }
+
+    // Check role (case-insensitive, trimmed)
+    const userRole = user.role?.toLowerCase().trim();
+    if (userRole !== 'citizen') {
+      // Silently redirect non-citizens to their dashboard
+      router.push('/dashboard');
+      return;
+    }
+
+    if (!profile?.userId) return;
+    
+    // Redirect to case creation with lawyer pre-selection
+    router.push(`/cases/create?lawyerId=${profile.userId}&lawyerName=${encodeURIComponent(profile.user?.name || 'Lawyer')}`);
   };
 
   const getAvailabilityColor = (status: string) => {

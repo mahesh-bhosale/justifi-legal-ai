@@ -44,7 +44,11 @@ class ProposalsService {
     const canView =
       requester.role === 'admin' ||
       (requester.role === 'citizen' && c.citizenId === requester.userId) ||
-      (requester.role === 'lawyer' && (c.lawyerId === requester.userId || (c.status === 'pending' && !c.lawyerId)));
+      (requester.role === 'lawyer' && (
+        c.lawyerId === requester.userId || 
+        c.preferredLawyerId === requester.userId ||
+        (c.status === 'pending' && !c.lawyerId)
+      ));
     if (!canView) throw new Error('Access denied');
 
     const rows = await db.select().from(caseProposals).where(eq(caseProposals.caseId, caseId));

@@ -15,6 +15,13 @@
       "when": 1757830959913,
       "tag": "0001_fat_rockslide",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1767631311386,
+      "tag": "0002_pink_killraven",
+      "breakpoints": true
     }
   ]
 }

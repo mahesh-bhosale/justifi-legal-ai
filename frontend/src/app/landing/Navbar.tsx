@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Button from '../../components/Button';
 import { useRouter, usePathname } from 'next/navigation';
+import Image from 'next/image';
 
 const navItems = [
   { label: 'Home', href: '#hero' },
@@ -124,7 +125,16 @@ export default function LandingNavbar() {
         <div className="flex items-center justify-between h-14">
           {/* Logo */}
           <div className="flex items-center">
-            <div className="flex-shrink-0 cursor-pointer" onClick={() => handleNavigation('#hero')}>
+            <div className="flex-shrink-0 cursor-pointer flex items-center space-x-3" onClick={() => handleNavigation('#hero')}>
+              <div className="relative h-15 w-15">
+                <Image 
+                  src="/favicon.ico" 
+                  alt="Justifi Legal AI Logo" 
+                  fill 
+                  className="object-contain"
+                  sizes="32x32"
+                />
+              </div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Justifi Legal AI
               </h1>

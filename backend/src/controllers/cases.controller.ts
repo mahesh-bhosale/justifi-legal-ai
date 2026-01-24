@@ -10,6 +10,7 @@ const createSchema = z.object({
   preferredLanguage: z.string().optional(),
   location: z.string().optional(),
   budget: z.number().positive().optional(),
+  preferredLawyerId: z.string().uuid().optional(),
 });
 
 const listSchema = z.object({
@@ -47,8 +48,16 @@ class CasesController {
         return;
       }
       const body = createSchema.parse(req.body);
-      const created = await casesService.createCase({ citizenId: req.user.userId, ...body });
-      res.status(201).json({ success: true, data: created });
+      try {
+        const created = await casesService.createCase({ citizenId: req.user.userId, ...body });
+        res.status(201).json({ success: true, data: created });
+      } catch (err: any) {
+        if (err.message && err.message.includes('already have a pending contact request')) {
+          res.status(400).json({ success: false, message: err.message });
+          return;
+        }
+        throw err;
+      }
     } catch (err: any) {
       if (err instanceof z.ZodError) {
         res.status(400).json({ success: false, message: 'Validation error', errors: err.errors });
@@ -164,6 +173,66 @@ class CasesController {
       }
       console.error('Assign case error:', err);
       res.status(500).json({ success: false, message: 'Failed to assign case' });
+    }
+  }
+
+  async getDirectContactRequests(req: Request, res: Response): Promise<void> {
+    try {
+      if (!req.user || req.user.role !== 'lawyer') {
+        res.status(403).json({ success: false, message: 'Lawyer access required' });
+        return;
+      }
+      const requests = await casesService.getDirectContactRequests(req.user.userId);
+      res.json({ success: true, count: requests.length, data: requests });
+    } catch (err: any) {
+      console.error('Get direct contact requests error:', err);
+      res.status(500).json({ success: false, message: 'Failed to fetch direct contact requests' });
+    }
+  }
+
+  async acceptDirectContact(req: Request, res: Response): Promise<void> {
+    try {
+      if (!req.user || req.user.role !== 'lawyer') {
+        res.status(403).json({ success: false, message: 'Lawyer access required' });
+        return;
+      }
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        res.status(400).json({ success: false, message: 'Invalid case id' });
+        return;
+      }
+      const updated = await casesService.acceptDirectContact(id, req.user.userId);
+      if (!updated) {
+        res.status(404).json({ success: false, message: 'Case not found or not a direct contact request' });
+        return;
+      }
+      res.json({ success: true, data: updated });
+    } catch (err: any) {
+      console.error('Accept direct contact error:', err);
+      res.status(500).json({ success: false, message: 'Failed to accept direct contact request' });
+    }
+  }
+
+  async rejectDirectContact(req: Request, res: Response): Promise<void> {
+    try {
+      if (!req.user || req.user.role !== 'lawyer') {
+        res.status(403).json({ success: false, message: 'Lawyer access required' });
+        return;
+      }
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        res.status(400).json({ success: false, message: 'Invalid case id' });
+        return;
+      }
+      const updated = await casesService.rejectDirectContact(id, req.user.userId);
+      if (!updated) {
+        res.status(404).json({ success: false, message: 'Case not found or not a direct contact request' });
+        return;
+      }
+      res.json({ success: true, data: updated });
+    } catch (err: any) {
+      console.error('Reject direct contact error:', err);
+      res.status(500).json({ success: false, message: 'Failed to reject direct contact request' });
     }
   }
 

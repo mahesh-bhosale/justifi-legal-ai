@@ -1,8 +1,8 @@
-import { and, eq, isNull, sql } from 'drizzle-orm';
+import { and, eq, isNull, sql, or } from 'drizzle-orm';
 import { db } from '../db';
 import { cases, type Case, type NewCase } from '../models/schema';
 
-export type CaseStatus = 'pending' | 'in_progress' | 'resolved' | 'closed';
+export type CaseStatus = 'pending' | 'pending_lawyer_acceptance' | 'in_progress' | 'resolved' | 'closed' | 'rejected';
 
 export interface CreateCaseInput {
   citizenId: string;
@@ -13,6 +13,7 @@ export interface CreateCaseInput {
   preferredLanguage?: string;
   location?: string;
   budget?: number;
+  preferredLawyerId?: string;
 }
 
 export interface ListCasesParams {
@@ -44,6 +45,25 @@ export interface UpdateCaseInput {
 
 class CasesService {
   async createCase(input: CreateCaseInput): Promise<Case> {
+    // Check if there's already a pending direct contact request to the same lawyer
+    if (input.preferredLawyerId) {
+      const existingRequest = await db
+        .select()
+        .from(cases)
+        .where(
+          and(
+            eq(cases.citizenId, input.citizenId),
+            eq(cases.preferredLawyerId, input.preferredLawyerId),
+            eq(cases.status, 'pending_lawyer_acceptance' as any)
+          )
+        )
+        .limit(1);
+      
+      if (existingRequest.length > 0) {
+        throw new Error('You already have a pending contact request to this lawyer');
+      }
+    }
+
     const payload: NewCase = {
       citizenId: input.citizenId,
       title: input.title,
@@ -53,7 +73,8 @@ class CasesService {
       preferredLanguage: input.preferredLanguage,
       location: input.location,
       budget: input.budget === undefined ? undefined : (input.budget as any),
-      status: 'pending' as any,
+      preferredLawyerId: input.preferredLawyerId,
+      status: input.preferredLawyerId ? ('pending_lawyer_acceptance' as any) : ('pending' as any),
     };
     const [created] = await db.insert(cases).values(payload).returning();
     return created;
@@ -71,8 +92,13 @@ class CasesService {
         // show open cases (no lawyer assigned, pending)
         where.push(and(isNull(cases.lawyerId), eq(cases.status, 'pending')));
       } else {
-        // assigned to this lawyer
-        where.push(eq(cases.lawyerId, userId));
+        // assigned to this lawyer OR direct contact requests
+        where.push(
+          or(
+            eq(cases.lawyerId, userId),
+            eq(cases.preferredLawyerId, userId)
+          )!
+        );
       }
     } else if (role === 'admin') {
       if (citizenId) where.push(eq(cases.citizenId, citizenId));
@@ -104,7 +130,11 @@ class CasesService {
 
     if (requester.role === 'admin') return found;
     if (requester.role === 'citizen' && found.citizenId === requester.userId) return found;
-    if (requester.role === 'lawyer' && (found.lawyerId === requester.userId || (found.status === 'pending' && !found.lawyerId))) return found;
+    if (requester.role === 'lawyer' && (
+      found.lawyerId === requester.userId || 
+      found.preferredLawyerId === requester.userId ||
+      (found.status === 'pending' && !found.lawyerId)
+    )) return found;
     return null;
   }
 
@@ -114,7 +144,7 @@ class CasesService {
 
     if (requester.role === 'citizen') {
       if (existing.citizenId !== requester.userId) return null;
-      if (existing.status !== 'pending') return null;
+      if (existing.status !== 'pending' && existing.status !== 'pending_lawyer_acceptance') return null;
       const allowed: Partial<NewCase> = {
         title: update.title ?? existing.title,
         description: update.description ?? existing.description,
@@ -167,6 +197,74 @@ class CasesService {
       .set({ lawyerId, status: nextStatus as any, updatedAt: new Date() as any })
       .where(eq(cases.id, id))
       .returning();
+    return updated;
+  }
+
+  async getDirectContactRequests(lawyerId: string): Promise<Case[]> {
+    return await db
+      .select()
+      .from(cases)
+      .where(
+        and(
+          eq(cases.preferredLawyerId, lawyerId),
+          eq(cases.status, 'pending_lawyer_acceptance' as any)
+        )
+      )
+      .orderBy(cases.createdAt);
+  }
+
+  async acceptDirectContact(caseId: number, lawyerId: string): Promise<Case | null> {
+    const [existing] = await db
+      .select()
+      .from(cases)
+      .where(
+        and(
+          eq(cases.id, caseId),
+          eq(cases.preferredLawyerId, lawyerId),
+          eq(cases.status, 'pending_lawyer_acceptance' as any)
+        )
+      )
+      .limit(1);
+    
+    if (!existing) return null;
+
+    const [updated] = await db
+      .update(cases)
+      .set({
+        lawyerId: lawyerId,
+        status: 'in_progress' as any,
+        updatedAt: new Date() as any,
+      })
+      .where(eq(cases.id, caseId))
+      .returning();
+    
+    return updated;
+  }
+
+  async rejectDirectContact(caseId: number, lawyerId: string): Promise<Case | null> {
+    const [existing] = await db
+      .select()
+      .from(cases)
+      .where(
+        and(
+          eq(cases.id, caseId),
+          eq(cases.preferredLawyerId, lawyerId),
+          eq(cases.status, 'pending_lawyer_acceptance' as any)
+        )
+      )
+      .limit(1);
+    
+    if (!existing) return null;
+
+    const [updated] = await db
+      .update(cases)
+      .set({
+        status: 'rejected' as any,
+        updatedAt: new Date() as any,
+      })
+      .where(eq(cases.id, caseId))
+      .returning();
+    
     return updated;
   }
 
