@@ -47,8 +47,13 @@ export default function LawyerDetailPage() {
       return;
     }
 
+    if (!profile?.userId) return;
+
     if (!user) {
-      router.push('/auth/login');
+      // Redirect to login with lawyer info preserved in query params
+      const lawyerId = profile.userId;
+      const lawyerName = profile.user?.name || 'Lawyer';
+      router.push(`/auth/login?lawyerId=${lawyerId}&lawyerName=${encodeURIComponent(lawyerName)}`);
       return;
     }
 
@@ -59,8 +64,6 @@ export default function LawyerDetailPage() {
       router.push('/dashboard');
       return;
     }
-
-    if (!profile?.userId) return;
     
     // Redirect to case creation with lawyer pre-selection
     router.push(`/cases/create?lawyerId=${profile.userId}&lawyerName=${encodeURIComponent(profile.user?.name || 'Lawyer')}`);

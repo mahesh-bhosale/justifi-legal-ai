@@ -20,7 +20,10 @@ export default function LawyersPage() {
     }
 
     if (!user) {
-      router.push('/auth/login');
+      // Redirect to login with lawyer info preserved in query params
+      const lawyerId = profile.userId;
+      const lawyerName = profile.user?.name || 'Lawyer';
+      router.push(`/auth/login?lawyerId=${lawyerId}&lawyerName=${encodeURIComponent(lawyerName)}`);
       return;
     }
 

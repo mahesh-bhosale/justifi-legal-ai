@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import api from '../../../lib/api';
-import { setToken } from '../../../lib/auth';
+import { setToken, decodeUser } from '../../../lib/auth';
 
 interface LoginFormData {
   email: string;
@@ -19,8 +20,10 @@ interface ApiError {
   message?: string;
 }
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { setUser } = useAuth();
   const [formData, setFormData] = useState<LoginFormData>({
     email: '',
     password: ''
@@ -29,6 +32,11 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+
+  // Get return URL or lawyer contact info from query params
+  const returnUrl = searchParams.get('returnUrl');
+  const lawyerId = searchParams.get('lawyerId');
+  const lawyerName = searchParams.get('lawyerName');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -48,13 +56,41 @@ export default function LoginPage() {
       console.log('Login response:', response.data);
       
       if (response.data.data && response.data.data.token) {
-        console.log('Setting token and redirecting to dashboard');
+        console.log('Setting token and updating auth state');
         setToken(response.data.data.token);
         
-        // Add a small delay to ensure token is set before redirecting
+        // Immediately update auth context
+        const decoded = decodeUser();
+        if (decoded) {
+          const userData = {
+            id: String(decoded.id || '').trim(),
+            email: String(decoded.email || '').trim(),
+            role: String(decoded.role || 'citizen').trim(),
+          };
+          setUser(userData);
+        }
+        
+        // Determine redirect destination
+        let redirectPath = '/dashboard';
+        
+        // If we have lawyer contact info, redirect to case creation
+        if (lawyerId && lawyerName) {
+          redirectPath = `/cases/create?lawyerId=${lawyerId}&lawyerName=${encodeURIComponent(lawyerName)}`;
+        } 
+        // If we have a return URL, use it
+        else if (returnUrl) {
+          redirectPath = returnUrl;
+        }
+        // Otherwise, redirect based on role
+        else if (decoded) {
+          const role = String(decoded.role || 'citizen').trim().toLowerCase();
+          redirectPath = role === 'citizen' ? '/dashboard/citizen' : '/dashboard';
+        }
+        
+        // Small delay to ensure state is updated, then redirect
         setTimeout(() => {
-          router.push('/dashboard');
-          router.refresh(); // Force a refresh to ensure auth state is updated
+          router.push(redirectPath);
+          router.refresh();
         }, 100);
       } else {
         console.error('No token in response:', response.data);
@@ -195,6 +231,18 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    }>
+      <LoginPageContent />
+    </Suspense>
   );
 }
 
