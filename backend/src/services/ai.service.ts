@@ -1,7 +1,19 @@
 import { AISummaryRequest, AIAskRequest, AISummaryResponse, AIAskResponse, AIChatResponse } from '../utils/types/ai.types';
+import redis from '../lib/redis';
+import crypto from 'crypto';
 
 const NGROK_QA = process.env.NGROK_QA;
 const NGROK_SUMMARY = process.env.NGROK_SUMMARY;
+
+function createHash(input: string | Buffer): string {
+  return crypto.createHash('sha256').update(input).digest('hex');
+}
+
+// Allow overriding via env, default to 72 hours (259200 seconds)
+const SUMMARY_CACHE_TTL_SECONDS =
+  (process.env.SUMMARY_CACHE_TTL_HOURS
+    ? Number(process.env.SUMMARY_CACHE_TTL_HOURS) * 60 * 60
+    : 72 * 60 * 60);
 
 if (!NGROK_QA) {
   console.warn('NGROK_QA environment variable is not set. Question answering service will not be available.');
@@ -21,10 +33,24 @@ export class AIService {
       throw new Error('Summary service is not configured');
     }
 
+    const { text, level } = request;
+    const hash = createHash(`${level}:${text}`);
+    const cacheKey = `summary:text:${hash}:${level}`;
+
     try {
+      // Try cache first
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        console.log(`✅ Redis cache hit for summarizeText - key: ${cacheKey}`);
+        const parsed = JSON.parse(cached) as AISummaryResponse;
+        return parsed;
+      }
+
+      console.log(`ℹ️ Redis cache miss for summarizeText - key: ${cacheKey}`);
+
       const formData = new FormData();
-      formData.append('text', request.text);
-      formData.append('level', request.level);
+      formData.append('text', text);
+      formData.append('level', level);
 
       const response = await fetch(`${NGROK_SUMMARY}/summarize/text`, {
         method: 'POST',
@@ -38,11 +64,21 @@ export class AIService {
       }
 
       const result = await response.json();
-      return {
+      const responsePayload: AISummaryResponse = {
         summary: result.summary || '',
-        level: request.level,
+        level,
         status: 'success'
       };
+
+      // Store in cache
+      try {
+        await redis.set(cacheKey, JSON.stringify(responsePayload), 'EX', SUMMARY_CACHE_TTL_SECONDS);
+        console.log(`✅ Stored summarizeText result in Redis - key: ${cacheKey}, ttl: ${SUMMARY_CACHE_TTL_SECONDS}s`);
+      } catch (cacheError) {
+        console.error('Failed to write summarizeText result to Redis cache:', cacheError);
+      }
+
+      return responsePayload;
     } catch (error) {
       console.error('Error calling external AI service:', error);
       throw new Error(error instanceof Error ? error.message : 'AI service is currently unavailable. Please try again later.');
@@ -83,6 +119,9 @@ export class AIService {
       throw new Error('Summary service is not configured');
     }
 
+    const pdfHash = createHash(Buffer.from(file));
+    const cacheKey = `summary:pdf:${pdfHash}:${level}`;
+
     const formData = new FormData();
     
     // Convert Buffer to Blob for file upload
@@ -91,6 +130,16 @@ export class AIService {
     formData.append('level', level);
 
     try {
+      // Try cache first
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        console.log(`✅ Redis cache hit for summarizePdf - key: ${cacheKey}`);
+        const parsed = JSON.parse(cached) as AISummaryResponse;
+        return parsed;
+      }
+
+      console.log(`ℹ️ Redis cache miss for summarizePdf - key: ${cacheKey}`);
+
       console.log(`Sending request to: ${NGROK_SUMMARY}/summarize/pdf`);
       console.log('Headers:', {
         'Content-Type': 'multipart/form-data',
@@ -115,11 +164,21 @@ export class AIService {
       }
       
       const result = JSON.parse(responseText);
-      return {
+      const responsePayload: AISummaryResponse = {
         summary: result.summary,
         level,
         status: 'success'
       };
+
+      // Store in cache
+      try {
+        await redis.set(cacheKey, JSON.stringify(responsePayload), 'EX', SUMMARY_CACHE_TTL_SECONDS);
+        console.log(`✅ Stored summarizePdf result in Redis - key: ${cacheKey}, ttl: ${SUMMARY_CACHE_TTL_SECONDS}s`);
+      } catch (cacheError) {
+        console.error('Failed to write summarizePdf result to Redis cache:', cacheError);
+      }
+
+      return responsePayload;
     } catch (error) {
       console.error('Error calling external AI service:', error);
       throw new Error(error instanceof Error ? error.message : 'Failed to process PDF. Please try again later.');
