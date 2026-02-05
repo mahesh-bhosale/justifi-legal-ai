@@ -28,7 +28,6 @@ datasets/
 # =========================
 inlegalbert_final/
 inlegalbert_results/
-ml_model/
 offload_folder/
 *.bin
 *.pt
