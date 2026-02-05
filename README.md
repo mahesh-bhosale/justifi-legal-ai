@@ -1,256 +1,377 @@
-⚖️ JustiFi – AI-Powered Legal Decision Support System
+# ⚖️ JustiFi - AI-Powered Legal Simplifier & Case Outcome Predictor
 
-JustiFi is an AI-driven legal intelligence platform designed to assist legal professionals by predicting case outcomes, retrieving similar legal cases, and providing explainability for decisions using state-of-the-art InLegalBERT and NLP techniques.
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-blue?style=for-the-badge)](https://justifi-legal-ai.vercel.app/)
+![Status](https://img.shields.io/badge/Status-Development-yellow?style=for-the-badge)
 
-This project is developed as a final-year major project and focuses on real-world scalability, explainability, and deployment readiness.
+An end-to-end AI-powered legal platform that simplifies complex legal documents and predicts possible case outcomes using **NLP, ML, and LLMs**.
 
-🚀 Key Features
-🔹 1. Legal Outcome Prediction
+Built as a **Major Project (B.E. Computer Engineering)** under the University of Mumbai, 2025-2026.
 
-Predicts ACCEPT / REJECT for legal cases
+---
 
-Powered by InLegalBERT
+## 📌 Table of Contents
 
-Uses chunk-based inference to handle long legal documents (beyond 512 tokens)
+* [Abstract](#abstract)
+* [Features](#features)
+* [Tech Stack](#tech-stack)
+* [System Architecture](#system-architecture)
+* [Installation](#installation)
+* [Usage](#usage)
+* [Project Structure](#project-structure)
+* [API Documentation](#api-documentation)
+* [Team & Institution](#team--institution)
+* [Future Scope](#future-scope)
+* [License](#license)
 
-🔹 2. Chunk-Based Document Processing
+---
 
-Splits long judgments into overlapping chunks
+## 📄 Abstract
 
-Aggregates predictions using probability averaging
+In recent years, Artificial Intelligence (AI) has emerged as a transformative technology in the legal domain, offering innovative solutions for managing and analyzing vast volumes of legal documents. The AI-Powered Legal Assistant developed in this project aims to simplify and modernize legal research, case prediction, and citizen–lawyer interaction through intelligent automation.
 
-Ensures full-document understanding
+The proposed system integrates Natural Language Processing (NLP) and Machine Learning (ML) techniques to perform two major tasks: legal document summarization and case outcome prediction. Using transformer-based language models, the system extracts concise and relevant summaries from lengthy case documents. Additionally, supervised learning algorithms are used to predict probable case outcomes based on historical data.
 
-🔹 3. Similar Case Retrieval
+The application is implemented as a web-based platform built using Next.js, Node.js, and PostgreSQL, providing an interactive interface for citizens, lawyers, and administrators.
 
-Finds legally similar past cases
+---
 
-Uses sentence embeddings + cosine similarity
+## ✨ Features
 
-Works on entire documents, not just first 512 tokens
+### 🤖 AI Capabilities
+- **Legal Document Summarization** - Condenses lengthy legal texts using transformer models
+- **Case Outcome Prediction** - ML-powered predictions with confidence scores
+- **Explainable AI** - Rationales and evidence for predictions
+- **Multilingual Support** - English & Hindi document processing
 
-🔹 4. Explainability (Why This Prediction?)
+### 👥 Multi-Role System
+- **Citizens** - Upload documents, create cases, search lawyers, get AI predictions
+- **Lawyers** - Manage profiles, submit proposals, interact with clients, publish blogs
+- **Admins** - Verify lawyers, manage users, monitor platform integrity
 
-Shows:
+### 🔧 Platform Features
+- **Real-time Chat** - Secure messaging between lawyers and citizens
+- **Document Management** - Upload, store, and process legal documents
+- **Search & Discovery** - Find lawyers based on expertise, ratings, and location
+- **Blog System** - Legal knowledge sharing platform
+- **Review System** - Rate and review legal services
 
-Confidence score
+---
 
-Number of chunks considered
+## 🛠 Tech Stack
 
-Similar cases that influenced the decision
+### **Frontend**
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
 
-Designed for legal transparency
+### **Backend**
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white)
+![Drizzle ORM](https://img.shields.io/badge/Drizzle%20ORM-000000?style=for-the-badge)
 
-🔹 5. PDF Upload & Processing
+### **AI/ML Services**
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
+![Hugging Face](https://img.shields.io/badge/Hugging%20Face-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)
+![Scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
 
-Upload any legal PDF
+### **Infrastructure & Tools**
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
+![ngrok](https://img.shields.io/badge/ngrok-000000?style=for-the-badge)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
 
-Extracts text automatically
+---
 
-Runs prediction + similarity search
+## 🏗 System Architecture
 
-🔹 6. API-Based Architecture
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     Frontend (Next.js)                      │
+│                    http://localhost:3000                    │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+                           │ REST API
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│                     Backend (Node.js)                       │
+│                    http://localhost:5000                    │
+│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐         │
+│  │ Auth    │  │ Cases   │  │ Chat    │  │ AI      │         │
+│  │ Module  │  │ Module  │  │ Module  │  │ Gateway │         │
+│  └─────────┘  └─────────┘  └─────────┘  └────┬────┘         │
+└──────────────────────────┬────────────────────┼─────────────┘
+                           │                    │
+                    ┌──────┴──────┐     ┌──────▼──────┐
+                    │ PostgreSQL  │     │   Redis     │
+                    │ (Supabase)  │     │  (Cache)    │
+                    └─────────────┘     └─────────────┘
+                           │                    │
+                           └──────┬──────┬──────┘
+                                  │      │
+                           ┌──────▼──────▼──────┐
+                           │    AI Services     │
+                           └────────────────────┘
+                                  │      │
+                       ┌──────────▼──────▼──────────┐
+                       │ Summarization   Prediction │
+                       │   Service        Service   │
+                       │  (ml_model)   (prediction) │
+                       └────────────────────────────┘
+```
 
-FastAPI backend
+---
 
-Modular, production-ready structure
+## 🚀 Installation
 
-Can be integrated with frontend or mobile apps
+### Prerequisites
+- **Node.js** (v18 or higher)
+- **Python** (3.9 or higher)
+- **Docker** (for Redis)
+- **Supabase Account** (for PostgreSQL)
+- **ngrok Account** (for exposing ML services)
 
-🧠 Model & Dataset
-🔸 Model Used
-
-InLegalBERT (Legal-domain BERT model)
-
-Fine-tuned on Indian legal judgments
-
-Binary classification: ACCEPT (1) / REJECT (0)
-
-🔸 Dataset
-
-Source: CJPE / NyayaAnumana legal datasets
-
-Courts covered:
-
-Supreme Court
-
-High Courts
-
-Tribunals
-
-Dataset size: 300K+ legal cases
-
-Labels:
-
-0 → Rejected
-
-1 → Accepted
-
-⚠️ Datasets are NOT included in this repository due to size and licensing constraints.
-
-📂 Project Structure
-JUSTIFI-LEGAL-AI/
-│
-├── backend/                 # Backend services (FastAPI)
-│
-├── datasets/                # (Ignored) Raw legal datasets
-│
-├── ml_model/
-│   ├── routes/              # API routes
-│   ├── utils/               # PDF, text utilities
-│   ├── model_loader.py      # Loads trained model
-│   ├── summarizer.py
-│   ├── run_server.py
-│   └── requirements.txt
-│
-├── prediction_module/
-│   ├── inlegalbert_final/   # (Ignored) Trained model
-│   ├── bert_prediction.ipynb
-│   ├── inlegalbert_inference.ipynb
-│   ├── data_processing.ipynb
-│   └── prediction.py        # FastAPI inference API
-│
-├── .gitignore
-├── README.md
-└── requirements.txt
-
-🛠️ Tech Stack
-Category	Tools
-Language	Python 3.10
-Model	InLegalBERT
-NLP	HuggingFace Transformers
-ML	PyTorch
-API	FastAPI
-PDF	pdfplumber
-Similarity	Sentence Transformers
-Deployment	Uvicorn
-⚙️ Installation & Setup
-1️⃣ Clone the Repository
-git clone https://github.com/your-username/justifi-legal-ai.git
+### Step 1: Clone the Repository
+```bash
+git clone https://github.com/mahesh-bhosale/justifi-legal-ai.git
 cd justifi-legal-ai
+```
 
-2️⃣ Create Virtual Environment
-python -m venv legal_env
-legal_env\Scripts\activate   # Windows
+### Step 2: Set Up Environment Variables
 
-3️⃣ Install Dependencies
+#### Backend (.env)
+```env
+# backend/.env
+DATABASE_URL="postgresql://postgres:[password]@[host]:5432/postgres"
+PORT=5000
+JWT_SECRET=your_secure_jwt_secret
+JWT_EXPIRES_IN=24h
+NGROK_QA=https://your-ngrok-url.ngrok-free.dev
+NGROK_SUMMARY=https://your-ngrok-url.ngrok-free.dev
+REDIS_URL=redis://localhost:6379
+NODE_ENV=development
+```
+
+#### Frontend (.env.local)
+```env
+# frontend/.env.local
+NEXT_PUBLIC_API_URL=http://localhost:5000
+```
+
+### Step 3: Start Redis with Docker
+```bash
+docker run -d --name redis-server -p 6379:6379 redis
+docker start redis-server
+```
+
+### Step 4: Set Up Python Environment
+```bash
+# Create virtual environment
+python -m venv legal_venv
+
+# Activate (Windows)
+legal_venv\Scripts\activate
+
+# Activate (Linux/Mac)
+source legal_venv/bin/activate
+
+# Install Python dependencies
 pip install -r requirements.txt
+```
 
-▶️ Running the API Server
-Start Prediction API
-uvicorn prediction:app --reload
+### Step 5: Install Backend Dependencies
+```bash
+cd backend
+npm install
 
+# Set up database with Drizzle ORM
+npm run db:generate
+npm run db:push
+npm run db:studio  # Optional: Database GUI
+```
 
-API will run at:
+### Step 6: Install Frontend Dependencies
+```bash
+cd ../frontend
+npm install
+```
 
-http://127.0.0.1:8000
+### Step 7: Run ML Services
+```bash
+# Activate virtual environment if not already activated
+source legal_venv/bin/activate  # or legal_venv\Scripts\activate
 
+# Run ML model server
+cd ml_model
+python run_server.py
+```
 
-Swagger UI:
+### Step 8: Expose ML Services with ngrok
+```bash
+# In a new terminal
+ngrok http 8000
+```
+Copy the ngrok URL and update `NGROK_QA` and `NGROK_SUMMARY` in `backend/.env`
 
-http://127.0.0.1:8000/docs
+### Step 9: Start All Services
 
-📄 API Endpoints
-🔹 Predict Case Outcome (PDF)
+#### Terminal 1: Backend
+```bash
+cd backend
+npm run dev
+```
 
-POST /predict/pdf
+#### Terminal 2: Frontend
+```bash
+cd frontend
+npm run dev
+```
 
-Response:
+#### Terminal 3: ML Service (if not running)
+```bash
+cd ml_model
+python run_server.py
+```
 
-{
-  "prediction": "ACCEPT",
-  "confidence": 0.73,
-  "num_chunks": 8
-}
+---
 
-🔹 Predict Case Outcome (Text)
+## 📖 Usage
 
-POST /predict/text
+### Access URLs
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:5000
+- **ML Service**: http://127.0.0.1:8000
+- **Drizzle Studio**: http://localhost:4983 (after running `npm run db:studio`)
 
-🔹 Similar Case Retrieval
+### User Roles & Features
 
-POST /similar_cases
+#### 👤 Citizen
+1. Register/Login as Citizen
+2. Upload legal documents for summarization
+3. Create new legal cases
+4. Search for lawyers by expertise
+5. Receive AI-powered case predictions
+6. Chat with lawyers in real-time
 
-Returns:
+#### ⚖️ Lawyer
+1. Register/Login as Lawyer (requires admin verification)
+2. Complete professional profile
+3. Browse open cases and submit proposals
+4. Communicate with clients via chat
+5. Publish legal blogs/articles
+6. Manage active cases
 
-Top similar judgments
+#### 👑 Admin
+1. Verify lawyer registrations
+2. Manage users and content
+3. Monitor platform activity
+4. Moderate blogs and reviews
 
-Similarity score
+---
 
-Reason for similarity
+## 📁 Project Structure
 
-📊 Model Performance (Chunk-Based)
-Metric	Score
-Accuracy	0.735
-Precision	0.70
-Recall	0.76
-F1-score	0.73
+```
+justifi-legal-ai/
+├── backend/                    # Node.js + Express + TypeScript API
+│   ├── src/
+│   │   ├── controllers/       # Request handlers
+│   │   ├── services/          # Business logic
+│   │   ├── middleware/        # Auth & validation
+│   │   ├── routes/           # API endpoints
+│   │   └── db/              # Database schema & models
+│   ├── drizzle.config.ts     # Drizzle ORM configuration
+│   └── package.json         # Backend dependencies
+│
+├── frontend/                  # Next.js 14 + TypeScript
+│   ├── src/app/             # App router pages
+│   ├── components/          # Reusable UI components
+│   ├── contexts/            # React contexts (Auth, etc.)
+│   ├── lib/                # Utility functions & API clients
+│   └── package.json        # Frontend dependencies
+│
+├── ml_model/                 # AI Summarization service (Python)
+│   ├── notebooks/           # Jupyter notebooks
+│   │   └── legal_assistant.ipynb
+│   ├── run_server.py       # FastAPI server for summarization
+│   └── requirements.txt    # Python dependencies
+│
+├── prediction_module/        # Case outcome prediction service
+│   ├── prediction.py        # ML prediction logic
+│   └── requirements.txt    # Python dependencies
+│
+├── legal_venv/              # Python virtual environment (create this)
+├── requirements.txt         # Shared Python dependencies
+└── README.md               # This file
+```
 
-Chunk-based inference significantly improves performance over 512-token limitation.
+---
 
-🔍 Explainability Strategy
+## 🔌 API Documentation
 
-JustiFi provides explainability by:
+Once the backend is running, access the following:
 
-Chunk-level predictions
+### Base URL: `http://localhost:5000`
 
-Confidence aggregation
+### Key Endpoints
 
-Similar case evidence
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/api/auth/register` | User registration | No |
+| POST | `/api/auth/login` | User login | No |
+| POST | `/api/documents/summarize` | Summarize legal document | Yes |
+| POST | `/api/ai/predict` | Predict case outcome | Yes |
+| GET | `/api/lawyers` | Search lawyers | No |
+| POST | `/api/cases` | Create legal case | Yes |
+| GET | `/api/cases/:id/chat` | Get case messages | Yes |
+| POST | `/api/blogs` | Create blog post | Yes (Lawyer/Admin) |
 
-Transparent scoring
+### Testing with Postman
+1. Import the collection from `backend/API_Documentation.md`
+2. Set base URL to `http://localhost:5000`
+3. Use login endpoint to get JWT token
+4. Add token to Authorization header: `Bearer <token>`
 
-This makes predictions interpretable and trustworthy for legal use.
+---
 
-❗ Why Chunking?
+### 👨‍💻 Team Members
 
-Legal judgments are very long (10k–30k words).
+- **Mahesh Bhosale** — [github.com/mahesh-bhosale](https://github.com/mahesh-bhosale)
+- **Vikas Maurya** — [github.com/vikas-maurya](https://github.com/vikasmaurya9769)
+- **Intaza Chaudhary** — [github.com/intaza-chaudhary](https://github.com/Intaza)
+- **Mausam Yadav** — [github.com/mausam-yadav](https://github.com/omyadav0410-jpg)
+---
 
-BERT limit = 512 tokens
+## 🔮 Future Scope
 
-✔ Chunking ensures:
+### 🚀 Short-term Enhancements
+- **Mobile Application** - React Native/iOS/Android apps
+- **Advanced AI Models** - Fine-tuned legal-specific LLMs
+- **Video Consultations** - Integrated video calling feature
+- **Payment Integration** - Secure payment gateway for legal services
 
-No loss of legal reasoning
+### 🌟 Long-term Vision
+- **Blockchain Integration** - For document verification and smart contracts
+- **Multilingual Expansion** - Support for all Indian regional languages
+- **AR/VR Courtroom Simulations** - For legal education and preparation
+- **Predictive Analytics Dashboard** - For law firms and courts
+- **Global Legal Database** - Integration with international case laws
 
-Full-document context
+---
 
-Better real-world accuracy
+## 📄 License
 
-📌 Why Datasets & Models Are Ignored
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Extremely large size (GBs)
+---
 
-Licensing restrictions
+## ⚠️ Disclaimer
 
-Can be regenerated via scripts
-
-All training and preprocessing code is included.
-
-🔮 Future Enhancements
-
-Multilingual legal support
-
-Advanced legal reasoning graphs
-
-RAG-based legal chatbot
-
-Timeline extraction
-
-Citation analysis
-
-👨‍🎓 Academic Note
-
-This project is developed as a final-year engineering major project focusing on:
-
-Applied AI
-
-Legal NLP
-
-Explainable ML
-
-Production deployment
-
-
-⭐ If You Like This Project
-
-Give it a ⭐ on GitHub — it really helps!
+**Important**: This system provides AI-assisted legal information and predictions for **educational purposes only**. It does **NOT** constitute legal advice. Always consult with a qualified legal professional for actual legal matters. The predictions and summaries are generated by AI models and may contain inaccuracies.
