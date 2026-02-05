@@ -123,7 +123,8 @@ The application is implemented as a web-based platform built using Next.js, Node
                        ┌──────────▼──────▼──────────┐
                        │ Summarization   Prediction │
                        │   Service        Service   │
-                       │  (ml_model)   (prediction) │
+                       │ (Google Colab/  (Local/    │
+                       │    Kaggle)       Colab)    │
                        └────────────────────────────┘
 ```
 
@@ -137,6 +138,7 @@ The application is implemented as a web-based platform built using Next.js, Node
 - **Docker** (for Redis)
 - **Supabase Account** (for PostgreSQL)
 - **ngrok Account** (for exposing ML services)
+- **Google Colab or Kaggle Account** (for AI services)
 
 ### Step 1: Clone the Repository
 ```bash
@@ -203,7 +205,22 @@ cd ../frontend
 npm install
 ```
 
-### Step 7: Run ML Services
+### Step 7: Set Up AI Services via Google Colab/Kaggle
+
+#### Method A: Google Colab (Recommended)
+1. Open Google Colab: https://colab.research.google.com/
+2. Upload `ml_model/notebooks/legal_assistant.ipynb`
+3. Run all cells in the notebook
+4. Look for the ngrok URL output (will look like: `https://subplacental-maryjo-polytonally.ngrok-free.dev`)
+5. Copy this URL and update both `NGROK_QA` and `NGROK_SUMMARY` in `backend/.env`
+
+#### Method B: Kaggle
+1. Upload `ml_model/notebooks/legal_assistant.ipynb` to Kaggle
+2. Run the notebook in Kaggle
+3. Get the ngrok URL from output
+4. Update `backend/.env` with the URL
+
+### Step 8: Run ML Services
 ```bash
 # Activate virtual environment if not already activated
 source legal_venv/bin/activate  # or legal_venv\Scripts\activate
@@ -213,14 +230,14 @@ cd ml_model
 python run_server.py
 ```
 
-### Step 8: Expose ML Services with ngrok
+### Step 9: Expose ML Services with ngrok
 ```bash
 # In a new terminal
 ngrok http 8000
 ```
 Copy the ngrok URL and update `NGROK_QA` and `NGROK_SUMMARY` in `backend/.env`
 
-### Step 9: Start All Services
+### Step 10: Start All Services
 
 #### Terminal 1: Backend
 ```bash
