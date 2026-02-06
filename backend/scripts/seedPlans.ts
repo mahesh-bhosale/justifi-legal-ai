@@ -15,7 +15,7 @@ async function seedPlans() {
         priceCents: 0,
         currency: 'INR',
         isUnlimited: false,
-        summarizeLimitPerDay: 5,
+        summarizeLimitPerDay: 15,
         askLimitPerDay: 30,
       },
       {
