@@ -41,7 +41,6 @@ The application is implemented as a web-based platform built using Next.js, Node
 - **Legal Document Summarization** - Condenses lengthy legal texts using transformer models
 - **Case Outcome Prediction** - ML-powered predictions with confidence scores
 - **Explainable AI** - Rationales and evidence for predictions
-- **Multilingual Support** - English & Hindi document processing
 
 ### 👥 Multi-Role System
 - **Citizens** - Upload documents, create cases, search lawyers, get AI predictions
