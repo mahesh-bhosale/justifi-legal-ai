@@ -152,3 +152,18 @@ async def predict_pdf(
         result["note"] = "Rejected due to confidence below threshold"
 
     return result
+
+if __name__ == "__main__":
+    import uvicorn
+
+    print("\n🚀 InLegalBERT Prediction Server Starting...")
+    print("Local URL: http://localhost:8001")
+    print("API Docs: http://localhost:8001/docs")
+    print("Health Check: http://localhost:8001/health\n")
+
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8001,
+        log_level="info"
+    )
