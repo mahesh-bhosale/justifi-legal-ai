@@ -94,12 +94,12 @@ class PredictionController {
         userId: req.user.userId,
         fileUrl,
         prediction: prediction.prediction,
-        confidence: prediction.confidence,
+        confidence: prediction.confidence != null ? String(prediction.confidence) : null,
         confidenceLevel: prediction.confidence_level,
         numChunks: prediction.num_chunks,
-        avgChunkConfidence: prediction.avg_chunk_confidence,
-        minChunkConfidence: prediction.min_chunk_confidence,
-        maxChunkConfidence: prediction.max_chunk_confidence,
+        avgChunkConfidence: prediction.avg_chunk_confidence != null ? String(prediction.avg_chunk_confidence) : null,
+        minChunkConfidence: prediction.min_chunk_confidence != null ? String(prediction.min_chunk_confidence) : null,
+        maxChunkConfidence: prediction.max_chunk_confidence != null ? String(prediction.max_chunk_confidence) : null,
         explanation: prediction.explanation,
       };
 

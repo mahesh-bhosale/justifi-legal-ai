@@ -1,61 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Server-side helper to decode JWT token from cookie
-function decodeTokenFromCookie(token: string): { id: string; role: string; email: string } | null {
+const TOKEN_COOKIE = 'justifi_token';
+
+// Edge-safe base64url decode (middleware runs on Edge runtime).
+function base64UrlToUtf8(base64Url: string): string | null {
   try {
-    const parts = token.split('.');
-    if (parts.length !== 3) {
-      return null;
-    }
-    
-    // Decode base64 URL-safe string
-    let payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-    const padding = (4 - payload.length % 4) % 4;
-    payload += '='.repeat(padding);
-    
-    const decoded = Buffer.from(payload, 'base64').toString('utf-8');
-    const userData = JSON.parse(decoded);
-    
-    const userId = String(userData.sub || userData.userId || userData.id || '').trim();
-    const userRole = String(userData.role || 'citizen').trim();
-    const userEmail = String(userData.email || '').trim();
-    
-    if (!userId) {
-      return null;
-    }
-    
-    return {
-      id: userId,
-      role: userRole,
-      email: userEmail,
-    };
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4);
+    return atob(padded);
   } catch {
     return null;
   }
 }
 
-// Server-side authentication check
 function isAuthenticated(request: NextRequest): boolean {
-  const token = request.cookies.get('justifi_token')?.value;
-  if (!token) {
+  const token = request.cookies.get(TOKEN_COOKIE)?.value;
+  if (!token) return false;
+
+  // Basic JWT shape validation + decodable payload check.
+  const parts = token.split('.');
+  if (parts.length !== 3) return false;
+  const payload = base64UrlToUtf8(parts[1]);
+  if (!payload) return false;
+
+  // Optional: ensure payload is JSON (prevents random strings bypassing).
+  try {
+    JSON.parse(payload);
+    return true;
+  } catch {
     return false;
   }
-  
-  const user = decodeTokenFromCookie(token);
-  return !!user;
 }
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, search } = request.nextUrl;
 
   // Protect dashboard routes
-  if (pathname.startsWith('/dashboard')) {
-    // Check if user is authenticated using server-side cookie reading
-    if (!isAuthenticated(request)) {
-      // Redirect to login page
-      const loginUrl = new URL('/auth/login', request.url);
-      return NextResponse.redirect(loginUrl);
-    }
+  if (!isAuthenticated(request)) {
+    const loginUrl = new URL('/auth/login', request.url);
+    loginUrl.searchParams.set('returnUrl', `${pathname}${search}`);
+    return NextResponse.redirect(loginUrl);
   }
 
   // Continue with the request
@@ -64,14 +48,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico|public).*)',
+    '/dashboard/:path*',
   ],
 };
