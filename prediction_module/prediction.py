@@ -19,6 +19,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, constr
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
+from explainability import generate_explanation as generate_explanation_sentences
+
 
 # -------------------------------
 # App Initialization
@@ -238,8 +240,10 @@ def chunk_predict(text: str, stride: int = 256) -> Dict[str, Any]:
     return result
 
 
-def generate_explanation(result: Dict[str, Any]) -> str:
-    """Generate a simple, human-readable explanation for the prediction."""
+def _fallback_explanation(result: Dict[str, Any]) -> str:
+    """
+    Fallback, global explanation if sentence-level extraction is unavailable.
+    """
     prediction = result.get("prediction")
     confidence = result.get("confidence", 0.0)
     confidence_level_str = result.get("confidence_level", "Unknown")
@@ -342,7 +346,18 @@ async def predict_pdf(
         result["prediction"] = "REJECT"
         result["note"] = "Prediction forced to REJECT due to confidence below threshold."
 
-    result["explanation"] = generate_explanation(result)
+    # Sentence-level explainability: select top influential sentences.
+    try:
+        top_sentences = generate_explanation_sentences(text)
+        if top_sentences:
+            result["explanation"] = "\n".join(
+                f"- {sentence}" for sentence in top_sentences
+            )
+        else:
+            result["explanation"] = _fallback_explanation(result)
+    except Exception as exc:  # pragma: no cover - explanation must not break API
+        LOGGER.error("Failed to generate explanation sentences: %s", exc)
+        result["explanation"] = _fallback_explanation(result)
 
     response = PredictionResponse(**result)
     log_prediction_to_file(file.filename or "uploaded.pdf", response.dict())
@@ -380,7 +395,17 @@ async def predict_text(payload: TextPredictionRequest) -> PredictionResponse:
         result["prediction"] = "REJECT"
         result["note"] = "Prediction forced to REJECT due to confidence below threshold."
 
-    result["explanation"] = generate_explanation(result)
+    try:
+        top_sentences = generate_explanation_sentences(text)
+        if top_sentences:
+            result["explanation"] = "\n".join(
+                f"- {sentence}" for sentence in top_sentences
+            )
+        else:
+            result["explanation"] = _fallback_explanation(result)
+    except Exception as exc:  # pragma: no cover
+        LOGGER.error("Failed to generate explanation sentences: %s", exc)
+        result["explanation"] = _fallback_explanation(result)
 
     response = PredictionResponse(**result)
     log_prediction_to_file("raw_text", response.dict())
