@@ -1,16 +1,59 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../contexts/AuthContext';
 import Card from '../../../components/Card';
 import LawyerSearch from '../../../components/LawyerSearch';
 import { type LawyerProfile } from '../../../lib/lawyer-profiles';
+import {
+  fetchCitizenCaseHistory,
+  fetchCitizenDashboard,
+  fetchCitizenPredictionUsage,
+} from '../../../lib/analytics';
+import LineChartComponent from '../../../components/charts/LineChartComponent';
+import PieChartComponent from '../../../components/charts/PieChartComponent';
+import BarChartComponent from '../../../components/charts/BarChartComponent';
 
 export default function CitizenDashboard() {
   const router = useRouter();
   const { user, isLoading: authLoading } = useAuth();
   const [showLawyerSearch, setShowLawyerSearch] = useState(false);
+  const [summary, setSummary] = useState<{
+    totalCases: number;
+    activeCases: number;
+    resolvedCases: number;
+    predictionCount: number;
+  } | null>(null);
+  const [history, setHistory] = useState<{ id: number; status: string; createdAt: string }[]>([]);
+  const [predictionUsage, setPredictionUsage] = useState<{ date: string; count: number }[]>([]);
+  const [analyticsLoading, setAnalyticsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchAnalytics();
+    const interval = setInterval(() => {
+      fetchAnalytics();
+    }, 30_000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchAnalytics = async () => {
+    try {
+      setAnalyticsLoading(true);
+      const [dashboard, historyData, predictionData] = await Promise.all([
+        fetchCitizenDashboard(),
+        fetchCitizenCaseHistory(),
+        fetchCitizenPredictionUsage(),
+      ]);
+      setSummary(dashboard);
+      setHistory(historyData);
+      setPredictionUsage(predictionData);
+    } catch (error) {
+      console.error('Error fetching citizen analytics:', error);
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  };
 
 
   const handleViewLawyerProfile = (profile: LawyerProfile) => {
@@ -73,7 +116,9 @@ export default function CitizenDashboard() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Active Cases</p>
-              <p className="text-2xl font-bold text-gray-900">3</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {summary?.activeCases ?? 0}
+              </p>
             </div>
           </div>
         </Card>
@@ -86,8 +131,10 @@ export default function CitizenDashboard() {
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Completed</p>
-              <p className="text-2xl font-bold text-gray-900">12</p>
+              <p className="text-sm font-medium text-gray-600">Resolved</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {summary?.resolvedCases ?? 0}
+              </p>
             </div>
           </div>
         </Card>
@@ -100,8 +147,10 @@ export default function CitizenDashboard() {
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-gray-900">2</p>
+              <p className="text-sm font-medium text-gray-600">Total Cases</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {summary?.totalCases ?? 0}
+              </p>
             </div>
           </div>
         </Card>
@@ -114,11 +163,69 @@ export default function CitizenDashboard() {
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">AI Consultations</p>
-              <p className="text-2xl font-bold text-gray-900">8</p>
+              <p className="text-sm font-medium text-gray-600">AI Predictions</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {summary?.predictionCount ?? 0}
+              </p>
             </div>
           </div>
         </Card>
+      </div>
+
+      {/* Analytics Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+            Case History Timeline
+          </h3>
+          <LineChartComponent
+            data={history.map((h) => ({
+              label: new Date(h.createdAt).toLocaleDateString(),
+              count: 1,
+            }))}
+            xKey="label"
+            yKey="count"
+            loading={analyticsLoading}
+          />
+        </Card>
+
+        <Card className="p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+            Case Status Distribution
+          </h3>
+          <PieChartComponent
+            data={Object.values(
+              history.reduce((acc, h) => {
+                const key = h.status;
+                acc[key] = acc[key] || { label: key, count: 0 };
+                acc[key].count += 1;
+                return acc;
+              }, {} as Record<string, { label: string; count: number }>)
+            )}
+            nameKey="label"
+            valueKey="count"
+            loading={analyticsLoading}
+          />
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+            Prediction Usage Over Time
+          </h3>
+          <BarChartComponent
+            data={predictionUsage.map((p) => ({
+              label: p.date,
+              count: p.count,
+            }))}
+            xKey="label"
+            yKey="count"
+            loading={analyticsLoading}
+          />
+        </Card>
+
+        {/* existing Quick Actions / Lawyer Search cards remain below */}
       </div>
 
       {/* Quick Actions */}

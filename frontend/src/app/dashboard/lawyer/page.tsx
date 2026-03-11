@@ -6,15 +6,41 @@ import Card from '../../../components/Card';
 import Link from 'next/link';
 import Button from '../../../components/Button';
 import { getDirectContactRequests, acceptDirectContact, rejectDirectContact, type Case } from '../../../lib/cases';
+import {
+  fetchLawyerCaseStats,
+  fetchLawyerDashboard,
+  fetchLawyerProposalSuccess,
+  fetchLawyerReviews,
+} from '../../../lib/analytics';
+import LineChartComponent from '../../../components/charts/LineChartComponent';
+import PieChartComponent from '../../../components/charts/PieChartComponent';
+import BarChartComponent from '../../../components/charts/BarChartComponent';
 
 export default function LawyerDashboard() {
   const router = useRouter();
   const [directRequests, setDirectRequests] = useState<Case[]>([]);
   const [loadingRequests, setLoadingRequests] = useState(true);
   const [processingId, setProcessingId] = useState<number | null>(null);
+  const [summary, setSummary] = useState<{
+    activeCases: number;
+    totalCases: number;
+    completedCases: number;
+    averageRating: number | null;
+  } | null>(null);
+  const [caseStats, setCaseStats] = useState<{ status: string; count: number }[]>([]);
+  const [proposalStats, setProposalStats] = useState<{ status: string; count: number }[]>([]);
+  const [reviews, setReviews] = useState<{ rating: number; createdAt: string }[]>([]);
+  const [analyticsLoading, setAnalyticsLoading] = useState(true);
 
   useEffect(() => {
     fetchDirectRequests();
+    fetchAnalytics();
+
+    const interval = setInterval(() => {
+      fetchAnalytics();
+    }, 30_000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const fetchDirectRequests = async () => {
@@ -26,6 +52,26 @@ export default function LawyerDashboard() {
       console.error('Error fetching direct contact requests:', error);
     } finally {
       setLoadingRequests(false);
+    }
+  };
+
+  const fetchAnalytics = async () => {
+    try {
+      setAnalyticsLoading(true);
+      const [dashboard, stats, proposals, reviewsData] = await Promise.all([
+        fetchLawyerDashboard(),
+        fetchLawyerCaseStats(),
+        fetchLawyerProposalSuccess(),
+        fetchLawyerReviews(),
+      ]);
+      setSummary(dashboard);
+      setCaseStats(stats);
+      setProposalStats(proposals);
+      setReviews(reviewsData);
+    } catch (error) {
+      console.error('Error fetching lawyer analytics:', error);
+    } finally {
+      setAnalyticsLoading(false);
     }
   };
 
@@ -101,7 +147,9 @@ export default function LawyerDashboard() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Active Cases</p>
-              <p className="text-2xl font-bold text-gray-900">15</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {summary?.activeCases ?? 0}
+              </p>
             </div>
           </div>
         </Card>
@@ -114,8 +162,10 @@ export default function LawyerDashboard() {
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Clients</p>
-              <p className="text-2xl font-bold text-gray-900">42</p>
+              <p className="text-sm font-medium text-gray-600">Total Cases</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {summary?.totalCases ?? 0}
+              </p>
             </div>
           </div>
         </Card>
@@ -128,8 +178,10 @@ export default function LawyerDashboard() {
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Pending Reviews</p>
-              <p className="text-2xl font-bold text-gray-900">8</p>
+              <p className="text-sm font-medium text-gray-600">Completed</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {summary?.completedCases ?? 0}
+              </p>
             </div>
           </div>
         </Card>
@@ -142,11 +194,59 @@ export default function LawyerDashboard() {
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Completed</p>
-              <p className="text-2xl font-bold text-gray-900">127</p>
+              <p className="text-sm font-medium text-gray-600">Avg Rating</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {summary?.averageRating ? summary.averageRating.toFixed(2) : '—'}
+              </p>
             </div>
           </div>
         </Card>
+      </div>
+
+      {/* Analytics Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+            Case Status Distribution
+          </h3>
+          <PieChartComponent
+            data={caseStats.map((c) => ({ label: c.status, count: c.count }))}
+            nameKey="label"
+            valueKey="count"
+            loading={analyticsLoading}
+          />
+        </Card>
+
+        <Card className="p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+            Proposal Outcomes
+          </h3>
+          <BarChartComponent
+            data={proposalStats.map((p) => ({ label: p.status, count: p.count }))}
+            xKey="label"
+            yKey="count"
+            loading={analyticsLoading}
+          />
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+            Reviews Over Time
+          </h3>
+          <LineChartComponent
+            data={reviews.map((r) => ({
+              label: new Date(r.createdAt).toLocaleDateString(),
+              rating: r.rating,
+            }))}
+            xKey="label"
+            yKey="rating"
+            loading={analyticsLoading}
+          />
+        </Card>
+
+        {/* existing Direct Contact Requests card remains below */}
       </div>
 
       {/* Direct Contact Requests */}

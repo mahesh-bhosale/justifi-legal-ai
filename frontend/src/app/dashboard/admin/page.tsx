@@ -5,14 +5,36 @@ import { useRouter } from 'next/navigation';
 import Card from '../../../components/Card';
 import { getCaseStats, type CaseStats } from '../../../lib/cases';
 import Button from '../../../components/Button';
+import {
+  fetchAdminCasesTrend,
+  fetchAdminLawyerActivity,
+  fetchAdminUsersGrowth,
+} from '../../../lib/analytics';
+import LineChartComponent from '../../../components/charts/LineChartComponent';
+import AreaChartComponent from '../../../components/charts/AreaChartComponent';
+import BarChartComponent from '../../../components/charts/BarChartComponent';
+import PieChartComponent from '../../../components/charts/PieChartComponent';
 
 export default function AdminDashboard() {
   const router = useRouter();
   const [stats, setStats] = useState<CaseStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [usersGrowth, setUsersGrowth] = useState<{ label: string; count: number }[]>([]);
+  const [casesTrend, setCasesTrend] = useState<{ label: string; count: number }[]>([]);
+  const [lawyerActivity, setLawyerActivity] = useState<
+    { lawyerName: string; caseCount: number }[]
+  >([]);
+  const [analyticsLoading, setAnalyticsLoading] = useState(true);
 
   useEffect(() => {
     fetchStats();
+    fetchAnalytics();
+
+    const interval = setInterval(() => {
+      fetchAnalytics();
+    }, 30_000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const fetchStats = async () => {
@@ -24,6 +46,26 @@ export default function AdminDashboard() {
       console.error('Error fetching stats:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAnalytics = async () => {
+    try {
+      setAnalyticsLoading(true);
+      const [usersData, casesData, lawyerData] = await Promise.all([
+        fetchAdminUsersGrowth(),
+        fetchAdminCasesTrend(),
+        fetchAdminLawyerActivity(),
+      ]);
+      setUsersGrowth(usersData);
+      setCasesTrend(casesData);
+      setLawyerActivity(
+        lawyerData.map((l) => ({ lawyerName: l.lawyerName, caseCount: l.caseCount })),
+      );
+    } catch (error) {
+      console.error('Error fetching admin analytics:', error);
+    } finally {
+      setAnalyticsLoading(false);
     }
   };
 
@@ -113,6 +155,63 @@ export default function AdminDashboard() {
               <p className="text-2xl font-bold text-gray-900">{stats?.resolved || 0}</p>
             </div>
           </div>
+        </Card>
+      </div>
+
+      {/* Analytics Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+            Users Growth (last months)
+          </h3>
+          <LineChartComponent
+            data={usersGrowth}
+            xKey="label"
+            yKey="count"
+            loading={analyticsLoading}
+          />
+        </Card>
+
+        <Card className="p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+            Cases Created Over Time
+          </h3>
+          <AreaChartComponent
+            data={casesTrend}
+            xKey="label"
+            yKey="count"
+            loading={analyticsLoading}
+          />
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+            Top Active Lawyers
+          </h3>
+          <BarChartComponent
+            data={lawyerActivity}
+            xKey="lawyerName"
+            yKey="caseCount"
+            loading={analyticsLoading}
+          />
+        </Card>
+
+        <Card className="p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+            Case Outcome Distribution (sample)
+          </h3>
+          <PieChartComponent
+            data={[
+              { label: 'Pending', count: stats?.pending ?? 0 },
+              { label: 'In Progress', count: stats?.in_progress ?? 0 },
+              { label: 'Resolved', count: stats?.resolved ?? 0 },
+            ]}
+            nameKey="label"
+            valueKey="count"
+            loading={loading}
+          />
         </Card>
       </div>
 
