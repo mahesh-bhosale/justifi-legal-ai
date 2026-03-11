@@ -212,6 +212,26 @@ export const aiUsage = pgTable('ai_usage', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
+// Case predictions table for AI outcome predictions
+export const casePredictions = pgTable('case_predictions', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  fileUrl: text('file_url').notNull(),
+  prediction: text('prediction').notNull(),
+  confidence: numeric('confidence'),
+  confidenceLevel: text('confidence_level'),
+  numChunks: integer('num_chunks'),
+  avgChunkConfidence: numeric('avg_chunk_confidence'),
+  minChunkConfidence: numeric('min_chunk_confidence'),
+  maxChunkConfidence: numeric('max_chunk_confidence'),
+  explanation: text('explanation'),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
 // Types
 export type Case = typeof cases.$inferSelect;
 export type NewCase = typeof cases.$inferInsert;
@@ -239,3 +259,6 @@ export type NewSubscription = typeof subscriptions.$inferInsert;
 
 export type AIUsage = typeof aiUsage.$inferSelect;
 export type NewAIUsage = typeof aiUsage.$inferInsert;
+
+export type CasePrediction = typeof casePredictions.$inferSelect;
+export type NewCasePrediction = typeof casePredictions.$inferInsert;

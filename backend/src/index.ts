@@ -13,6 +13,7 @@ import messagesRoutes from './routes/messages.routes';
 import documentsRoutes from './routes/documents.routes';
 import socketService from './services/socket.service';
 import aiRoutes from './routes/ai.routes';
+import predictionRoutes from './routes/prediction.routes';
 
 // Load environment variables
 dotenv.config();
@@ -41,6 +42,7 @@ app.use('/api/blogs', blogRoutes);
 app.use('/api/lawyer-profiles', lawyerProfileRoutes);
 app.use('/api/lawyers', lawyersRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/prediction', predictionRoutes);
 app.use('/api', proposalsRoutes);
 app.use('/api/cases', casesRoutes);
 app.use('/api', messagesRoutes);
