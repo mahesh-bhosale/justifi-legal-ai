@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import usersService from '../services/users.service';
 
 class UsersController {
-  async list(req: Request, res: Response): Promise<void> {
+  async list(_req: Request, res: Response): Promise<void> {
     try {
       const data = await usersService.listAll();
       res.json({ success: true, data });
