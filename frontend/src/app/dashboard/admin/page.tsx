@@ -281,32 +281,6 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      {/* Recent Activity */}
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Platform Activity</h3>
-        <div className="space-y-3">
-          <div className="flex items-center text-sm text-gray-600">
-            <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-            <span>New case created - Family Law consultation</span>
-            <span className="ml-auto text-xs">2 hours ago</span>
-          </div>
-          <div className="flex items-center text-sm text-gray-600">
-            <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-            <span>Lawyer profile verified - John Smith</span>
-            <span className="ml-auto text-xs">4 hours ago</span>
-          </div>
-          <div className="flex items-center text-sm text-gray-600">
-            <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
-            <span>Case resolved - Property dispute #1234</span>
-            <span className="ml-auto text-xs">1 day ago</span>
-          </div>
-          <div className="flex items-center text-sm text-gray-600">
-            <div className="w-2 h-2 bg-yellow-500 rounded-full mr-3"></div>
-            <span>New lawyer registration - Sarah Johnson</span>
-            <span className="ml-auto text-xs">1 day ago</span>
-          </div>
-        </div>
-      </Card>
     </div>
   );
 }

@@ -326,7 +326,10 @@ export default function LawyerDashboard() {
         <Card className="p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
           <div className="space-y-3">
-            <button className="w-full text-left p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+            <button
+              onClick={() => router.push('/dashboard/summarize')}
+              className="w-full text-left p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+            >
               <div className="flex items-center">
                 <svg className="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -334,12 +337,16 @@ export default function LawyerDashboard() {
                 <span className="font-medium">Review AI Documents</span>
               </div>
             </button>
-            <button className="w-full text-left p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+            <button
+              onClick={() => router.push('/dashboard/lawyer/prediction')}
+              className="w-full text-left p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+            >
               <div className="flex items-center">
-                <svg className="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                <svg className="w-5 h-5 text-purple-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3v18h18" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 14l3-3 3 3 5-6" />
                 </svg>
-                <span className="font-medium">Client Management</span>
+                <span className="font-medium">Get Prediction</span>
               </div>
             </button>
             <Link href="/dashboard/lawyer/profile" className="block">
@@ -355,27 +362,6 @@ export default function LawyerDashboard() {
           </div>
         </Card>
 
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-          <div className="space-y-3">
-            <div className="flex items-center text-sm text-gray-600">
-              <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-              <span>Document review completed - Case #5678</span>
-            </div>
-            <div className="flex items-center text-sm text-gray-600">
-              <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-              <span>New client consultation scheduled</span>
-            </div>
-            <div className="flex items-center text-sm text-gray-600">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full mr-3"></div>
-              <span>AI document pending review</span>
-            </div>
-            <div className="flex items-center text-sm text-gray-600">
-              <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
-              <span>Case #9012 closed successfully</span>
-            </div>
-          </div>
-        </Card>
       </div>
     </div>
   );

@@ -236,19 +236,29 @@ class LawyerProfileService {
   /**
    * Verify a lawyer profile (admin only)
    */
-  async verifyProfile(profileId: number): Promise<LawyerProfile> {
+  async verifyProfile(profileId: number): Promise<LawyerProfileWithUser> {
     try {
-      const [profile] = await db
-        .update(lawyerProfiles)
-        .set({ verified: true, updatedAt: new Date() })
-        .where(eq(lawyerProfiles.id, profileId))
-        .returning();
+      await db.transaction(async (tx) => {
+        const [updatedProfile] = await tx
+          .update(lawyerProfiles)
+          .set({ verified: true, updatedAt: new Date() })
+          .where(eq(lawyerProfiles.id, profileId))
+          .returning();
 
-      if (!profile) {
-        throw new Error('Profile not found');
-      }
+        if (!updatedProfile) {
+          throw new Error('Profile not found');
+        }
 
-      return profile;
+        // Keep user verification in sync with lawyer profile verification
+        await tx
+          .update(users)
+          .set({ verified: true })
+          .where(eq(users.id, updatedProfile.userId));
+      });
+
+      const profileWithUser = await this.getProfileById(profileId);
+      if (!profileWithUser) throw new Error('Profile not found');
+      return profileWithUser;
     } catch (error) {
       console.error('Error verifying lawyer profile:', error);
       throw new Error('Failed to verify lawyer profile');
