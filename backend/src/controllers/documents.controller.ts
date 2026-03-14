@@ -1,13 +1,7 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import documentsService from '../services/documents.service';
-
-// Placeholder storage interface. Integrate your actual storage utils here.
-async function uploadToStorage(file: Express.Multer.File): Promise<{ url: string }>{
-  // Replace with S3/Supabase upload and return public URL
-  // For now, simulate local path or buffer-based upload
-  return { url: `/uploads/${Date.now()}_${file.originalname}` };
-}
+import { uploadDocument as uploadToSupabase, generateSignedUrl } from '../services/storage.service';
 
 const uploadSchema = z.object({
   description: z.string().optional(),
@@ -22,12 +16,17 @@ class DocumentsController {
       if (!req.file) { res.status(400).json({ success: false, message: 'File is required' }); return; }
       const body = uploadSchema.parse(req.body);
 
-      const uploaded = await uploadToStorage(req.file);
+      const uploaded = await uploadToSupabase({
+        caseId,
+        fileBuffer: req.file.buffer,
+        fileName: req.file.originalname,
+        mimeType: req.file.mimetype,
+      });
 
       const doc = await documentsService.uploadDocument({
         caseId,
         uploadedBy: req.user.userId,
-        fileUrl: uploaded.url,
+        fileUrl: uploaded.path,
         fileName: req.file.originalname,
         mimeType: req.file.mimetype,
         fileSize: req.file.size,
@@ -53,6 +52,30 @@ class DocumentsController {
     } catch (err: any) {
       console.error('List documents error:', err);
       res.status(500).json({ success: false, message: 'Failed to list documents' });
+    }
+  }
+
+  async getSignedUrl(req: Request, res: Response): Promise<void> {
+    try {
+      if (!req.user) { res.status(401).json({ success: false, message: 'Auth required' }); return; }
+      const caseId = parseInt(req.params.caseId);
+      const documentId = parseInt(req.params.documentId);
+      if (isNaN(caseId) || isNaN(documentId)) {
+        res.status(400).json({ success: false, message: 'Invalid caseId or documentId' });
+        return;
+      }
+
+      const doc = await documentsService.getDocumentById(caseId, documentId, req.user.userId);
+      if (!doc) {
+        res.status(404).json({ success: false, message: 'Document not found' });
+        return;
+      }
+
+      const url = await generateSignedUrl({ path: doc.fileUrl, expiresInSeconds: 60 });
+      res.json({ success: true, url, expiresIn: 60 });
+    } catch (err: any) {
+      console.error('Generate signed URL error:', err);
+      res.status(500).json({ success: false, message: 'Failed to generate signed URL' });
     }
   }
 }

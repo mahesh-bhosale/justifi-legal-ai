@@ -8,6 +8,13 @@ import { CaseMessagesContainer } from '../../../../../components/CaseMessagesCon
 import { getCaseById, type Case } from '../../../../../lib/cases';
 import { createProposal, getCaseProposals, type CreateProposalInput, type CaseProposal } from '../../../../../lib/proposals';
 import Button from '../../../../../components/Button';
+import {
+  uploadDocument,
+  fetchCaseDocuments,
+  generateSignedUrl,
+  type CaseDocument,
+} from '../../../../../lib/caseDocuments';
+import { useAuth } from '../../../../../contexts/AuthContext';
 
 export default function LawyerCaseDetailPage() {
   const params = useParams();
@@ -23,6 +30,15 @@ export default function LawyerCaseDetailPage() {
   const [proposalSuccess, setProposalSuccess] = useState<string | null>(null);
   const [proposals, setProposals] = useState<CaseProposal[]>([]);
   const [loadingProposals, setLoadingProposals] = useState(false);
+  const { user } = useAuth();
+
+  // Documents state
+  const [documents, setDocuments] = useState<CaseDocument[]>([]);
+  const [documentsLoading, setDocumentsLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [description, setDescription] = useState('');
+  const [documentsError, setDocumentsError] = useState<string | null>(null);
 
   useEffect(() => {
     if (caseId) {
@@ -54,6 +70,26 @@ export default function LawyerCaseDetailPage() {
       setLoadingProposals(false);
     }
   };
+
+  const loadDocuments = async () => {
+    try {
+      setDocumentsLoading(true);
+      setDocumentsError(null);
+      const data = await fetchCaseDocuments(caseId);
+      setDocuments(data);
+    } catch (error) {
+      console.error('Error fetching documents:', error);
+      setDocumentsError('Failed to load documents. Please try again.');
+    } finally {
+      setDocumentsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'documents') {
+      loadDocuments();
+    }
+  }, [activeTab]);
 
   const handleBackToCases = () => {
     router.push('/dashboard/lawyer/cases/open');
@@ -432,14 +468,174 @@ export default function LawyerCaseDetailPage() {
 
         {activeTab === 'documents' && (
           <Card className="p-6">
-            <div className="text-center py-12">
-              <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">Documents</h3>
-              <p className="mt-1 text-sm text-gray-500">
-                Document management will be implemented soon.
-              </p>
+            <div className="space-y-8">
+              {/* Upload Section */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Upload Document</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Upload legal documents, evidence, and briefs related to this case.
+                </p>
+                <div className="space-y-4">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      File
+                    </label>
+                    <input
+                      type="file"
+                      className="block w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] ?? null;
+                        setSelectedFile(file);
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Description <span className="text-gray-400 text-xs">(optional)</span>
+                    </label>
+                    <textarea
+                      className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      rows={3}
+                      placeholder="Add a short description (e.g. draft petition, evidence bundle, order copy, etc.)"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
+                  </div>
+
+                  {documentsError && (
+                    <p className="text-sm text-red-600">{documentsError}</p>
+                  )}
+
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={async () => {
+                        if (!selectedFile) {
+                          setDocumentsError('Please select a file to upload.');
+                          return;
+                        }
+                        if (!user) {
+                          setDocumentsError('You must be logged in to upload documents.');
+                          return;
+                        }
+                        try {
+                          setUploading(true);
+                          setDocumentsError(null);
+                          await uploadDocument(caseId, {
+                            file: selectedFile,
+                            description: description.trim() || undefined,
+                          });
+                          setSelectedFile(null);
+                          setDescription('');
+                          await loadDocuments();
+                        } catch (error) {
+                          console.error('Error uploading document:', error);
+                          setDocumentsError('Failed to upload document. Please try again.');
+                        } finally {
+                          setUploading(false);
+                        }
+                      }}
+                      disabled={uploading}
+                    >
+                      {uploading ? 'Uploading...' : 'Upload Document'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Documents Table */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Documents</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  All documents shared between you and the client for this case.
+                </p>
+
+                {documentsLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  </div>
+                ) : documents.length === 0 ? (
+                  <div className="text-center py-8 text-sm text-gray-500">
+                    No documents uploaded yet.
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200 text-sm">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-4 py-2 text-left font-medium text-gray-700">File Name</th>
+                          <th className="px-4 py-2 text-left font-medium text-gray-700">Uploaded By</th>
+                          <th className="px-4 py-2 text-left font-medium text-gray-700">Date</th>
+                          <th className="px-4 py-2 text-left font-medium text-gray-700">Description</th>
+                          <th className="px-4 py-2 text-left font-medium text-gray-700">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {documents.map((doc) => (
+                          <tr key={doc.id}>
+                            <td className="px-4 py-2 text-gray-900">
+                              {doc.fileName}
+                              {doc.fileSize ? (
+                                <span className="ml-2 text-xs text-gray-500">
+                                  ({(doc.fileSize / 1024).toFixed(1)} KB)
+                                </span>
+                              ) : null}
+                            </td>
+                            <td className="px-4 py-2 text-gray-700">
+                              {doc.uploadedByName || 'Unknown'}
+                            </td>
+                            <td className="px-4 py-2 text-gray-700">
+                              {new Date(doc.createdAt).toLocaleString()}
+                            </td>
+                            <td className="px-4 py-2 text-gray-700 max-w-xs">
+                              {doc.description || '—'}
+                            </td>
+                            <td className="px-4 py-2 text-gray-700">
+                              <div className="flex gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={async () => {
+                                    try {
+                                      const url = await generateSignedUrl(caseId, doc.id);
+                                      window.open(url, '_blank');
+                                    } catch (error) {
+                                      console.error('Error opening document:', error);
+                                      setDocumentsError('Failed to open document. Please try again.');
+                                    }
+                                  }}
+                                >
+                                  View
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={async () => {
+                                    try {
+                                      const url = await generateSignedUrl(caseId, doc.id);
+                                      const link = document.createElement('a');
+                                      link.href = url;
+                                      link.download = doc.fileName;
+                                      document.body.appendChild(link);
+                                      link.click();
+                                      document.body.removeChild(link);
+                                    } catch (error) {
+                                      console.error('Error downloading document:', error);
+                                      setDocumentsError('Failed to download document. Please try again.');
+                                    }
+                                  }}
+                                >
+                                  Download
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
             </div>
           </Card>
         )}

@@ -17,6 +17,7 @@ router.use(verifyToken);
 
 router.post('/cases/:caseId/documents', upload.single('file'), (req, res) => documentsController.upload(req, res));
 router.get('/cases/:caseId/documents', (req, res) => documentsController.list(req, res));
+router.get('/cases/:caseId/documents/:documentId/url', (req, res) => documentsController.getSignedUrl(req, res));
 
 export default router;
 

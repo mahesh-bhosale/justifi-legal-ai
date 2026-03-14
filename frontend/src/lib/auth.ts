@@ -46,7 +46,7 @@ const decodeBase64 = (str: string): string => {
   }
 };
 
-// JWT decoding with improved error handling
+// JWT decoding with improved error handling and expiry check
 export const decodeUser = (): { id: string; role: string; email: string } | null => {
   try {
     const token = getToken();
@@ -68,6 +68,14 @@ export const decodeUser = (): { id: string; role: string; email: string } | null
       // Debug log the decoded payload
       if (process.env.NODE_ENV === 'development') {
         console.log('Decoded JWT payload:', userData);
+      }
+      
+      // Check token expiry if present
+      const nowInSeconds = Math.floor(Date.now() / 1000);
+      if (typeof userData.exp === 'number' && userData.exp < nowInSeconds) {
+        console.warn('JWT token has expired, clearing stored token');
+        removeToken();
+        return null;
       }
       
       // Extract user data with fallbacks
