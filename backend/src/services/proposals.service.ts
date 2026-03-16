@@ -1,6 +1,7 @@
 import { and, eq, not } from 'drizzle-orm';
 import { db } from '../db';
 import { caseProposals, cases, type CaseProposal, type Case } from '../models/schema';
+import { buildEvent, publishEvent } from './kafka.service';
 
 export interface CreateProposalInput {
   caseId: number;
@@ -34,6 +35,23 @@ class ProposalsService {
     if (!created) {
       throw new Error('Duplicate proposal');
     }
+
+    // Fire-and-forget Kafka event (do not block proposal creation)
+    const appliedEvent = buildEvent({
+      eventType: 'lawyer_applied_to_case',
+      actorId: input.lawyerId,
+      caseId: input.caseId,
+      payload: {
+        caseId: input.caseId,
+        citizenId: targetCase.citizenId,
+        lawyerId: input.lawyerId,
+        proposalId: created.id,
+      },
+    });
+    void publishEvent('lawyer-applied-to-case', appliedEvent).catch((err) => {
+      console.error('Kafka publish failed (lawyer_applied_to_case):', err);
+    });
+
     return created;
   }
 
@@ -90,6 +108,22 @@ class ProposalsService {
           .set({ lawyerId: p.lawyerId, status: 'in_progress' as any, updatedAt: new Date() as any })
           .where(eq(cases.id, p.caseId))
           .returning();
+
+        // Fire-and-forget Kafka event (do not block accept flow)
+        const selectedEvent = buildEvent({
+          eventType: 'lawyer_selected',
+          actorId: requester.userId,
+          caseId: p.caseId,
+          payload: {
+            caseId: p.caseId,
+            citizenId: requester.userId,
+            lawyerId: p.lawyerId,
+            proposalId: p.id,
+          },
+        });
+        void publishEvent('lawyer-selected', selectedEvent).catch((err) => {
+          console.error('Kafka publish failed (lawyer_selected):', err);
+        });
 
         return { proposal: accepted, updatedCase };
       } else {

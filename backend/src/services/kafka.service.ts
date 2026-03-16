@@ -4,7 +4,14 @@ import { randomUUID } from 'crypto';
 type KafkaTopic =
   | 'case-message-created'
   | 'case-message-read'
-  | 'notification-created';
+  | 'notification-created'
+  | 'lawyer-applied-to-case'
+  | 'lawyer-selected'
+  | 'case-created'
+  | 'case-updated'
+  | 'case-closed'
+  | 'document-uploaded'
+  | 'new-case-posted';
 
 export type BaseEvent<TPayload extends Record<string, unknown> = Record<string, unknown>> = {
   eventId: string;

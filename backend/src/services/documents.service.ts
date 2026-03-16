@@ -1,6 +1,7 @@
 import { eq, desc } from 'drizzle-orm';
 import { db } from '../db';
 import { caseDocuments, cases, users, type CaseDocument } from '../models/schema';
+import { buildEvent, publishEvent } from './kafka.service';
 
 async function ensureParticipant(caseId: number, userId: string): Promise<boolean> {
   const [c] = await db.select().from(cases).where(eq(cases.id, caseId)).limit(1);
@@ -18,6 +19,9 @@ class DocumentsService {
   async uploadDocument(params: { caseId: number; uploadedBy: string; fileUrl: string; fileName: string; mimeType?: string; fileSize?: number; description?: string; }): Promise<CaseDocument | null> {
     const can = await ensureParticipant(params.caseId, params.uploadedBy);
     if (!can) return null;
+    const [c] = await db.select().from(cases).where(eq(cases.id, params.caseId)).limit(1);
+    if (!c) return null;
+
     const [created] = await db.insert(caseDocuments).values({
       caseId: params.caseId,
       uploadedBy: params.uploadedBy,
@@ -27,6 +31,26 @@ class DocumentsService {
       fileSize: params.fileSize,
       description: params.description,
     }).returning();
+
+    if (created) {
+      const evt = buildEvent({
+        eventType: 'document_uploaded',
+        actorId: params.uploadedBy,
+        caseId: params.caseId,
+        payload: {
+          caseId: params.caseId,
+          documentId: created.id,
+          fileName: created.fileName,
+          uploadedBy: params.uploadedBy,
+          citizenId: c.citizenId,
+          lawyerId: c.lawyerId,
+        },
+      });
+      void publishEvent('document-uploaded', evt).catch((err) => {
+        console.error('Kafka publish failed (document_uploaded):', err);
+      });
+    }
+
     return created ?? null;
   }
 

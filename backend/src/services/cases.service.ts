@@ -1,6 +1,7 @@
 import { and, eq, isNull, sql, or } from 'drizzle-orm';
 import { db } from '../db';
 import { cases, type Case, type NewCase } from '../models/schema';
+import { buildEvent, publishEvent } from './kafka.service';
 
 export type CaseStatus = 'pending' | 'pending_lawyer_acceptance' | 'in_progress' | 'resolved' | 'closed' | 'rejected';
 
@@ -77,6 +78,46 @@ class CasesService {
       status: input.preferredLawyerId ? ('pending_lawyer_acceptance' as any) : ('pending' as any),
     };
     const [created] = await db.insert(cases).values(payload).returning();
+
+    // Kafka event(s) are async-only: do not block or fail the request
+    const createdEvent = buildEvent({
+      eventType: 'case_created',
+      actorId: input.citizenId,
+      caseId: created.id,
+      payload: {
+        caseId: created.id,
+        citizenId: created.citizenId,
+        preferredLawyerId: created.preferredLawyerId,
+        category: created.category,
+        location: created.location,
+        title: created.title,
+        status: created.status,
+      },
+    });
+    void publishEvent('case-created', createdEvent).catch((err) => {
+      console.error('Kafka publish failed (case_created):', err);
+    });
+
+    // For lawyer discovery feeds (open cases)
+    if (!created.preferredLawyerId) {
+      const postedEvent = buildEvent({
+        eventType: 'new_case_posted',
+        actorId: input.citizenId,
+        caseId: created.id,
+        payload: {
+          caseId: created.id,
+          citizenId: created.citizenId,
+          category: created.category,
+          location: created.location,
+          title: created.title,
+          urgency: created.urgency,
+        },
+      });
+      void publishEvent('new-case-posted', postedEvent).catch((err) => {
+        console.error('Kafka publish failed (new_case_posted):', err);
+      });
+    }
+
     return created;
   }
 
@@ -156,6 +197,22 @@ class CasesService {
         updatedAt: new Date() as any,
       } as any;
       const [updated] = await db.update(cases).set(allowed).where(eq(cases.id, id)).returning();
+
+      const evt = buildEvent({
+        eventType: 'case_updated',
+        actorId: requester.userId,
+        caseId: id,
+        payload: {
+          caseId: id,
+          updatedByRole: requester.role,
+          previousStatus: existing.status,
+          newStatus: updated.status,
+        },
+      });
+      void publishEvent('case-updated', evt).catch((err) => {
+        console.error('Kafka publish failed (case_updated):', err);
+      });
+
       return updated;
     }
 
@@ -175,6 +232,24 @@ class CasesService {
         })
         .where(eq(cases.id, id))
         .returning();
+
+      const statusChanged = (update.status !== undefined) && update.status !== (existing.status as any);
+      const evt = buildEvent({
+        eventType: statusChanged && update.status === 'closed' ? 'case_closed' : 'case_updated',
+        actorId: requester.userId,
+        caseId: id,
+        payload: {
+          caseId: id,
+          updatedByRole: requester.role,
+          previousStatus: existing.status,
+          newStatus: updated.status,
+          nextHearingDate: updated.nextHearingDate,
+        },
+      });
+      void publishEvent(statusChanged && update.status === 'closed' ? 'case-closed' : 'case-updated', evt).catch((err) => {
+        console.error('Kafka publish failed (case_update/case_closed):', err);
+      });
+
       return updated;
     }
 

@@ -1,4 +1,5 @@
 import api from './api';
+import axios from 'axios';
 
 export interface CaseMessage {
   id: number;
@@ -46,6 +47,10 @@ export const getCaseMessages = async (caseId: number): Promise<CaseMessage[]> =>
     return response.data.data;
   } catch (error) {
     console.error('Error fetching messages:', error);
+    // If the user isn't a participant (403), treat as "no access" instead of crashing the UI.
+    if (axios.isAxiosError(error) && error.response?.status === 403) {
+      return [];
+    }
     throw error;
   }
 };

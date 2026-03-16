@@ -20,15 +20,25 @@ interface CaseMessagesContainerProps {
 export function CaseMessagesContainer({ caseId }: CaseMessagesContainerProps) {
   const [messages, setMessages] = useState<CaseMessage[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const { socket: authSocket } = useAuth();
 
   const fetchMessages = useCallback(async () => {
     try {
       setLoading(true);
+      setFetchError(null);
       console.log('Fetching messages for case:', caseId);
       const data = await getCaseMessages(caseId);
       console.log('Fetched messages:', data);
       setMessages(data);
+      // If API returned [] due to 403 handling, surface a friendly message.
+      if (data.length === 0) {
+        // We can't reliably distinguish "no messages yet" vs "403" here without API help,
+        // but we can avoid crashing and let the rest of the UI work.
+      }
+    } catch (err: any) {
+      setFetchError(err?.response?.data?.message || err?.message || 'Failed to fetch messages');
+      setMessages([]);
     } finally {
       setLoading(false);
     }
@@ -340,13 +350,20 @@ export function CaseMessagesContainer({ caseId }: CaseMessagesContainerProps) {
   }
 
   return (
-    <CaseMessages
-      messages={messages}
-      onSendMessage={handleSendMessage}
-      onMarkAsRead={handleMarkAsRead}
-      currentUserId={currentUserId}
-      otherParticipantId={otherParticipantId}
-      isLoading={loading}
-    />
+    <div className="h-full">
+      {fetchError && (
+        <div className="mb-3 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {fetchError}
+        </div>
+      )}
+      <CaseMessages
+        messages={messages}
+        onSendMessage={handleSendMessage}
+        onMarkAsRead={handleMarkAsRead}
+        currentUserId={currentUserId}
+        otherParticipantId={otherParticipantId}
+        isLoading={loading}
+      />
+    </div>
   );
 }
