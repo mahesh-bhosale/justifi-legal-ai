@@ -16,7 +16,7 @@ async function seedPlans() {
         currency: 'INR',
         isUnlimited: false,
         summarizeLimitPerDay: 15,
-        askLimitPerDay: 30,
+        askLimitPerDay: 60,
       },
       {
         slug: 'citizen-pro',

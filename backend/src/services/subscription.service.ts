@@ -78,7 +78,7 @@ export async function getUserDailyLimits(userId: string): Promise<{
     const roleLimits = {
       admin: { summarize: 100, ask: 200 },
       lawyer: { summarize: 20, ask: 50 },
-      citizen: { summarize: 15, ask: 30 },
+      citizen: { summarize: 15, ask: 60 },
     };
     
     const limits = roleLimits[role as keyof typeof roleLimits] || roleLimits.citizen;
@@ -93,7 +93,7 @@ export async function getUserDailyLimits(userId: string): Promise<{
     // Return safe defaults in case of error
     return {
       summarizeLimit: 15,
-      askLimit: 30,
+      askLimit: 60,
       role: 'citizen'
     };
   }

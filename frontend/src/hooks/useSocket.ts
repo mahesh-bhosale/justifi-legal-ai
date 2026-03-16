@@ -17,6 +17,18 @@ interface Message {
   createdAt: string;
 }
 
+interface Notification {
+  id: number;
+  userId: string;
+  caseId: number | null;
+  type: string;
+  title: string;
+  body: string;
+  isRead: boolean;
+  meta: any;
+  createdAt: string;
+}
+
 export const useSocket = (options: UseSocketOptions = {}) => {
   const { caseId, autoConnect = true } = options;
   const socketRef = useRef<Socket | null>(null);
@@ -110,6 +122,16 @@ export const useSocket = (options: UseSocketOptions = {}) => {
     };
   };
 
+  const onNewNotification = (callback: (notification: Notification) => void) => {
+    if (!socketRef.current) return;
+
+    socketRef.current.on('notification:new', callback);
+
+    return () => {
+      socketRef.current?.off('notification:new', callback);
+    };
+  };
+
   useEffect(() => {
     if (autoConnect) {
       connect();
@@ -136,5 +158,6 @@ export const useSocket = (options: UseSocketOptions = {}) => {
     leaveCase,
     onNewMessage,
     onMessageRead,
+    onNewNotification,
   };
 };

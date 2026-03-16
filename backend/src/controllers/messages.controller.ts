@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import messagesService from '../services/messages.service';
 import socketService from '../services/socket.service';
+import { buildEvent, publishEvent } from '../services/kafka.service';
 
 const createSchema = z.object({
   recipientId: z.string(),
@@ -87,6 +88,19 @@ class MessagesController {
       
       // Emit WebSocket event for read receipt
       socketService.emitMessageRead(updated.caseId as number, updated);
+
+      // Kafka is async-only: do not block or fail the request
+      const event = buildEvent({
+        eventType: 'case-message-read',
+        actorId: req.user.userId,
+        caseId: updated.caseId as number,
+        payload: {
+          messageId: updated.id,
+        },
+      });
+      void publishEvent('case-message-read', event).catch((err) => {
+        console.error('Kafka publish failed (case-message-read):', err);
+      });
       
       res.json({ success: true, data: updated });
     } catch (err: any) {

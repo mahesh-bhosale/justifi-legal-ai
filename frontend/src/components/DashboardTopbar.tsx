@@ -1,13 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { getUserRole } from '../lib/auth';
 import { useAuth } from '../contexts/AuthContext';
+import api from '../lib/api';
 
 interface DashboardTopbarProps {
   onMobileMenuToggle: () => void;
 }
+
+type Notification = {
+  id: number;
+  userId: string;
+  caseId: number | null;
+  type: string;
+  title: string;
+  body: string;
+  isRead: boolean;
+  meta: any;
+  createdAt: string;
+};
 
 export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -15,16 +28,83 @@ export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarP
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
-  const { logout } = useAuth();
+  const { logout, socket } = useAuth();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
     setUserRole(getUserRole());
   }, []);
 
+  const unreadCount = useMemo(
+    () => notifications.reduce((acc, n) => acc + (n.isRead ? 0 : 1), 0),
+    [notifications]
+  );
+
+  const loadNotifications = async () => {
+    setNotificationsLoading(true);
+    try {
+      const res = await api.get('/api/notifications');
+      if (res.data?.success) {
+        setNotifications(res.data.data || []);
+      }
+    } catch (err) {
+      console.error('Failed to load notifications:', err);
+    } finally {
+      setNotificationsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    void loadNotifications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handler = (notification: Notification) => {
+      setNotifications((prev) => {
+        if (prev.some((n) => n.id === notification.id)) return prev;
+        return [notification, ...prev];
+      });
+    };
+
+    socket.on('notification:new', handler);
+    return () => {
+      socket.off('notification:new', handler);
+    };
+  }, [socket]);
+
+  const markNotificationRead = async (id: number) => {
+    try {
+      const res = await api.patch(`/api/notifications/${id}/read`, {});
+      if (res.data?.success) {
+        setNotifications((prev) =>
+          prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
+        );
+      }
+    } catch (err) {
+      console.error('Failed to mark notification read:', err);
+    }
+  };
+
   const handleLogout = () => {
     logout();
     router.push('/auth/login');
+  };
+
+  const formatRelativeTime = (iso: string) => {
+    const date = new Date(iso);
+    const diffMs = Date.now() - date.getTime();
+    const diffMin = Math.floor(diffMs / 60000);
+    if (diffMin < 1) return 'Just now';
+    if (diffMin < 60) return `${diffMin} minute${diffMin === 1 ? '' : 's'} ago`;
+    const diffHr = Math.floor(diffMin / 60);
+    if (diffHr < 24) return `${diffHr} hour${diffHr === 1 ? '' : 's'} ago`;
+    const diffDay = Math.floor(diffHr / 24);
+    return `${diffDay} day${diffDay === 1 ? '' : 's'} ago`;
   };
 
   return (
@@ -64,31 +144,45 @@ export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarP
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM4.83 2.83l4.24 4.24M14.83 2.83l-4.24 4.24M20.12 12.75A8.384 8.384 0 0012 3a8.384 8.384 0 00-8.12 9.75L3 17h18l-2.88-4.25z" />
               </svg>
               {/* Notification badge */}
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 bg-red-600 text-white text-xs rounded-full flex items-center justify-center">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
             </button>
 
             {/* Notifications dropdown */}
             {isNotificationsOpen && (
               <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-                <div className="p-4 border-b border-gray-200">
+                <div className="p-4 border-b border-gray-200 flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
+                  <button
+                    onClick={() => void loadNotifications()}
+                    className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    Refresh
+                  </button>
                 </div>
                 <div className="max-h-64 overflow-y-auto">
-                  <div className="p-4 border-b border-gray-100 hover:bg-gray-50">
-                    <p className="text-sm font-medium text-gray-900">New case assigned</p>
-                    <p className="text-xs text-gray-500">Case #1234 has been assigned to you</p>
-                    <p className="text-xs text-gray-400 mt-1">2 minutes ago</p>
-                  </div>
-                  <div className="p-4 border-b border-gray-100 hover:bg-gray-50">
-                    <p className="text-sm font-medium text-gray-900">Document review completed</p>
-                    <p className="text-xs text-gray-500">AI has completed document analysis</p>
-                    <p className="text-xs text-gray-400 mt-1">1 hour ago</p>
-                  </div>
-                  <div className="p-4 hover:bg-gray-50">
-                    <p className="text-sm font-medium text-gray-900">System update</p>
-                    <p className="text-xs text-gray-500">New features available</p>
-                    <p className="text-xs text-gray-400 mt-1">3 hours ago</p>
-                  </div>
+                  {notificationsLoading ? (
+                    <div className="p-4 text-sm text-gray-500">Loading…</div>
+                  ) : notifications.length === 0 ? (
+                    <div className="p-4 text-sm text-gray-500">No notifications yet.</div>
+                  ) : (
+                    notifications.map((n) => (
+                      <button
+                        key={n.id}
+                        onClick={() => void markNotificationRead(n.id)}
+                        className={`w-full text-left p-4 border-b border-gray-100 hover:bg-gray-50 ${
+                          n.isRead ? 'bg-white' : 'bg-blue-50'
+                        }`}
+                      >
+                        <p className="text-sm font-medium text-gray-900">{n.title}</p>
+                        <p className="text-xs text-gray-600 line-clamp-2">{n.body}</p>
+                        <p className="text-xs text-gray-400 mt-1">{formatRelativeTime(n.createdAt)}</p>
+                      </button>
+                    ))
+                  )}
                 </div>
                 <div className="p-4 border-t border-gray-200">
                   <button className="w-full text-sm text-blue-600 hover:text-blue-800 font-medium">

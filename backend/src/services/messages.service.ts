@@ -1,6 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { cases, caseMessages, type CaseMessage } from '../models/schema';
+import { buildEvent, publishEvent } from './kafka.service';
 
 async function ensureParticipant(caseId: number, userId: string): Promise<boolean> {
   const [c] = await db.select().from(cases).where(eq(cases.id, caseId)).limit(1);
@@ -71,6 +72,26 @@ class MessagesService {
           isRead: false,
         })
         .returning();
+
+      // Kafka is async-only: do not block or fail the request
+      if (newMessage) {
+        const event = buildEvent({
+          eventType: 'case-message-created',
+          actorId: senderId,
+          caseId,
+          payload: {
+            messageId: newMessage.id,
+            content: newMessage.message,
+            senderId,
+            receiverId: effectiveRecipientId,
+          },
+        });
+
+        void publishEvent('case-message-created', event).catch((err) => {
+          console.error('Kafka publish failed (case-message-created):', err);
+        });
+      }
+
       return newMessage;
     } catch (error) {
       console.error('Create message error:', error);

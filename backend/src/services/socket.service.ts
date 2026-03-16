@@ -69,6 +69,12 @@ class SocketService {
     this.io.on('connection', (socket: AuthenticatedSocket) => {
       console.log(`User connected: ${socket.userId}`);
 
+      // Join user-specific room for notifications, etc.
+      if (socket.userId) {
+        socket.join(`user:${socket.userId}`);
+        console.log(`User ${socket.userId} joined room user:${socket.userId}`);
+      }
+
       // Join case room
       socket.on('join:case', async (data: JoinRoomData, callback: (response: any) => void) => {
         try {

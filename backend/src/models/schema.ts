@@ -138,6 +138,19 @@ export const caseMessages = pgTable('case_messages', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
+// Notifications table (async events, source-of-truth in DB)
+export const notifications = pgTable('notifications', {
+  id: serial('id').primaryKey(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  caseId: integer('case_id').references(() => cases.id, { onDelete: 'cascade' }),
+  type: varchar('type', { length: 100 }).notNull(),
+  title: text('title').notNull(),
+  body: text('body').notNull(),
+  isRead: boolean('is_read').notNull().default(false),
+  meta: jsonb('meta').notNull().default({}),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
 // Case updates table
 export const caseUpdates = pgTable('case_updates', {
   id: serial('id').primaryKey(),
@@ -244,6 +257,9 @@ export type NewCaseDocument = typeof caseDocuments.$inferInsert;
 
 export type CaseMessage = typeof caseMessages.$inferSelect;
 export type NewCaseMessage = typeof caseMessages.$inferInsert;
+
+export type Notification = typeof notifications.$inferSelect;
+export type NewNotification = typeof notifications.$inferInsert;
 
 export type CaseUpdate = typeof caseUpdates.$inferSelect;
 export type NewCaseUpdate = typeof caseUpdates.$inferInsert;

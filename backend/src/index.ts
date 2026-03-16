@@ -16,6 +16,8 @@ import aiRoutes from './routes/ai.routes';
 import predictionRoutes from './routes/prediction.routes';
 import analyticsRoutes from './analytics/analytics.routes';
 import usersRoutes from './routes/users.routes';
+import notificationsRoutes from './routes/notifications.routes';
+import { connectKafka, startConsumers } from './services/kafka.service';
 
 // Load environment variables
 dotenv.config();
@@ -51,6 +53,7 @@ app.use('/api', proposalsRoutes);
 app.use('/api/cases', casesRoutes);
 app.use('/api', messagesRoutes);
 app.use('/api', documentsRoutes);
+app.use('/api', notificationsRoutes);
 
 // Health check endpoint
 app.get('/api/health', (_req, res) => {
@@ -89,6 +92,16 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 // Create HTTP server and initialize Socket.IO
 const server = createServer(app);
 socketService.initialize(server);
+
+// Initialize Kafka for async events (never block server startup)
+void (async () => {
+  try {
+    await connectKafka();
+    await startConsumers();
+  } catch (err) {
+    console.error('Kafka startup failed (continuing without Kafka):', err);
+  }
+})();
 
 // Start server
 server.listen(PORT, '0.0.0.0', () => {
