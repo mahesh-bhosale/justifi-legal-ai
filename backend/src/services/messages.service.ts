@@ -87,7 +87,7 @@ class MessagesService {
           },
         });
 
-        void publishEvent('case-message-created', event).catch((err) => {
+        void publishEvent('message-events', event).catch((err) => {
           console.error('Kafka publish failed (case-message-created):', err);
         });
       }

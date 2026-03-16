@@ -48,7 +48,7 @@ class ProposalsService {
         proposalId: created.id,
       },
     });
-    void publishEvent('lawyer-applied-to-case', appliedEvent).catch((err) => {
+    void publishEvent('proposal-events', appliedEvent).catch((err) => {
       console.error('Kafka publish failed (lawyer_applied_to_case):', err);
     });
 
@@ -121,7 +121,7 @@ class ProposalsService {
             proposalId: p.id,
           },
         });
-        void publishEvent('lawyer-selected', selectedEvent).catch((err) => {
+        void publishEvent('proposal-events', selectedEvent).catch((err) => {
           console.error('Kafka publish failed (lawyer_selected):', err);
         });
 

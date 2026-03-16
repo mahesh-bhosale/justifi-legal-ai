@@ -18,14 +18,10 @@ export async function startMessageEventsConsumer(): Promise<void> {
   const consumer = getKafkaConsumer();
   if (!consumer) return;
 
-  await consumer.subscribe({ topic: 'case-message-created' });
-  await consumer.subscribe({ topic: 'lawyer-applied-to-case' });
-  await consumer.subscribe({ topic: 'lawyer-selected' });
-  await consumer.subscribe({ topic: 'case-created' });
-  await consumer.subscribe({ topic: 'case-updated' });
-  await consumer.subscribe({ topic: 'case-closed' });
-  await consumer.subscribe({ topic: 'document-uploaded' });
-  await consumer.subscribe({ topic: 'new-case-posted' });
+  await consumer.subscribe({ topic: 'message-events' });
+  await consumer.subscribe({ topic: 'proposal-events' });
+  await consumer.subscribe({ topic: 'case-events' });
+  await consumer.subscribe({ topic: 'document-events' });
 
   await consumer.run({
     eachMessage: async ({ topic, message }) => {
@@ -35,7 +31,7 @@ export async function startMessageEventsConsumer(): Promise<void> {
         const event = JSON.parse(message.value.toString('utf8')) as AnyEvent;
 
         // 1) New chat message -> notify receiver
-        if (topic === 'case-message-created' && event.eventType === 'case-message-created') {
+        if (topic === 'message-events' && event.eventType === 'case-message-created') {
           const receiverId = event.payload.receiverId as string;
           const senderId = event.payload.senderId as string;
 
@@ -63,7 +59,7 @@ export async function startMessageEventsConsumer(): Promise<void> {
         }
 
         // 2) Lawyer applied -> notify citizen
-        if (topic === 'lawyer-applied-to-case' && event.eventType === 'lawyer_applied_to_case') {
+        if (topic === 'proposal-events' && event.eventType === 'lawyer_applied_to_case') {
           const citizenId = event.payload.citizenId as string;
           const lawyerId = event.payload.lawyerId as string;
           const [lawyer] = await db.select({ name: users.name }).from(users).where(eq(users.id, lawyerId)).limit(1);
@@ -83,7 +79,7 @@ export async function startMessageEventsConsumer(): Promise<void> {
         }
 
         // 3) Citizen selected lawyer -> notify lawyer
-        if (topic === 'lawyer-selected' && event.eventType === 'lawyer_selected') {
+        if (topic === 'proposal-events' && event.eventType === 'lawyer_selected') {
           const lawyerId = event.payload.lawyerId as string;
           const [citizen] = await db.select({ name: users.name }).from(users).where(eq(users.id, event.payload.citizenId)).limit(1);
           const citizenName = citizen?.name ? String(citizen.name) : 'A citizen';
@@ -102,7 +98,7 @@ export async function startMessageEventsConsumer(): Promise<void> {
         }
 
         // 4) Case closed -> notify both participants
-        if (topic === 'case-closed' && event.eventType === 'case_closed') {
+        if (topic === 'case-events' && event.eventType === 'case_closed') {
           const caseIdNum = Number(event.payload.caseId) || Number(event.caseId);
           const [c] = await db.select().from(cases).where(eq(cases.id, caseIdNum)).limit(1);
           if (!c) return;
@@ -124,7 +120,7 @@ export async function startMessageEventsConsumer(): Promise<void> {
         }
 
         // 4b) Case created -> notify preferred lawyer (direct contact request)
-        if (topic === 'case-created' && event.eventType === 'case_created') {
+        if (topic === 'case-events' && event.eventType === 'case_created') {
           const preferredLawyerId = event.payload.preferredLawyerId as string | null | undefined;
           if (preferredLawyerId) {
             const [citizen] = await db
@@ -148,7 +144,7 @@ export async function startMessageEventsConsumer(): Promise<void> {
         }
 
         // 4c) Case updated -> notify opposite participant for meaningful changes
-        if (topic === 'case-updated' && (event.eventType === 'case_updated' || event.eventType === 'case_closed')) {
+        if (topic === 'case-events' && (event.eventType === 'case_updated' || event.eventType === 'case_closed')) {
           const caseIdNum = Number(event.payload.caseId) || Number(event.caseId);
           const [c] = await db.select().from(cases).where(eq(cases.id, caseIdNum)).limit(1);
           if (!c) return;
@@ -177,7 +173,7 @@ export async function startMessageEventsConsumer(): Promise<void> {
         }
 
         // 4d) Document uploaded -> notify the other participant
-        if (topic === 'document-uploaded' && event.eventType === 'document_uploaded') {
+        if (topic === 'document-events' && event.eventType === 'document_uploaded') {
           const caseIdNum = Number(event.payload.caseId) || Number(event.caseId);
           const citizenId = event.payload.citizenId as string;
           const lawyerId = event.payload.lawyerId as string | null | undefined;
@@ -203,7 +199,7 @@ export async function startMessageEventsConsumer(): Promise<void> {
         }
 
         // 5) New case posted -> notify matching lawyers by specialization (best-effort)
-        if (topic === 'new-case-posted' && event.eventType === 'new_case_posted') {
+        if (topic === 'case-events' && event.eventType === 'new_case_posted') {
           const category = String(event.payload.category || '').trim();
           const caseIdNum = Number(event.payload.caseId) || Number(event.caseId);
           const location = event.payload.location ? String(event.payload.location) : null;

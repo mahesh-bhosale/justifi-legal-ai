@@ -98,7 +98,7 @@ class MessagesController {
           messageId: updated.id,
         },
       });
-      void publishEvent('case-message-read', event).catch((err) => {
+      void publishEvent('message-events', event).catch((err) => {
         console.error('Kafka publish failed (case-message-read):', err);
       });
       

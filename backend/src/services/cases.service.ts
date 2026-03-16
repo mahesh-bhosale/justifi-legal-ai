@@ -94,7 +94,7 @@ class CasesService {
         status: created.status,
       },
     });
-    void publishEvent('case-created', createdEvent).catch((err) => {
+    void publishEvent('case-events', createdEvent).catch((err) => {
       console.error('Kafka publish failed (case_created):', err);
     });
 
@@ -113,7 +113,7 @@ class CasesService {
           urgency: created.urgency,
         },
       });
-      void publishEvent('new-case-posted', postedEvent).catch((err) => {
+      void publishEvent('case-events', postedEvent).catch((err) => {
         console.error('Kafka publish failed (new_case_posted):', err);
       });
     }
@@ -209,7 +209,7 @@ class CasesService {
           newStatus: updated.status,
         },
       });
-      void publishEvent('case-updated', evt).catch((err) => {
+      void publishEvent('case-events', evt).catch((err) => {
         console.error('Kafka publish failed (case_updated):', err);
       });
 
@@ -246,7 +246,7 @@ class CasesService {
           nextHearingDate: updated.nextHearingDate,
         },
       });
-      void publishEvent(statusChanged && update.status === 'closed' ? 'case-closed' : 'case-updated', evt).catch((err) => {
+      void publishEvent('case-events', evt).catch((err) => {
         console.error('Kafka publish failed (case_update/case_closed):', err);
       });
 

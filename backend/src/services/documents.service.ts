@@ -46,7 +46,7 @@ class DocumentsService {
           lawyerId: c.lawyerId,
         },
       });
-      void publishEvent('document-uploaded', evt).catch((err) => {
+      void publishEvent('document-events', evt).catch((err) => {
         console.error('Kafka publish failed (document_uploaded):', err);
       });
     }
