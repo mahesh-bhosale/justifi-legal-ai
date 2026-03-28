@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AuthForm from '../../../components/AuthForm';
 import api from '../../../lib/api';
-import { setToken } from '../../../lib/auth';
+import { setTokens } from '../../../lib/auth';
 
 interface RegisterFormData {
   name: string;
@@ -55,6 +55,11 @@ export default function RegisterPage() {
       setError('Password must be at least 8 characters long');
       return false;
     }
+    const pwd = formData.password;
+    if (!/[A-Z]/.test(pwd) || !/[0-9]/.test(pwd) || !/[^A-Za-z0-9]/.test(pwd)) {
+      setError('Password needs an uppercase letter, a number, and a special character');
+      return false;
+    }
     
     if (!agreedToTerms) {
       setError('You must agree to the Terms of Service and Privacy Policy');
@@ -76,8 +81,8 @@ export default function RegisterPage() {
       const { confirmPassword, ...submitData } = formData;
       const response = await api.post('/api/auth/signup', submitData);
       
-      if (response.data.data && response.data.data.token) {
-        setToken(response.data.data.token);
+      if (response.data.data?.token && response.data.data?.refreshToken) {
+        setTokens(response.data.data.token, response.data.data.refreshToken);
         router.push('/dashboard');
       } else {
         setError('Registration successful but no token received');

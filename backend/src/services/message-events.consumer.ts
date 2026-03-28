@@ -38,7 +38,6 @@ export async function startMessageEventsConsumer(): Promise<void> {
               caseId: caseIdNum,
               senderId,
               messageId,
-              content: String(event.payload.content ?? ''),
             });
           }
           return;

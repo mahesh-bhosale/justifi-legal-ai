@@ -1,6 +1,15 @@
 import { Request, Response } from 'express';
+import { z, ZodError } from 'zod';
 import authService from '../services/auth.service';
 import { signupSchema, loginSchema } from '../utils/validation';
+
+const refreshBodySchema = z.object({
+  refreshToken: z.string().min(1, 'Refresh token required'),
+});
+
+const logoutBodySchema = z.object({
+  refreshToken: z.string().optional(),
+});
 
 export class AuthController {
   /**
@@ -13,7 +22,7 @@ export class AuthController {
       const validatedData = signupSchema.parse(req.body);
 
       // Call auth service
-      const result = await authService.signup(validatedData);
+      const result = await authService.signup(validatedData, req);
 
       // Return success response
       res.status(201).json({
@@ -56,7 +65,7 @@ export class AuthController {
       const validatedData = loginSchema.parse(req.body);
 
       // Call auth service
-      const result = await authService.login(validatedData);
+      const result = await authService.login(validatedData, req);
 
       // Return success response
       res.status(200).json({
@@ -86,6 +95,54 @@ export class AuthController {
           message: 'Internal server error',
         });
       }
+    }
+  }
+
+  /**
+   * POST /auth/refresh
+   */
+  async refresh(req: Request, res: Response): Promise<void> {
+    try {
+      const { refreshToken } = refreshBodySchema.parse(req.body);
+      const result = await authService.refresh(refreshToken, req);
+      if (!result) {
+        res.status(401).json({ success: false, message: 'Invalid or expired refresh token' });
+        return;
+      }
+      res.status(200).json({
+        success: true,
+        message: 'Token refreshed',
+        data: result,
+      });
+    } catch (error: unknown) {
+      if (error instanceof ZodError) {
+        res.status(400).json({
+          success: false,
+          message: 'Validation failed',
+          errors: error.errors,
+        });
+        return;
+      }
+      console.error('Refresh error:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+  }
+
+  /**
+   * POST /auth/logout — revokes refresh token if provided
+   */
+  async logout(req: Request, res: Response): Promise<void> {
+    try {
+      const body = logoutBodySchema.parse(req.body);
+      await authService.logout(body.refreshToken);
+      res.status(200).json({ success: true, message: 'Logged out' });
+    } catch (error: unknown) {
+      if (error instanceof ZodError) {
+        res.status(400).json({ success: false, message: 'Validation failed' });
+        return;
+      }
+      console.error('Logout error:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
     }
   }
 }

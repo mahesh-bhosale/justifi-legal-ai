@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import casesService from '../services/cases.service';
+import { sanitizePlainText } from '../utils/sanitize-text';
 
 const createSchema = z.object({
   title: z.string().min(3),
@@ -132,7 +133,21 @@ class CasesController {
         return;
       }
       const body = updateSchema.parse(req.body);
-      const updated = await casesService.updateCase(id, { role: req.user.role as 'citizen' | 'lawyer' | 'admin', userId: req.user.userId }, body);
+      const sanitized = { ...body };
+      if (sanitized.title !== undefined) sanitized.title = sanitizePlainText(sanitized.title);
+      if (sanitized.description !== undefined) sanitized.description = sanitizePlainText(sanitized.description);
+      if (sanitized.category !== undefined) sanitized.category = sanitizePlainText(sanitized.category);
+      if (sanitized.preferredLanguage !== undefined) {
+        sanitized.preferredLanguage = sanitizePlainText(sanitized.preferredLanguage);
+      }
+      if (sanitized.location !== undefined) sanitized.location = sanitizePlainText(sanitized.location);
+      if (sanitized.resolution !== undefined) sanitized.resolution = sanitizePlainText(sanitized.resolution);
+
+      const updated = await casesService.updateCase(
+        id,
+        { role: req.user.role as 'citizen' | 'lawyer' | 'admin', userId: req.user.userId },
+        sanitized
+      );
       if (!updated) {
         res.status(403).json({ success: false, message: 'Not allowed or not found' });
         return;

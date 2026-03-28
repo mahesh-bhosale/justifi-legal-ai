@@ -5,8 +5,8 @@ import socketService from '../services/socket.service';
 import { buildEvent, publishEvent } from '../services/kafka.service';
 
 const createSchema = z.object({
-  recipientId: z.string(),
-  message: z.string().min(1),
+  recipientId: z.union([z.string().uuid('Invalid recipient ID'), z.literal('')]),
+  message: z.string().min(1).max(5000, 'Message too long'),
 });
 
 class MessagesController {
@@ -17,42 +17,21 @@ class MessagesController {
         return; 
       }
       
-      const caseId = parseInt(req.params.caseId);
-      if (isNaN(caseId)) { 
-        res.status(400).json({ success: false, message: 'Invalid caseId' }); 
-        return; 
+      const caseId = parseInt(req.params.caseId, 10);
+      if (isNaN(caseId) || caseId <= 0) {
+        res.status(400).json({ success: false, message: 'Invalid caseId' });
+        return;
       }
-      
+
       const body = createSchema.parse(req.body);
-      
-      console.log('Message creation request:', {
-        caseId,
-        senderId: req.user.userId,
-        recipientId: body.recipientId,
-        message: body.message.slice(0, 50)
-      });
-      
-      console.log('Creating message in service...');
+
       const created = await messagesService.createMessage(caseId, req.user.userId, body.recipientId, body.message);
-      if (!created) { 
-        const errorMsg = 'Not allowed - you are not a participant in this case';
-        console.error(errorMsg);
-        res.status(403).json({ success: false, message: errorMsg }); 
-        return; 
+      if (!created) {
+        res.status(403).json({ success: false, message: 'Not allowed - you are not a participant in this case' });
+        return;
       }
-      
-      console.log('Message created successfully, emitting WebSocket event...', {
-        caseId,
-        messageId: created.id,
-        senderId: created.senderId,
-        recipientId: created.recipientId
-      });
-      
-      // Emit WebSocket event for real-time message
+
       socketService.emitNewMessage(caseId, created);
-      
-      // Log after emitting to ensure no errors
-      console.log('WebSocket event emitted, sending response to client');
       res.status(201).json({ success: true, data: created });
     } catch (err: any) {
       if (err instanceof z.ZodError) { 
@@ -67,8 +46,8 @@ class MessagesController {
   async list(req: Request, res: Response): Promise<void> {
     try {
       if (!req.user) { res.status(401).json({ success: false, message: 'Auth required' }); return; }
-      const caseId = parseInt(req.params.caseId);
-      if (isNaN(caseId)) { res.status(400).json({ success: false, message: 'Invalid caseId' }); return; }
+      const caseId = parseInt(req.params.caseId, 10);
+      if (isNaN(caseId) || caseId <= 0) { res.status(400).json({ success: false, message: 'Invalid caseId' }); return; }
       const rows = await messagesService.listMessages(caseId, req.user.userId);
       if (!rows) { res.status(403).json({ success: false, message: 'Not allowed' }); return; }
       res.json({ success: true, count: rows.length, data: rows });

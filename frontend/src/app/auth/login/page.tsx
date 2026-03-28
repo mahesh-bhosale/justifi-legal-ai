@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import api from '../../../lib/api';
-import { setToken, decodeUser } from '../../../lib/auth';
+import { setTokens, decodeUser } from '../../../lib/auth';
 
 interface LoginFormData {
   email: string;
@@ -53,13 +53,10 @@ function LoginPageContent() {
 
     try {
       const response = await api.post('/api/auth/login', formData);
-      console.log('Login response:', response.data);
-      
-      if (response.data.data && response.data.data.token) {
-        console.log('Setting token and updating auth state');
-        setToken(response.data.data.token);
-        
-        // Immediately update auth context
+
+      if (response.data.data?.token && response.data.data?.refreshToken) {
+        setTokens(response.data.data.token, response.data.data.refreshToken);
+
         const decoded = decodeUser();
         if (decoded) {
           const userData = {
@@ -93,7 +90,6 @@ function LoginPageContent() {
           router.refresh();
         }, 100);
       } else {
-        console.error('No token in response:', response.data);
         setError('Login successful but no token received');
       }
     } catch (err: unknown) {

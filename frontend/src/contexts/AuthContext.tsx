@@ -2,7 +2,8 @@
 
 import { createContext, useContext, ReactNode, useState, useEffect, useCallback, useMemo } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { getToken, decodeUser, removeToken } from '@/lib/auth';
+import { getToken, decodeUser, removeToken, getRefreshToken } from '@/lib/auth';
+import api from '@/lib/api';
 
 export interface User {
   id: string;
@@ -30,7 +31,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Function to update user data
   const updateUser = useCallback((newUser: User | null) => {
-    console.log('Updating user context:', newUser);
     setUser(newUser);
     // Ensure we don't show loading state after first initialization
     if (!initialized) {
@@ -69,7 +69,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setSocket(socket);
 
     socket.on('connect', () => {
-      console.log('WebSocket connected with ID:', socket.id);
       if (user.id) {
         socket.emit('join-user', user.id);
       }
@@ -80,7 +79,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     socket.on('disconnect', (reason) => {
-      console.log('WebSocket disconnected:', reason);
       if (reason === 'io server disconnect') {
         // Reconnect manually
         socket.connect();
@@ -89,10 +87,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     socket.on('error', (error) => {
       console.error('WebSocket error:', error);
-    });
-
-    socket.on('joined:case', (data) => {
-      console.log('Successfully joined room:', data);
     });
 
     return () => {
@@ -106,18 +100,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const loadUser = async () => {
       try {
         const token = getToken();
-        console.log('AuthProvider - Loading user, token exists:', !!token);
-        
+
         if (!token) {
-          console.log('AuthProvider - No token found, setting user to null');
           updateUser(null);
           return;
         }
         
         try {
           const decoded = decodeUser();
-          console.log('AuthProvider - Decoded user data:', decoded);
-          
+
           if (decoded) {
             const userData = {
               id: String(decoded.id || '').trim(),
@@ -131,10 +122,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               return;
             }
             
-            console.log('AuthProvider - Setting authenticated user:', userData);
             updateUser(userData);
           } else {
-            console.log('AuthProvider - No user data in token');
             updateUser(null);
           }
         } catch (error) {
@@ -184,6 +173,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       socket,
       setUser: updateUser,
       logout: () => {
+        const rt = getRefreshToken();
+        if (rt) {
+          void api.post('/api/auth/logout', { refreshToken: rt }).catch(() => {});
+        }
         removeToken();
         setUser(null);
         window.location.href = '/auth/login';

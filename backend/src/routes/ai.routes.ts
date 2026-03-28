@@ -1,33 +1,54 @@
 import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
 import { AIController } from '../controllers/ai.controller';
 import { verifyToken } from '../middleware/auth.middleware';
 import { requireRole } from '../middleware/role.middleware';
 import multer from 'multer';
+import {
+  MAX_AI_UPLOAD_BYTES,
+  pdfOnlyFileFilter,
+} from '../config/upload-security';
 
 const router = Router();
-// Configure multer with increased file size limits (50MB)
-const upload = multer({ 
-  storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 50 * 1024 * 1024, // 50MB in bytes
-    fieldSize: 50 * 1024 * 1024, // 50MB for field values
-  }
+
+const publicAiLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 3,
+  message: { error: 'Too many requests. Try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
-// Public demo route - no authentication required
-router.post('/public/summarize', AIController.summarizeText);
+const aiLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    const uid = (req as { user?: { userId?: string } }).user?.userId;
+    return uid ? String(uid) : req.ip || 'anon';
+  },
+});
 
-// Authenticated routes
-router.post('/summarize/text', verifyToken, AIController.summarizeText);
-router.post('/summarize/pdf', verifyToken, upload.single('file'), AIController.summarizePdf);
-router.post('/ask/text', verifyToken, AIController.askQuestion);
-router.post('/ask/pdf', verifyToken, upload.single('file'), AIController.askPdfQuestion);
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: MAX_AI_UPLOAD_BYTES,
+    fieldSize: MAX_AI_UPLOAD_BYTES,
+  },
+  fileFilter: pdfOnlyFileFilter,
+});
 
-// Role-specific routes
-router.post('/citizen/summarize', verifyToken, requireRole(['citizen']), AIController.summarizeText);
-router.post('/lawyer/summarize', verifyToken, requireRole(['lawyer']), AIController.summarizeText);
+router.post('/public/summarize', publicAiLimiter, AIController.summarizeText);
 
-// Chat routes
-router.post('/chat/simple', verifyToken, AIController.simpleChat);
+router.post('/summarize/text', verifyToken, aiLimiter, AIController.summarizeText);
+router.post('/summarize/pdf', verifyToken, aiLimiter, upload.single('file'), AIController.summarizePdf);
+router.post('/ask/text', verifyToken, aiLimiter, AIController.askQuestion);
+router.post('/ask/pdf', verifyToken, aiLimiter, upload.single('file'), AIController.askPdfQuestion);
+
+router.post('/citizen/summarize', verifyToken, requireRole(['citizen']), aiLimiter, AIController.summarizeText);
+router.post('/lawyer/summarize', verifyToken, requireRole(['lawyer']), aiLimiter, AIController.summarizeText);
+
+router.post('/chat/simple', verifyToken, aiLimiter, AIController.simpleChat);
 
 export default router;

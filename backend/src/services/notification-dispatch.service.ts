@@ -55,7 +55,6 @@ export async function notifyNewMessage(params: {
   caseId: number;
   senderId: string;
   messageId: number;
-  content: string;
 }): Promise<void> {
   const dedupeKey = `message:${params.messageId}`;
   const [sender] = await db.select({ name: users.name }).from(users).where(eq(users.id, params.senderId)).limit(1);
@@ -64,7 +63,7 @@ export async function notifyNewMessage(params: {
     caseId: params.caseId,
     type: 'message',
     title: `New message from ${fromName}`,
-    body: params.content,
+    body: 'You have a new message. Open the case to read it.',
     dedupeKey,
     meta: {
       messageId: params.messageId,

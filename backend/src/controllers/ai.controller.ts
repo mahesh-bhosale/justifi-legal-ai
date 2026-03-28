@@ -65,14 +65,12 @@ export class AIController {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       console.error('Error in checkRateLimit:', errorMessage);
-      // Fail open in production, closed in development
-      const shouldAllow = process.env.NODE_ENV === 'production';
-      return { 
-        allowed: shouldAllow, 
-        limit: 0, 
+      return {
+        allowed: false,
+        limit: 0,
         used: 0,
         remaining: 0,
-        error: `Error checking rate limit: ${errorMessage}`
+        error: `Error checking rate limit: ${errorMessage}`,
       };
     }
   }

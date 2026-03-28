@@ -28,6 +28,18 @@ export const users = pgTable('users', {
   createdAt: timestamp('created_at').defaultNow(),
 });
 
+// Refresh tokens for short-lived access JWT rotation
+export const refreshTokens = pgTable('refresh_tokens', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  tokenHash: text('token_hash').notNull().unique(),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  revokedAt: timestamp('revoked_at', { withTimezone: true }),
+  ipAddress: varchar('ip_address', { length: 64 }),
+  userAgent: text('user_agent'),
+});
+
 // Blog posts table schema
 export const blogPosts = pgTable('blog_posts', {
   id: serial('id').primaryKey(),
@@ -44,6 +56,9 @@ export const blogPosts = pgTable('blog_posts', {
 // Type for user data
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+
+export type RefreshTokenRow = typeof refreshTokens.$inferSelect;
+export type NewRefreshTokenRow = typeof refreshTokens.$inferInsert;
 
 // Type for blog post data
 export type BlogPost = typeof blogPosts.$inferSelect;

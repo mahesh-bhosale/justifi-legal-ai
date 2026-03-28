@@ -1,6 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import multer from 'multer';
 import { createServer } from 'http';
 import authRoutes from './routes/auth.routes';
 import protectedRoutes from './routes/protected.routes';
@@ -19,27 +22,53 @@ import usersRoutes from './routes/users.routes';
 import notificationsRoutes from './routes/notifications.routes';
 import { connectKafka, startConsumers } from './services/kafka.service';
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
+app.set('trust proxy', 1);
+
 const PORT = parseInt(process.env.PORT || '3001', 10);
 
-// Middleware
-app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://justifi-legal-fj8ql797y-mahesh-bhosales-projects-4e94489c.vercel.app',
-    'https://justifi-legal-ai.vercel.app',
-    ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : [])
-  ],
-  credentials: true,
-}));
-// Increase body size limits for file uploads (50MB for JSON, 50MB for URL-encoded)
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    ...(process.env.NODE_ENV === 'production'
+      ? {
+          hsts: {
+            maxAge: 31536000,
+            includeSubDomains: true,
+            preload: true,
+          },
+        }
+      : {}),
+  })
+);
 
-// Routes
+app.use(
+  cors({
+    origin: [
+      'http://localhost:3000',
+      'https://justifi-legal-fj8ql797y-mahesh-bhosales-projects-4e94489c.vercel.app',
+      'https://justifi-legal-ai.vercel.app',
+      ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
+    ].filter(Boolean),
+    credentials: true,
+  })
+);
+
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use('/api', apiLimiter);
+
 app.use('/api/auth', authRoutes);
 app.use('/api/protected', protectedRoutes);
 app.use('/api/blogs', blogRoutes);
@@ -55,41 +84,54 @@ app.use('/api', messagesRoutes);
 app.use('/api', documentsRoutes);
 app.use('/api', notificationsRoutes);
 
-// Health check endpoint
 app.get('/api/health', (_req, res) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     message: 'Server is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
-// Root endpoint
 app.get('/', (_req, res) => {
-  res.json({ 
+  res.json({
     message: 'Justifi Legal AI Backend API',
-    version: '1.0.0'
+    version: '1.0.0',
   });
 });
 
-// 404 handler
 app.use('/*', (req, res) => {
-  res.status(404).json({ 
+  res.status(404).json({
     error: 'Route not found',
-    path: req.originalUrl 
+    path: req.originalUrl,
   });
 });
 
-// Error handling middleware
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  if (err instanceof multer.MulterError) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+    return;
+  }
+  const anyErr = err as { status?: number; message?: string; stack?: string };
+  const message =
+    typeof anyErr?.message === 'string' && anyErr.message.includes('File type not allowed')
+      ? anyErr.message
+      : typeof anyErr?.message === 'string' && anyErr.message.includes('Only PDF')
+        ? anyErr.message
+        : undefined;
+  if (message) {
+    res.status(400).json({ success: false, message });
+    return;
+  }
   console.error('Error:', err);
-  res.status(err.status || 500).json({
-    error: err.message || 'Internal server error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  res.status(anyErr.status || 500).json({
+    error: anyErr.message || 'Internal server error',
+    ...(process.env.NODE_ENV === 'development' && { stack: anyErr.stack }),
   });
 });
 
-// HTTP + Socket.IO must be initialized before Kafka consumer (consumer emits via getIO()).
 const server = createServer(app);
 socketService.initialize(server);
 

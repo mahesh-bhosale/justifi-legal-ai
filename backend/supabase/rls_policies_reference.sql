@@ -1,0 +1,5 @@
+-- Deprecated stub — use the production bundle instead:
+--   supabase/rls_policies_production.sql
+--
+-- That file defines helpers (is_app_admin, can_access_case), enables RLS on all
+-- app tables, and adds SELECT/INSERT policies aligned with JustiFi workflows.

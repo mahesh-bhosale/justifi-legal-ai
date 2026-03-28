@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import documentsService from '../services/documents.service';
 import { uploadDocument as uploadToSupabase, generateSignedUrl } from '../services/storage.service';
+import { sanitizeUploadedFileName } from '../config/upload-security';
 
 const uploadSchema = z.object({
   description: z.string().optional(),
@@ -15,11 +16,12 @@ class DocumentsController {
       if (isNaN(caseId)) { res.status(400).json({ success: false, message: 'Invalid caseId' }); return; }
       if (!req.file) { res.status(400).json({ success: false, message: 'File is required' }); return; }
       const body = uploadSchema.parse(req.body);
+      const safeFileName = sanitizeUploadedFileName(req.file.originalname);
 
       const uploaded = await uploadToSupabase({
         caseId,
         fileBuffer: req.file.buffer,
-        fileName: req.file.originalname,
+        fileName: safeFileName,
         mimeType: req.file.mimetype,
       });
 
@@ -27,7 +29,7 @@ class DocumentsController {
         caseId,
         uploadedBy: req.user.userId,
         fileUrl: uploaded.path,
-        fileName: req.file.originalname,
+        fileName: safeFileName,
         mimeType: req.file.mimetype,
         fileSize: req.file.size,
         description: body.description,
@@ -71,8 +73,9 @@ class DocumentsController {
         return;
       }
 
-      const url = await generateSignedUrl({ path: doc.fileUrl, expiresInSeconds: 60 });
-      res.json({ success: true, url, expiresIn: 60 });
+      const expiresInSeconds = 300;
+      const url = await generateSignedUrl({ path: doc.fileUrl, expiresInSeconds });
+      res.json({ success: true, url, expiresIn: expiresInSeconds });
     } catch (err: any) {
       console.error('Generate signed URL error:', err);
       res.status(500).json({ success: false, message: 'Failed to generate signed URL' });

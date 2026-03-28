@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import proposalsService from '../services/proposals.service';
+import { sanitizePlainText } from '../utils/sanitize-text';
 
 const createSchema = z.object({
   proposalText: z.string().min(10),
@@ -23,7 +24,15 @@ class ProposalsController {
         return;
       }
       const body = createSchema.parse(req.body);
-      const created = await proposalsService.createProposal({ caseId, lawyerId: req.user.userId, ...body });
+      const created = await proposalsService.createProposal({
+        caseId,
+        lawyerId: req.user.userId,
+        proposalText: sanitizePlainText(body.proposalText),
+        proposedFee: body.proposedFee,
+        estimatedDuration: body.estimatedDuration
+          ? sanitizePlainText(body.estimatedDuration)
+          : undefined,
+      });
       res.status(201).json({ success: true, data: created });
     } catch (err: any) {
       if (err instanceof z.ZodError) {
