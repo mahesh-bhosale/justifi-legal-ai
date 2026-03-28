@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, ReactNode, useState, useEffect, useRef, useCallback } from 'react';
+import { createContext, useContext, ReactNode, useState, useEffect, useCallback, useMemo } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { getToken, decodeUser, removeToken } from '@/lib/auth';
 
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [initialized, setInitialized] = useState(false);
-  const socketRef = useRef<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   // Function to update user data
   const updateUser = useCallback((newUser: User | null) => {
@@ -42,11 +42,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Initialize WebSocket connection when user is authenticated
   useEffect(() => {
     if (!user) {
-      // Disconnect socket if no user is logged in
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-        socketRef.current = null;
-      }
+      setSocket((prev: Socket | null) => {
+        prev?.disconnect();
+        return null;
+      });
       return;
     }
 
@@ -67,8 +66,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     // Connection event handlers
+    setSocket(socket);
+
     socket.on('connect', () => {
       console.log('WebSocket connected with ID:', socket.id);
+      if (user.id) {
+        socket.emit('join-user', user.id);
+      }
     });
 
     socket.on('connect_error', (error) => {
@@ -87,35 +91,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error('WebSocket error:', error);
     });
 
-    socketRef.current = socket;
-
-    socket.on('disconnect', (reason) => {
-      console.log('WebSocket disconnected:', reason);
-      if (reason === 'io server disconnect') {
-        // The disconnection was initiated by the server, you need to reconnect manually
-        socket.connect();
-      }
-    });
-
-    socket.on('connect_error', (error) => {
-      console.error('WebSocket connection error:', error.message);
-      console.error('Error details:', error);
-    });
-
-    socket.on('error', (error) => {
-      console.error('WebSocket error:', error);
-    });
-
     socket.on('joined:case', (data) => {
       console.log('Successfully joined room:', data);
     });
 
-    socket.on('error', (error) => {
-      console.error('Socket error:', error);
-    });
-
     return () => {
       socket.disconnect();
+      setSocket(null);
     };
   }, [user]);
 
@@ -195,17 +177,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [user, isLoading]);
 
-  const value = {
-    user,
-    isLoading,
-    socket: socketRef.current,
-    setUser: updateUser,
-    logout: () => {
-      removeToken();
-      setUser(null);
-      window.location.href = '/auth/login';
-    }
-  };
+  const value = useMemo(
+    () => ({
+      user,
+      isLoading,
+      socket,
+      setUser: updateUser,
+      logout: () => {
+        removeToken();
+        setUser(null);
+        window.location.href = '/auth/login';
+      },
+    }),
+    [user, isLoading, socket, updateUser]
+  );
 
   return (
     <AuthContext.Provider value={value}>

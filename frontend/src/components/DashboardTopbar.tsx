@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { getUserRole } from '../lib/auth';
 import { useAuth } from '../contexts/AuthContext';
@@ -31,6 +31,7 @@ export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarP
   const { logout, socket } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [notificationsLoading, setNotificationsLoading] = useState(false);
+  const dismissTimers = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
 
   useEffect(() => {
     setIsClient(true);
@@ -41,6 +42,15 @@ export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarP
     () => notifications.reduce((acc, n) => acc + (n.isRead ? 0 : 1), 0),
     [notifications]
   );
+
+  const sortedNotifications = useMemo(() => {
+    const copy = [...notifications];
+    copy.sort((a, b) => {
+      if (a.isRead !== b.isRead) return a.isRead ? 1 : -1;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+    return copy.slice(0, 40);
+  }, [notifications]);
 
   const loadNotifications = async () => {
     setNotificationsLoading(true);
@@ -62,6 +72,11 @@ export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarP
   }, []);
 
   useEffect(() => {
+    if (isNotificationsOpen) void loadNotifications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isNotificationsOpen]);
+
+  useEffect(() => {
     if (!socket) return;
 
     const handler = (notification: Notification) => {
@@ -77,6 +92,31 @@ export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarP
     };
   }, [socket]);
 
+  useEffect(() => {
+    const timers = dismissTimers.current;
+    return () => {
+      timers.forEach(clearTimeout);
+      timers.clear();
+    };
+  }, []);
+
+  const scheduleRemoveFromDb = (id: number) => {
+    if (dismissTimers.current.has(id)) return;
+    const t = setTimeout(() => {
+      void (async () => {
+        try {
+          await api.delete(`/api/notifications/${id}`);
+          setNotifications((prev) => prev.filter((n) => n.id !== id));
+        } catch (err) {
+          console.error('Failed to remove notification:', err);
+        } finally {
+          dismissTimers.current.delete(id);
+        }
+      })();
+    }, 2200);
+    dismissTimers.current.set(id, t);
+  };
+
   const markNotificationRead = async (id: number) => {
     try {
       const res = await api.patch(`/api/notifications/${id}/read`, {});
@@ -84,10 +124,32 @@ export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarP
         setNotifications((prev) =>
           prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
         );
+        scheduleRemoveFromDb(id);
       }
     } catch (err) {
       console.error('Failed to mark notification read:', err);
     }
+  };
+
+  const dismissNotificationNow = async (id: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const pending = dismissTimers.current.get(id);
+    if (pending) clearTimeout(pending);
+    dismissTimers.current.delete(id);
+    try {
+      await api.patch(`/api/notifications/${id}/read`, {}).catch(() => undefined);
+      await api.delete(`/api/notifications/${id}`);
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    } catch (err) {
+      console.error('Failed to dismiss notification:', err);
+    }
+  };
+
+  const typeLabel = (t: string) => {
+    if (t === 'message') return 'Message';
+    if (t === 'document') return 'Document';
+    return 'Case';
   };
 
   const handleLogout = () => {
@@ -137,11 +199,18 @@ export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarP
           {/* Notifications */}
           <div className="relative">
             <button
+              type="button"
+              aria-label="Notifications"
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-              className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 relative"
+              className="p-2 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-100 relative transition-colors"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM4.83 2.83l4.24 4.24M14.83 2.83l-4.24 4.24M20.12 12.75A8.384 8.384 0 0012 3a8.384 8.384 0 00-8.12 9.75L3 17h18l-2.88-4.25z" />
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.75}
+                  d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+                />
               </svg>
               {/* Notification badge */}
               {unreadCount > 0 && (
@@ -153,41 +222,72 @@ export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarP
 
             {/* Notifications dropdown */}
             {isNotificationsOpen && (
-              <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-                <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
+              <div className="absolute right-0 mt-2 w-[22rem] max-w-[calc(100vw-2rem)] bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden">
+                <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/80 flex items-center justify-between gap-2">
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
+                    <p className="text-xs text-gray-500 mt-0.5">Unread first. Open one to mark read; it clears shortly after.</p>
+                  </div>
                   <button
+                    type="button"
                     onClick={() => void loadNotifications()}
-                    className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                    className="shrink-0 text-xs font-medium text-indigo-600 hover:text-indigo-800 px-2 py-1 rounded-md hover:bg-white"
                   >
                     Refresh
                   </button>
                 </div>
-                <div className="max-h-64 overflow-y-auto">
+                <div className="max-h-72 overflow-y-auto">
                   {notificationsLoading ? (
-                    <div className="p-4 text-sm text-gray-500">Loading…</div>
-                  ) : notifications.length === 0 ? (
-                    <div className="p-4 text-sm text-gray-500">No notifications yet.</div>
+                    <div className="p-6 text-sm text-gray-500 text-center">Loading…</div>
+                  ) : sortedNotifications.length === 0 ? (
+                    <div className="p-8 text-center">
+                      <p className="text-sm font-medium text-gray-700">You&apos;re all caught up</p>
+                      <p className="text-xs text-gray-500 mt-1">New alerts for messages, cases, and documents appear here.</p>
+                    </div>
                   ) : (
-                    notifications.map((n) => (
-                      <button
+                    sortedNotifications.map((n) => (
+                      <div
                         key={n.id}
+                        role="button"
+                        tabIndex={0}
                         onClick={() => void markNotificationRead(n.id)}
-                        className={`w-full text-left p-4 border-b border-gray-100 hover:bg-gray-50 ${
-                          n.isRead ? 'bg-white' : 'bg-blue-50'
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            void markNotificationRead(n.id);
+                          }
+                        }}
+                        className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50/90 cursor-pointer flex gap-3 transition-colors ${
+                          n.isRead ? 'bg-white' : 'bg-indigo-50/40'
                         }`}
                       >
-                        <p className="text-sm font-medium text-gray-900">{n.title}</p>
-                        <p className="text-xs text-gray-600 line-clamp-2">{n.body}</p>
-                        <p className="text-xs text-gray-400 mt-1">{formatRelativeTime(n.createdAt)}</p>
-                      </button>
+                        <span
+                          className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
+                            n.isRead ? 'bg-transparent' : 'bg-indigo-500'
+                          }`}
+                          aria-hidden
+                        />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="text-sm font-medium text-gray-900 leading-snug">{n.title}</p>
+                            <span className="shrink-0 text-[10px] uppercase tracking-wide text-gray-400 font-semibold">
+                              {typeLabel(n.type)}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-600 line-clamp-2 mt-0.5">{n.body}</p>
+                          <p className="text-[11px] text-gray-400 mt-1.5">{formatRelativeTime(n.createdAt)}</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => void dismissNotificationNow(n.id, e)}
+                          className="shrink-0 self-start text-xs text-gray-400 hover:text-gray-700 px-1 py-0.5 rounded"
+                          title="Dismiss now"
+                        >
+                          ✕
+                        </button>
+                      </div>
                     ))
                   )}
-                </div>
-                <div className="p-4 border-t border-gray-200">
-                  <button className="w-full text-sm text-blue-600 hover:text-blue-800 font-medium">
-                    View all notifications
-                  </button>
                 </div>
               </div>
             )}

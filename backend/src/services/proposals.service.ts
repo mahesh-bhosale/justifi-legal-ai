@@ -2,6 +2,7 @@ import { and, eq, not } from 'drizzle-orm';
 import { db } from '../db';
 import { caseProposals, cases, type CaseProposal, type Case } from '../models/schema';
 import { buildEvent, publishEvent } from './kafka.service';
+import { notifyLawyerApplied, notifyLawyerSelected } from './notification-dispatch.service';
 
 export interface CreateProposalInput {
   caseId: number;
@@ -52,6 +53,13 @@ class ProposalsService {
       console.error('Kafka publish failed (lawyer_applied_to_case):', err);
     });
 
+    void notifyLawyerApplied({
+      citizenId: targetCase.citizenId,
+      lawyerId: input.lawyerId,
+      caseId: input.caseId,
+      proposalId: created.id,
+    }).catch((err) => console.error('In-app notifyLawyerApplied failed:', err));
+
     return created;
   }
 
@@ -80,7 +88,7 @@ class ProposalsService {
   ): Promise<{ proposal: CaseProposal; updatedCase?: Case } | null> {
     // Only citizen owner can accept/reject
     // Tx: accept -> set proposal accepted, others rejected, assign case to lawyer + set in_progress
-    return await db.transaction(async (tx) => {
+    const result = await db.transaction(async (tx) => {
       const [p] = await tx.select().from(caseProposals).where(eq(caseProposals.id, proposalId)).limit(1);
       if (!p) return null;
       const [c] = await tx.select().from(cases).where(eq(cases.id, p.caseId)).limit(1);
@@ -135,6 +143,17 @@ class ProposalsService {
         return { proposal: rejected };
       }
     });
+
+    if (status === 'accepted' && result?.updatedCase && result.proposal) {
+      void notifyLawyerSelected({
+        lawyerId: result.proposal.lawyerId,
+        citizenId: requester.userId,
+        caseId: result.proposal.caseId,
+        proposalId: result.proposal.id,
+      }).catch((err) => console.error('In-app notifyLawyerSelected failed:', err));
+    }
+
+    return result;
   }
 
   async withdraw(proposalId: number, requester: { role: 'lawyer'; userId: string }): Promise<CaseProposal | null> {

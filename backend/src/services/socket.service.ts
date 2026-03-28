@@ -5,6 +5,16 @@ import { db } from '../db';
 import { cases } from '../models/schema';
 import { eq } from 'drizzle-orm';
 
+/** Shared Socket.IO instance for HTTP handlers + Kafka consumer (same process). */
+let ioInstance: SocketIOServer | null = null;
+
+export function getIO(): SocketIOServer {
+  if (!ioInstance) {
+    throw new Error('Socket not initialized');
+  }
+  return ioInstance;
+}
+
 interface AuthenticatedSocket extends Socket {
   userId?: string;
   userRole?: string;
@@ -38,6 +48,8 @@ class SocketService {
       transports: ['websocket', 'polling'],
       allowEIO3: true
     });
+
+    ioInstance = this.io;
     
     console.log('WebSocket server initialized with CORS for origins:', [
       'http://localhost:3000',
@@ -74,6 +86,16 @@ class SocketService {
         socket.join(`user:${socket.userId}`);
         console.log(`User ${socket.userId} joined room user:${socket.userId}`);
       }
+
+      // Explicit join for notification rooms (frontend can emit after connect / token refresh)
+      socket.on('join-user', (userId: string) => {
+        if (!userId || !socket.userId || userId !== socket.userId) {
+          console.warn(`join-user rejected for socket ${socket.id}: payload mismatch`);
+          return;
+        }
+        void socket.join(`user:${userId}`);
+        console.log(`User ${userId} joined notification room via join-user`);
+      });
 
       // Join case room
       socket.on('join:case', async (data: JoinRoomData, callback: (response: any) => void) => {
@@ -238,7 +260,7 @@ class SocketService {
     console.log(`Emitted message read to room ${roomName}:`, messageData.id);
   }
 
-  // Get Socket.IO instance
+  // Get Socket.IO instance (nullable for callers that handle missing IO)
   getIO(): SocketIOServer | null {
     return this.io;
   }

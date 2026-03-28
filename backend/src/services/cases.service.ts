@@ -2,6 +2,12 @@ import { and, eq, isNull, sql, or } from 'drizzle-orm';
 import { db } from '../db';
 import { cases, type Case, type NewCase } from '../models/schema';
 import { buildEvent, publishEvent } from './kafka.service';
+import {
+  notifyCaseClosed,
+  notifyCaseParticipantUpdate,
+  notifyMatchingLawyersNewOpenCase,
+  notifyPreferredLawyerNewRequest,
+} from './notification-dispatch.service';
 
 export type CaseStatus = 'pending' | 'pending_lawyer_acceptance' | 'in_progress' | 'resolved' | 'closed' | 'rejected';
 
@@ -116,6 +122,20 @@ class CasesService {
       void publishEvent('case-events', postedEvent).catch((err) => {
         console.error('Kafka publish failed (new_case_posted):', err);
       });
+
+      void notifyMatchingLawyersNewOpenCase({
+        caseId: created.id,
+        category: String(created.category ?? ''),
+        location: created.location ? String(created.location) : null,
+      }).catch((err) => console.error('In-app notifyMatchingLawyersNewOpenCase failed:', err));
+    }
+
+    if (created.preferredLawyerId) {
+      void notifyPreferredLawyerNewRequest({
+        preferredLawyerId: created.preferredLawyerId,
+        caseId: created.id,
+        citizenId: created.citizenId,
+      }).catch((err) => console.error('In-app notifyPreferredLawyerNewRequest failed:', err));
     }
 
     return created;
@@ -249,6 +269,27 @@ class CasesService {
       void publishEvent('case-events', evt).catch((err) => {
         console.error('Kafka publish failed (case_update/case_closed):', err);
       });
+
+      if (updated) {
+        if (update.status === 'closed') {
+          void notifyCaseClosed({ caseId: id, updatedBy: requester.userId }).catch((err) =>
+            console.error('In-app notifyCaseClosed failed:', err)
+          );
+        } else if (
+          existing.citizenId &&
+          (statusChanged ||
+            update.nextHearingDate !== undefined ||
+            update.resolution !== undefined)
+        ) {
+          void notifyCaseParticipantUpdate({
+            caseId: id,
+            updatedByRole: requester.role,
+            previousStatus: String(existing.status),
+            newStatus: String(updated.status),
+            updatedBy: requester.userId,
+          }).catch((err) => console.error('In-app notifyCaseParticipantUpdate failed:', err));
+        }
+      }
 
       return updated;
     }

@@ -2,6 +2,7 @@ import { eq, desc } from 'drizzle-orm';
 import { db } from '../db';
 import { caseDocuments, cases, users, type CaseDocument } from '../models/schema';
 import { buildEvent, publishEvent } from './kafka.service';
+import { notifyDocumentUploaded } from './notification-dispatch.service';
 
 async function ensureParticipant(caseId: number, userId: string): Promise<boolean> {
   const [c] = await db.select().from(cases).where(eq(cases.id, caseId)).limit(1);
@@ -49,6 +50,15 @@ class DocumentsService {
       void publishEvent('document-events', evt).catch((err) => {
         console.error('Kafka publish failed (document_uploaded):', err);
       });
+
+      void notifyDocumentUploaded({
+        caseId: params.caseId,
+        citizenId: c.citizenId,
+        lawyerId: c.lawyerId,
+        uploadedBy: params.uploadedBy,
+        documentId: created.id,
+        fileName: created.fileName,
+      }).catch((err) => console.error('In-app notifyDocumentUploaded failed:', err));
     }
 
     return created ?? null;

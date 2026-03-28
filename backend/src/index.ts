@@ -89,36 +89,36 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   });
 });
 
-// Create HTTP server and initialize Socket.IO
+// HTTP + Socket.IO must be initialized before Kafka consumer (consumer emits via getIO()).
 const server = createServer(app);
 socketService.initialize(server);
 
-// Initialize Kafka for async events (never block server startup)
-void (async () => {
+async function start(): Promise<void> {
   try {
     await connectKafka();
     await startConsumers();
   } catch (err) {
     console.error('Kafka startup failed (continuing without Kafka):', err);
   }
-})();
 
-// Start server
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🔌 WebSocket server initialized`);
-  console.log(`📡 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
-  console.log(`🛡️ Protected endpoints: http://localhost:${PORT}/api/protected`);
-  console.log(`📝 Blog endpoints: http://localhost:${PORT}/api/blogs`);
-  console.log(`⚖️ Lawyer Profile endpoints: http://localhost:${PORT}/api/lawyer-profiles`);
-  console.log(`🧭 Lawyer search endpoints: http://localhost:${PORT}/api/lawyers/search`);
-  console.log(`📂 Case endpoints: http://localhost:${PORT}/api/cases`);
-  console.log(`🤖 AI endpoints: http://localhost:${PORT}/api/ai`); 
-  console.log(`📮 Proposals endpoints: http://localhost:${PORT}/api/proposals`);
-  console.log(`✉️ Messages endpoints: http://localhost:${PORT}/api/cases/:caseId/messages`);
-  console.log(`📎 Documents endpoints: http://localhost:${PORT}/api/cases/:caseId/documents`);
-});
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`🔌 WebSocket server initialized`);
+    console.log(`📡 Health check: http://localhost:${PORT}/api/health`);
+    console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
+    console.log(`🛡️ Protected endpoints: http://localhost:${PORT}/api/protected`);
+    console.log(`📝 Blog endpoints: http://localhost:${PORT}/api/blogs`);
+    console.log(`⚖️ Lawyer Profile endpoints: http://localhost:${PORT}/api/lawyer-profiles`);
+    console.log(`🧭 Lawyer search endpoints: http://localhost:${PORT}/api/lawyers/search`);
+    console.log(`📂 Case endpoints: http://localhost:${PORT}/api/cases`);
+    console.log(`🤖 AI endpoints: http://localhost:${PORT}/api/ai`);
+    console.log(`📮 Proposals endpoints: http://localhost:${PORT}/api/proposals`);
+    console.log(`✉️ Messages endpoints: http://localhost:${PORT}/api/cases/:caseId/messages`);
+    console.log(`📎 Documents endpoints: http://localhost:${PORT}/api/cases/:caseId/documents`);
+  });
+}
+
+void start();
 
 server.on('error', (err) => {
   console.error('Server error:', err);

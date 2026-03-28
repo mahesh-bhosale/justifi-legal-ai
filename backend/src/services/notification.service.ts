@@ -48,6 +48,14 @@ class NotificationService {
     if (!updated) return null;
     return updated;
   }
+
+  async deleteForUser(id: number, userId: string): Promise<boolean> {
+    const [deleted] = await db
+      .delete(notifications)
+      .where(and(eq(notifications.id, id), eq(notifications.userId, userId)))
+      .returning({ id: notifications.id });
+    return !!deleted;
+  }
 }
 
 export default new NotificationService();

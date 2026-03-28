@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { cases, caseMessages, type CaseMessage } from '../models/schema';
 import { buildEvent, publishEvent } from './kafka.service';
+import { notifyNewMessage } from './notification-dispatch.service';
 
 async function ensureParticipant(caseId: number, userId: string): Promise<boolean> {
   const [c] = await db.select().from(cases).where(eq(cases.id, caseId)).limit(1);
@@ -90,6 +91,14 @@ class MessagesService {
         void publishEvent('message-events', event).catch((err) => {
           console.error('Kafka publish failed (case-message-created):', err);
         });
+
+        void notifyNewMessage({
+          receiverId: effectiveRecipientId,
+          caseId,
+          senderId,
+          messageId: newMessage.id,
+          content: newMessage.message,
+        }).catch((err) => console.error('In-app notifyNewMessage failed:', err));
       }
 
       return newMessage;

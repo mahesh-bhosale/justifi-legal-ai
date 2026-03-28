@@ -44,6 +44,32 @@ class NotificationsController {
       res.status(500).json({ success: false, message: 'Failed to mark notification read' });
     }
   }
+
+  async remove(req: Request, res: Response): Promise<void> {
+    try {
+      if (!req.user) {
+        res.status(401).json({ success: false, message: 'Auth required' });
+        return;
+      }
+
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        res.status(400).json({ success: false, message: 'Invalid id' });
+        return;
+      }
+
+      const ok = await notificationService.deleteForUser(id, req.user.userId);
+      if (!ok) {
+        res.status(404).json({ success: false, message: 'Not found or not allowed' });
+        return;
+      }
+
+      res.json({ success: true });
+    } catch (err) {
+      console.error('Delete notification error:', err);
+      res.status(500).json({ success: false, message: 'Failed to delete notification' });
+    }
+  }
 }
 
 export default new NotificationsController();

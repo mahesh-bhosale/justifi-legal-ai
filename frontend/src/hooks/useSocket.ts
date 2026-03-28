@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import Cookies from 'js-cookie';
+import { decodeUser } from '@/lib/auth';
 
 interface UseSocketOptions {
   caseId?: number;
@@ -34,6 +35,7 @@ export const useSocket = (options: UseSocketOptions = {}) => {
   const socketRef = useRef<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lastNotification, setLastNotification] = useState<Notification | null>(null);
 
   const connect = useCallback(() => {
     if (socketRef.current?.connected) return;
@@ -55,11 +57,21 @@ export const useSocket = (options: UseSocketOptions = {}) => {
       console.log('WebSocket connected');
       setIsConnected(true);
       setError(null);
+
+      const u = decodeUser();
+      if (u?.id && socketRef.current) {
+        socketRef.current.emit('join-user', u.id);
+      }
       
       // Auto-join case room if caseId provided
       if (caseId) {
         joinCase(caseId);
       }
+    });
+
+    socketRef.current.on('notification:new', (data: Notification) => {
+      console.log('New notification:', data);
+      setLastNotification(data);
     });
 
     socketRef.current.on('disconnect', () => {
@@ -152,6 +164,7 @@ export const useSocket = (options: UseSocketOptions = {}) => {
     socket: socketRef.current,
     isConnected,
     error,
+    lastNotification,
     connect,
     disconnect,
     joinCase,
