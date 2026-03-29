@@ -200,7 +200,7 @@ export default function AdminDashboard() {
 
         <Card className="p-4">
           <h3 className="text-sm font-semibold text-gray-900 mb-2">
-            Case Outcome Distribution (sample)
+            Case Outcome Distribution
           </h3>
           <PieChartComponent
             data={[
