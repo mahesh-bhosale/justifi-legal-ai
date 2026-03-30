@@ -26,7 +26,7 @@ const aiLimiter = rateLimit({
   legacyHeaders: false,
   keyGenerator: (req) => {
     const uid = (req as { user?: { userId?: string } }).user?.userId;
-    return uid ? String(uid) : req.ip || 'anon';
+    return uid ? String(uid) : 'anonymous';
   },
 });
 
