@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import casesController from '../controllers/cases.controller';
 import { verifyToken } from '../middleware/auth.middleware';
-import { requireAdmin } from '../middleware/role.middleware';
+import { requireAdmin, requireCitizen } from '../middleware/role.middleware';
 
 const router = Router();
 
@@ -25,11 +25,34 @@ router.get('/direct-requests', (req, res) => {
   return casesController.getDirectContactRequests(req, res);
 });
 
+// admin audit log — before /:id
+router.get('/:id/updates', requireAdmin, (req, res) => casesController.listUpdates(req, res));
+
 // get by id (access controlled in service)
 router.get('/:id', (req, res) => casesController.getById(req, res));
 
 // update
 router.patch('/:id', (req, res) => casesController.update(req, res));
+
+router.patch('/:id/resolve', (req, res) => {
+  if (!req.user || (req.user.role !== 'lawyer' && req.user.role !== 'admin')) {
+    res.status(403).json({ success: false, message: 'Lawyer or admin required' });
+    return;
+  }
+  return casesController.resolve(req, res);
+});
+
+router.patch('/:id/terminate', (req, res) => {
+  if (!req.user || (req.user.role !== 'lawyer' && req.user.role !== 'admin')) {
+    res.status(403).json({ success: false, message: 'Lawyer or admin required' });
+    return;
+  }
+  return casesController.terminate(req, res);
+});
+
+router.patch('/:id/withdraw', requireCitizen, (req, res) => casesController.withdraw(req, res));
+
+router.delete('/:id', requireAdmin, (req, res) => casesController.remove(req, res));
 
 // assign (lawyer/admin)
 router.patch('/:id/assign', (req, res) => {

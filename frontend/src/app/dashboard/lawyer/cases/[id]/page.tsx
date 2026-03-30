@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Card from '../../../../../components/Card';
 import { SubmitProposalForm } from '../../../../../components/SubmitProposalForm';
 import { CaseMessagesContainer } from '../../../../../components/CaseMessagesContainer';
-import { getCaseById, type Case } from '../../../../../lib/cases';
+import { getCaseById, resolveCase, terminateCase, caseStatusLabel, type Case } from '../../../../../lib/cases';
 import { createProposal, getCaseProposals, type CreateProposalInput, type CaseProposal } from '../../../../../lib/proposals';
 import Button from '../../../../../components/Button';
 import {
@@ -20,7 +20,7 @@ export default function LawyerCaseDetailPage() {
   const params = useParams();
   const router = useRouter();
   const caseId = parseInt(params.id as string);
-  
+
   const [caseData, setCaseData] = useState<Case | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'proposal' | 'proposals' | 'messages' | 'documents'>('overview');
@@ -39,6 +39,14 @@ export default function LawyerCaseDetailPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [description, setDescription] = useState('');
   const [documentsError, setDocumentsError] = useState<string | null>(null);
+
+  const [showResolveModal, setShowResolveModal] = useState(false);
+  const [resolutionText, setResolutionText] = useState('');
+  const [resolveSubmitting, setResolveSubmitting] = useState(false);
+  const [resolveError, setResolveError] = useState<string | null>(null);
+  const [showTerminateConfirm, setShowTerminateConfirm] = useState(false);
+  const [terminateSubmitting, setTerminateSubmitting] = useState(false);
+  const [terminateError, setTerminateError] = useState<string | null>(null);
 
   useEffect(() => {
     if (caseId) {
@@ -107,12 +115,12 @@ export default function LawyerCaseDetailPage() {
       setSubmittingProposal(true);
       setProposalError(null);
       setProposalSuccess(null);
-      
+
       await createProposal(caseId, data);
-      
+
       // Refresh proposals to show the newly submitted one
       await fetchProposals();
-      
+
       // Set success message and stay on proposal tab to show the submitted proposal
       setProposalSuccess('Proposal submitted successfully! The citizen will review it and get back to you.');
       setActiveTab('proposal');
@@ -127,9 +135,11 @@ export default function LawyerCaseDetailPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'pending_lawyer_acceptance': return 'bg-orange-100 text-orange-800';
       case 'in_progress': return 'bg-blue-100 text-blue-800';
       case 'resolved': return 'bg-green-100 text-green-800';
-      case 'closed': return 'bg-gray-100 text-gray-800';
+      case 'closed': return 'bg-gray-200 text-gray-800';
+      case 'rejected': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -143,16 +153,9 @@ export default function LawyerCaseDetailPage() {
     }
   };
 
-  // Check if current lawyer has already submitted a proposal
-  const getCurrentLawyerProposal = () => {
-    // This would need to get the current lawyer's ID from auth context
-    // For now, we'll check if there are any proposals
-    // In a real app, you'd compare p.lawyerId with the current user's ID
-    return proposals.find(p => p.status === 'pending' || p.status === 'accepted' || p.status === 'rejected');
-  };
-
-  const hasSubmittedProposal = getCurrentLawyerProposal() !== undefined;
-  const currentProposal = getCurrentLawyerProposal();
+  const myProposals = user ? proposals.filter((p) => p.lawyerId === user.id) : [];
+  const currentProposal = myProposals[0];
+  const hasSubmittedProposal = myProposals.length > 0;
 
   if (loading) {
     return (
@@ -187,7 +190,7 @@ export default function LawyerCaseDetailPage() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <Button 
+          <Button
             onClick={handleBackToCases}
             variant="outline"
             className="mb-4"
@@ -199,7 +202,7 @@ export default function LawyerCaseDetailPage() {
         </div>
         <div className="flex gap-2">
           <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(caseData.status)}`}>
-            {caseData.status.replace('_', ' ').toUpperCase()}
+            {caseStatusLabel(caseData.status).toUpperCase()}
           </span>
           <span className={`px-3 py-1 rounded-full text-sm font-medium ${getUrgencyColor(caseData.urgency)}`}>
             {caseData.urgency.toUpperCase()} PRIORITY
@@ -214,11 +217,10 @@ export default function LawyerCaseDetailPage() {
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id as any)}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === tab.id
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === tab.id
                   ? 'border-blue-500 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
+                }`}
             >
               <span className="mr-2">{tab.icon}</span>
               {tab.label}
@@ -231,6 +233,21 @@ export default function LawyerCaseDetailPage() {
       <div className="min-h-[500px]">
         {activeTab === 'overview' && (
           <Card className="p-6">
+            {(['resolved', 'closed', 'rejected'] as const).includes(caseData.status as 'resolved' | 'closed' | 'rejected') && (
+              <div
+                className={`mb-6 rounded-md border px-4 py-3 text-sm ${
+                  caseData.status === 'resolved'
+                    ? 'bg-green-50 border-green-200 text-green-900'
+                    : caseData.status === 'rejected'
+                      ? 'bg-red-50 border-red-200 text-red-900'
+                      : 'bg-gray-50 border-gray-200 text-gray-800'
+                }`}
+              >
+                {caseData.status === 'resolved' && 'This case is resolved.'}
+                {caseData.status === 'closed' && 'This case is closed.'}
+                {caseData.status === 'rejected' && 'This request was rejected.'}
+              </div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Case Details</h3>
@@ -259,7 +276,7 @@ export default function LawyerCaseDetailPage() {
                   </div>
                 </dl>
               </div>
-              
+
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Timeline</h3>
                 <dl className="space-y-3">
@@ -283,15 +300,45 @@ export default function LawyerCaseDetailPage() {
                       </dd>
                     </div>
                   )}
+                  {caseData.status === 'resolved' && caseData.resolution && (
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">Resolution</dt>
+                      <dd className="text-sm text-gray-900 whitespace-pre-wrap">{caseData.resolution}</dd>
+                    </div>
+                  )}
                 </dl>
               </div>
             </div>
 
             {/* Action Buttons */}
             <div className="mt-8 pt-6 border-t border-gray-200">
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-4">
+                {caseData.status === 'in_progress' && user?.id && caseData.lawyerId === user.id && (
+                  <>
+                    <Button
+                      className="bg-green-600 hover:bg-green-700"
+                      onClick={() => {
+                        setResolveError(null);
+                        setResolutionText('');
+                        setShowResolveModal(true);
+                      }}
+                    >
+                      Mark as Resolved ✓
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="border-red-400 text-red-700 hover:bg-red-50"
+                      onClick={() => {
+                        setTerminateError(null);
+                        setShowTerminateConfirm(true);
+                      }}
+                    >
+                      Terminate case
+                    </Button>
+                  </>
+                )}
                 {hasSubmittedProposal ? (
-                  <Button 
+                  <Button
                     onClick={() => handleTabChange('proposal')}
                     variant="outline"
                     className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
@@ -299,14 +346,14 @@ export default function LawyerCaseDetailPage() {
                     ✓ View Proposal
                   </Button>
                 ) : (
-                  <Button 
+                  <Button
                     onClick={() => handleTabChange('proposal')}
                     className="bg-blue-600 hover:bg-blue-700"
                   >
                     Submit Proposal
                   </Button>
                 )}
-                <Button 
+                <Button
                   onClick={() => handleTabChange('messages')}
                   variant="outline"
                 >
@@ -332,7 +379,7 @@ export default function LawyerCaseDetailPage() {
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Proposal Submitted Successfully!</h3>
                 <p className="text-gray-600 mb-4">{proposalSuccess}</p>
-                <Button 
+                <Button
                   onClick={() => {
                     setProposalSuccess(null);
                     fetchProposals();
@@ -375,13 +422,13 @@ export default function LawyerCaseDetailPage() {
                     Provide a detailed proposal explaining how you can help with this case.
                   </p>
                 </div>
-                
+
                 {proposalError && (
                   <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
                     <p className="text-sm text-red-600">{proposalError}</p>
                   </div>
                 )}
-                
+
                 <SubmitProposalForm
                   caseId={caseId}
                   onSubmit={handleProposalSubmitted}
@@ -400,7 +447,7 @@ export default function LawyerCaseDetailPage() {
                 View all proposals submitted for this case.
               </p>
             </div>
-            
+
             {loadingProposals ? (
               <div className="flex items-center justify-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -421,12 +468,11 @@ export default function LawyerCaseDetailPage() {
                   <div key={proposal.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex justify-between items-start mb-3">
                       <div className="flex items-center space-x-2">
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          proposal.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          proposal.status === 'accepted' ? 'bg-green-100 text-green-800' :
-                          proposal.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${proposal.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                            proposal.status === 'accepted' ? 'bg-green-100 text-green-800' :
+                              proposal.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                                'bg-gray-100 text-gray-800'
+                          }`}>
                           {proposal.status.toUpperCase()}
                         </span>
                         {proposal.lawyerId === currentProposal?.lawyerId && (
@@ -439,11 +485,11 @@ export default function LawyerCaseDetailPage() {
                         {new Date(proposal.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    
+
                     <div className="prose prose-sm max-w-none">
                       <p className="text-gray-900 mb-3">{proposal.proposalText}</p>
                     </div>
-                    
+
                     <div className="flex items-center space-x-4 text-sm text-gray-600">
                       {proposal.proposedFee && (
                         <span><strong>Fee:</strong> ₹{proposal.proposedFee}</span>
@@ -460,7 +506,7 @@ export default function LawyerCaseDetailPage() {
         )}
 
         {activeTab === 'messages' && (
-          <CaseMessagesContainer 
+          <CaseMessagesContainer
             caseId={caseId}
             userRole="lawyer"
           />
@@ -640,6 +686,90 @@ export default function LawyerCaseDetailPage() {
           </Card>
         )}
       </div>
+
+      {showResolveModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="max-w-lg w-full rounded-lg bg-white shadow-xl p-6 space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Mark case as resolved</h3>
+            <p className="text-sm text-gray-600">Describe the outcome for the citizen (required).</p>
+            {resolveError && <p className="text-sm text-red-600">{resolveError}</p>}
+            <textarea
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm min-h-[120px]"
+              placeholder="Resolution summary"
+              value={resolutionText}
+              onChange={(e) => setResolutionText(e.target.value)}
+            />
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowResolveModal(false);
+                  setResolveError(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-green-600 hover:bg-green-700"
+                disabled={resolveSubmitting || !resolutionText.trim()}
+                onClick={async () => {
+                  try {
+                    setResolveSubmitting(true);
+                    setResolveError(null);
+                    const updated = await resolveCase(caseId, resolutionText.trim());
+                    setCaseData(updated);
+                    setShowResolveModal(false);
+                  } catch (err: unknown) {
+                    const ax = err as { response?: { data?: { message?: string } } };
+                    setResolveError(ax.response?.data?.message || 'Could not resolve case.');
+                  } finally {
+                    setResolveSubmitting(false);
+                  }
+                }}
+              >
+                {resolveSubmitting ? 'Saving…' : 'Confirm resolved'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showTerminateConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="max-w-md w-full rounded-lg bg-white shadow-xl p-6 space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Terminate this case?</h3>
+            <p className="text-sm text-gray-600">
+              The citizen will be notified that you have stopped work on this case. This cannot be undone from your side.
+            </p>
+            {terminateError && <p className="text-sm text-red-600">{terminateError}</p>}
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => { setShowTerminateConfirm(false); setTerminateError(null); }}>
+                Cancel
+              </Button>
+              <Button
+                className="bg-red-600 hover:bg-red-700"
+                disabled={terminateSubmitting}
+                onClick={async () => {
+                  try {
+                    setTerminateSubmitting(true);
+                    setTerminateError(null);
+                    const updated = await terminateCase(caseId);
+                    setCaseData(updated);
+                    setShowTerminateConfirm(false);
+                  } catch (err: unknown) {
+                    const ax = err as { response?: { data?: { message?: string } } };
+                    setTerminateError(ax.response?.data?.message || 'Could not terminate case.');
+                  } finally {
+                    setTerminateSubmitting(false);
+                  }
+                }}
+              >
+                {terminateSubmitting ? 'Terminating…' : 'Terminate case'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

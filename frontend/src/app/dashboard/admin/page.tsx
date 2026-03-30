@@ -207,6 +207,8 @@ export default function AdminDashboard() {
               { label: 'Pending', count: stats?.pending ?? 0 },
               { label: 'In Progress', count: stats?.in_progress ?? 0 },
               { label: 'Resolved', count: stats?.resolved ?? 0 },
+              { label: 'Closed', count: stats?.closed ?? 0 },
+              { label: 'Rejected', count: stats?.rejected ?? 0 },
             ]}
             nameKey="label"
             valueKey="count"

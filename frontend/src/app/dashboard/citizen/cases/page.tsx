@@ -67,7 +67,36 @@ export default function CitizenCasesPage() {
       </div>
 
       {/* Filters */}
-      <Card className="p-6">
+      <Card className="p-6 space-y-4">
+        <div>
+          <p className="text-sm font-medium text-gray-700 mb-2">Quick status</p>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { v: '', label: 'All' },
+              { v: 'pending', label: 'Pending' },
+              { v: 'pending_lawyer_acceptance', label: 'Awaiting lawyer' },
+              { v: 'in_progress', label: 'In progress' },
+              { v: 'resolved', label: 'Resolved' },
+              { v: 'closed', label: 'Closed' },
+              { v: 'rejected', label: 'Rejected' },
+            ].map((chip) => (
+              <button
+                key={chip.v || 'all'}
+                type="button"
+                onClick={() => {
+                  setFilters((prev) => ({ ...prev, status: chip.v || '' }));
+                }}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                  (filters.status || '') === chip.v
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                {chip.label}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -80,9 +109,11 @@ export default function CitizenCasesPage() {
             >
               <option value="">All Statuses</option>
               <option value="pending">Pending</option>
+              <option value="pending_lawyer_acceptance">Awaiting lawyer</option>
               <option value="in_progress">In Progress</option>
               <option value="resolved">Resolved</option>
               <option value="closed">Closed</option>
+              <option value="rejected">Rejected</option>
             </select>
           </div>
           

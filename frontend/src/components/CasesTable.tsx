@@ -220,14 +220,25 @@ export function CasesTable({ cases, userRole, onStatusChange, onViewCase }: Case
                     >
                       View
                     </Link>
-                    {userRole === 'citizen' && caseItem.status === 'pending' && (
+                    {userRole === 'citizen' &&
+                      (caseItem.status === 'pending' || caseItem.status === 'pending_lawyer_acceptance') && (
                       <Link
-                        href={`/dashboard/${userRole}/cases/${caseItem.id}/edit`}
+                        href={`/dashboard/${userRole}/cases/${caseItem.id}?edit=1`}
                         className="text-green-600 hover:text-green-900"
                       >
                         Edit
                       </Link>
                     )}
+                    {userRole === 'citizen' &&
+                      (caseItem.status === 'pending' || caseItem.status === 'pending_lawyer_acceptance') &&
+                      !caseItem.lawyerId && (
+                        <Link
+                          href={`/dashboard/${userRole}/cases/${caseItem.id}?withdraw=1`}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          Withdraw
+                        </Link>
+                      )}
                     {userRole === 'lawyer' && caseItem.status === 'pending' && !caseItem.lawyerId && (
                       <Link
                         href={`/dashboard/lawyer/cases/${caseItem.id}`}

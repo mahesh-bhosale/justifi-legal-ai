@@ -1,7 +1,13 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
-import casesService from '../services/cases.service';
+import casesService, { type CaseLifecycleErrorCode } from '../services/cases.service';
 import { sanitizePlainText } from '../utils/sanitize-text';
+
+function lifecycleHttpStatus(code: CaseLifecycleErrorCode): number {
+  if (code === 'not_found') return 404;
+  if (code === 'forbidden') return 403;
+  return 400;
+}
 
 const createSchema = z.object({
   title: z.string().min(3),
@@ -18,10 +24,20 @@ const listSchema = z.object({
   open: z.string().optional().transform((v) => v === 'true' ? true : v === 'false' ? false : undefined),
   limit: z.string().optional().transform((v) => (v ? parseInt(v) : undefined)),
   offset: z.string().optional().transform((v) => (v ? parseInt(v) : undefined)),
-  status: z.enum(['pending', 'in_progress', 'resolved', 'closed']).optional(),
+  status: z
+    .enum([
+      'pending',
+      'pending_lawyer_acceptance',
+      'in_progress',
+      'resolved',
+      'closed',
+      'rejected',
+    ])
+    .optional(),
   category: z.string().optional(),
   citizenId: z.string().optional(),
   lawyerId: z.string().optional(),
+  search: z.string().optional(),
 });
 
 const updateSchema = z.object({
@@ -39,6 +55,15 @@ const updateSchema = z.object({
 
 const assignSchema = z.object({
   lawyerId: z.string(),
+});
+
+const resolveSchema = z.object({
+  resolution: z.string().min(1),
+});
+
+const withdrawSchema = z.object({
+  reason: z.string().min(1),
+  note: z.string().optional(),
 });
 
 class CasesController {
@@ -262,6 +287,163 @@ class CasesController {
     } catch (err: any) {
       console.error('Stats error:', err);
       res.status(500).json({ success: false, message: 'Failed to fetch stats' });
+    }
+  }
+
+  async resolve(req: Request, res: Response): Promise<void> {
+    try {
+      if (!req.user || (req.user.role !== 'lawyer' && req.user.role !== 'admin')) {
+        res.status(403).json({ success: false, message: 'Lawyer or admin required' });
+        return;
+      }
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        res.status(400).json({ success: false, message: 'Invalid id' });
+        return;
+      }
+      const body = resolveSchema.parse(req.body);
+      const resolution = sanitizePlainText(body.resolution);
+      const result = await casesService.resolveCase(id, { role: req.user.role as 'lawyer' | 'admin', userId: req.user.userId }, resolution);
+      if (!result.ok) {
+        const msg =
+          result.error === 'invalid_status'
+            ? 'Case must be in progress to resolve'
+            : result.error === 'missing_resolution'
+              ? 'Resolution is required'
+              : result.error === 'invalid_transition'
+                ? 'Invalid status transition'
+                : result.error === 'forbidden'
+                  ? 'Not allowed'
+                  : 'Not found';
+        res.status(lifecycleHttpStatus(result.error)).json({ success: false, message: msg, code: result.error });
+        return;
+      }
+      res.json({ success: true, data: result.data });
+    } catch (err: any) {
+      if (err instanceof z.ZodError) {
+        res.status(400).json({ success: false, message: 'Validation error', errors: err.errors });
+        return;
+      }
+      console.error('Resolve case error:', err);
+      res.status(500).json({ success: false, message: 'Failed to resolve case' });
+    }
+  }
+
+  async terminate(req: Request, res: Response): Promise<void> {
+    try {
+      if (!req.user || (req.user.role !== 'lawyer' && req.user.role !== 'admin')) {
+        res.status(403).json({ success: false, message: 'Lawyer or admin required' });
+        return;
+      }
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        res.status(400).json({ success: false, message: 'Invalid id' });
+        return;
+      }
+      const result = await casesService.terminateCase(id, { role: req.user.role as 'lawyer' | 'admin', userId: req.user.userId });
+      if (!result.ok) {
+        const msg =
+          result.error === 'invalid_status'
+            ? 'Case must be in progress to terminate'
+            : result.error === 'invalid_transition'
+              ? 'Invalid status transition'
+              : result.error === 'forbidden'
+                ? 'Not allowed'
+                : 'Not found';
+        res.status(lifecycleHttpStatus(result.error)).json({ success: false, message: msg, code: result.error });
+        return;
+      }
+      res.json({ success: true, data: result.data });
+    } catch (err: any) {
+      console.error('Terminate case error:', err);
+      res.status(500).json({ success: false, message: 'Failed to terminate case' });
+    }
+  }
+
+  async withdraw(req: Request, res: Response): Promise<void> {
+    try {
+      if (!req.user || req.user.role !== 'citizen') {
+        res.status(403).json({ success: false, message: 'Citizen access required' });
+        return;
+      }
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        res.status(400).json({ success: false, message: 'Invalid id' });
+        return;
+      }
+      const body = withdrawSchema.parse(req.body);
+      const reason = sanitizePlainText(body.reason);
+      const note = body.note !== undefined ? sanitizePlainText(body.note) : undefined;
+      const result = await casesService.withdrawCase(id, req.user.userId, reason, note);
+      if (!result.ok) {
+        const msgMap: Record<string, string> = {
+          not_withdrawable: 'This case cannot be withdrawn in its current status',
+          lawyer_assigned: 'A lawyer is already assigned; you cannot withdraw this case',
+          proposal_accepted: 'A proposal has already been accepted; you cannot withdraw this case',
+          invalid_transition: 'Invalid status transition',
+          forbidden: 'Not allowed',
+        };
+        res.status(lifecycleHttpStatus(result.error)).json({
+          success: false,
+          message: msgMap[result.error] || 'Unable to withdraw case',
+          code: result.error,
+        });
+        return;
+      }
+      res.json({ success: true, data: result.data });
+    } catch (err: any) {
+      if (err instanceof z.ZodError) {
+        res.status(400).json({ success: false, message: 'Validation error', errors: err.errors });
+        return;
+      }
+      console.error('Withdraw case error:', err);
+      res.status(500).json({ success: false, message: 'Failed to withdraw case' });
+    }
+  }
+
+  async remove(req: Request, res: Response): Promise<void> {
+    try {
+      if (!req.user || req.user.role !== 'admin') {
+        res.status(403).json({ success: false, message: 'Admin required' });
+        return;
+      }
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        res.status(400).json({ success: false, message: 'Invalid id' });
+        return;
+      }
+      const deleted = await casesService.deleteCase(id, req.user.userId);
+      if (!deleted) {
+        res.status(404).json({ success: false, message: 'Case not found' });
+        return;
+      }
+      res.json({ success: true, message: 'Case deleted' });
+    } catch (err: any) {
+      console.error('Delete case error:', err);
+      res.status(500).json({ success: false, message: 'Failed to delete case' });
+    }
+  }
+
+  async listUpdates(req: Request, res: Response): Promise<void> {
+    try {
+      if (!req.user || req.user.role !== 'admin') {
+        res.status(403).json({ success: false, message: 'Admin required' });
+        return;
+      }
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        res.status(400).json({ success: false, message: 'Invalid id' });
+        return;
+      }
+      const rows = await casesService.listCaseAuditLog(id, { role: 'admin', userId: req.user.userId });
+      if (rows === null) {
+        res.status(404).json({ success: false, message: 'Case not found' });
+        return;
+      }
+      res.json({ success: true, count: rows.length, data: rows });
+    } catch (err: any) {
+      console.error('List case updates error:', err);
+      res.status(500).json({ success: false, message: 'Failed to load case updates' });
     }
   }
 }

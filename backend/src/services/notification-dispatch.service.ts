@@ -1,6 +1,6 @@
 import { and, eq, sql } from 'drizzle-orm';
 import { db } from '../db';
-import { cases, lawyerProfiles, notifications, users } from '../models/schema';
+import { caseProposals, cases, lawyerProfiles, notifications, users } from '../models/schema';
 import notificationService from './notification.service';
 import { getIO } from './socket.service';
 import type { Notification } from '../models/schema';
@@ -209,6 +209,68 @@ export async function notifyCaseParticipantUpdate(params: {
   });
 }
 
+export async function notifyCaseResolved(params: {
+  caseId: number;
+  citizenId: string;
+  lawyerId: string | null;
+}): Promise<void> {
+  const dedupeKey = `case_resolved:${params.caseId}:${params.citizenId}`;
+  let lawyerLabel = 'Your lawyer';
+  if (params.lawyerId) {
+    const [lawyer] = await db.select({ name: users.name }).from(users).where(eq(users.id, params.lawyerId)).limit(1);
+    if (lawyer?.name) lawyerLabel = String(lawyer.name);
+  }
+  await insertAndEmit(params.citizenId, {
+    caseId: params.caseId,
+    type: 'case',
+    title: 'Case resolved',
+    body: `${lawyerLabel} marked Case #${params.caseId} as resolved.`,
+    dedupeKey,
+    meta: { caseId: params.caseId },
+  });
+}
+
+export async function notifyCaseTerminated(params: {
+  caseId: number;
+  citizenId: string;
+  lawyerId: string;
+}): Promise<void> {
+  const dedupeKey = `case_terminated:${params.caseId}:${params.citizenId}`;
+  const [lawyer] = await db.select({ name: users.name }).from(users).where(eq(users.id, params.lawyerId)).limit(1);
+  const lawyerName = lawyer?.name ? String(lawyer.name) : 'The lawyer';
+  await insertAndEmit(params.citizenId, {
+    caseId: params.caseId,
+    type: 'case',
+    title: 'Case terminated',
+    body: `${lawyerName} has terminated work on Case #${params.caseId}.`,
+    dedupeKey,
+    meta: { caseId: params.caseId, lawyerId: params.lawyerId },
+  });
+}
+
+export async function notifyCaseWithdrawn(params: { caseId: number; citizenId: string }): Promise<void> {
+  const lawyerRows = await db
+    .select({ lawyerId: caseProposals.lawyerId })
+    .from(caseProposals)
+    .where(eq(caseProposals.caseId, params.caseId))
+    .groupBy(caseProposals.lawyerId);
+
+  const [citizen] = await db.select({ name: users.name }).from(users).where(eq(users.id, params.citizenId)).limit(1);
+  const citizenName = citizen?.name ? String(citizen.name) : 'A citizen';
+
+  for (const row of lawyerRows) {
+    const dedupeKey = `case_withdrawn:${params.caseId}:${row.lawyerId}`;
+    await insertAndEmit(row.lawyerId, {
+      caseId: params.caseId,
+      type: 'case',
+      title: 'Case withdrawn',
+      body: `${citizenName} withdrew Case #${params.caseId}. Any pending proposals are no longer active.`,
+      dedupeKey,
+      meta: { caseId: params.caseId, citizenId: params.citizenId },
+    });
+  }
+}
+
 export async function notifyMatchingLawyersNewOpenCase(params: {
   caseId: number;
   category: string;
@@ -246,6 +308,9 @@ export const notificationDispatch = {
   notifyLawyerSelected,
   notifyDocumentUploaded,
   notifyCaseClosed,
+  notifyCaseResolved,
+  notifyCaseTerminated,
+  notifyCaseWithdrawn,
   notifyPreferredLawyerNewRequest,
   notifyCaseParticipantUpdate,
   notifyMatchingLawyersNewOpenCase,

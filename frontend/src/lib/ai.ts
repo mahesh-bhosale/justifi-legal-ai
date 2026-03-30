@@ -53,13 +53,32 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response) {
-      // The request was made and the server responded with a status code
-      console.error('Response error:', {
-        status: error.response.status,
-        statusText: error.response.statusText,
-        data: error.response.data,
-        headers: error.response.headers,
-      });
+      // The request was made and the server responded with a status code.
+      // Avoid noisy console output for rate-limit errors (429).
+      if (error.response.status !== 429) {
+        console.error('Response error:', {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          data: error.response.data,
+          headers: error.response.headers,
+        });
+      }
+
+      if (error.response.status === 429) {
+        const data = error.response.data as
+          | { error?: string; remaining?: number; reset?: string }
+          | undefined;
+        const reset = data?.reset ? new Date(data.reset) : null;
+        const remaining = data?.remaining;
+        const resetText =
+          reset && !Number.isNaN(reset.getTime())
+            ? ` Try again at ${reset.toLocaleTimeString()}.`
+            : '';
+        const remainingText =
+          typeof remaining === 'number' ? ` (${remaining} left today.)` : '';
+        const message = `${data?.error || 'Rate limit exceeded.'}${remainingText}${resetText}`;
+        return Promise.reject(new Error(message));
+      }
       
       if (error.response.status === 401) {
         // Token expired or invalid
@@ -133,7 +152,8 @@ export const summarizeText = async (request: SummaryRequest, role?: 'citizen' | 
     });
     return response.data;
   } catch (error) {
-    console.error('Error in summarizeText:', error);
+    const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+    if (status !== 429) console.error('Error in summarizeText:', error);
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data?.error || 'Failed to summarize text');
     }
@@ -156,7 +176,8 @@ export const summarizePDF = async (file: File, level: string = 'short'): Promise
     
     return response.data;
   } catch (error) {
-    console.error('Error in summarizePDF:', error);
+    const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+    if (status !== 429) console.error('Error in summarizePDF:', error);
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data?.error || 'Failed to summarize PDF');
     }
@@ -185,7 +206,8 @@ export const askAboutText = async (request: ChatRequest): Promise<ChatResponse> 
     console.log('Received response for question:', request.question);
     return response.data || { answer: 'No response from server' };
   } catch (error) {
-    console.error('Error in askAboutText:', error);
+    const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+    if (status !== 429) console.error('Error in askAboutText:', error);
     
     if (axios.isAxiosError(error)) {
       // The interceptor already handled the error, just rethrow it
@@ -220,7 +242,8 @@ export const askAboutPDF = async (file: File, question: string): Promise<ChatRes
     console.log('Received response for PDF question:', question);
     return response.data || { answer: 'No response from server' };
   } catch (error) {
-    console.error('Error in askAboutPDF:', error);
+    const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+    if (status !== 429) console.error('Error in askAboutPDF:', error);
     
     if (axios.isAxiosError(error)) {
       // The interceptor already handled the error, just rethrow it
@@ -242,7 +265,8 @@ export const summarizeTextDemo = async (text: string, level: string = 'short'): 
     );
     return response.data;
   } catch (error) {
-    console.error('Error in summarizeTextDemo:', error);
+    const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+    if (status !== 429) console.error('Error in summarizeTextDemo:', error);
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data?.error || 'Failed to summarize text');
     }
