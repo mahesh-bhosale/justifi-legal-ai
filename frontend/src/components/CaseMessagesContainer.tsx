@@ -267,12 +267,17 @@ export function CaseMessagesContainer({ caseId }: CaseMessagesContainerProps) {
     try {
       const sentMessage = await sendMessage(caseId, data);
       console.log('Message sent successfully:', sentMessage);
-      
-      // Optimistically update the UI with the new message
-      // The WebSocket event will also update the list when it arrives
-      setMessages(prev => [...prev, sentMessage]);
-      
-      // Still fetch to ensure we have the latest state
+
+      // Avoid duplicate messages: WebSocket "message:new" will also add this.
+      setMessages(prev => {
+        if (prev.some(msg => msg.id === sentMessage.id)) {
+          console.log('Sent message already in local state, skipping add:', sentMessage.id);
+          return prev;
+        }
+        return [...prev, sentMessage];
+      });
+
+      // Optionally refresh from API to ensure consistency (IDs guard against duplicates)
       await fetchMessages();
     } catch (error) {
       console.error('Error sending message:', error);

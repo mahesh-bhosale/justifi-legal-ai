@@ -157,6 +157,7 @@ export default function LawyerCaseDetailPage() {
   const myProposals = user ? proposals.filter((p) => p.lawyerId === user.id) : [];
   const currentProposal = myProposals[0];
   const hasSubmittedProposal = myProposals.length > 0;
+  const hasAcceptedProposalForMe = myProposals.some((p) => p.status === 'accepted');
 
   if (loading) {
     return (
@@ -182,7 +183,8 @@ export default function LawyerCaseDetailPage() {
     { id: 'overview', label: 'Overview', icon: '📋' },
     { id: 'proposal', label: hasSubmittedProposal ? 'My Proposal' : 'Submit Proposal', icon: '💼' },
     { id: 'proposals', label: 'All Proposals', icon: '📊' },
-    { id: 'messages', label: 'Messages', icon: '💬' },
+    // Only allow messaging after THIS lawyer's proposal has been accepted
+    ...(hasAcceptedProposalForMe ? [{ id: 'messages', label: 'Messages', icon: '💬' } as const] : []),
     { id: 'documents', label: 'Documents', icon: '📄' },
   ];
 
@@ -354,12 +356,14 @@ export default function LawyerCaseDetailPage() {
                     Submit Proposal
                   </Button>
                 )}
-                <Button
-                  onClick={() => handleTabChange('messages')}
-                  variant="outline"
-                >
-                  View Messages
-                </Button>
+                {hasAcceptedProposalForMe && (
+                  <Button
+                    onClick={() => handleTabChange('messages')}
+                    variant="outline"
+                  >
+                    View Messages
+                  </Button>
+                )}
               </div>
             </div>
           </Card>
@@ -506,7 +510,7 @@ export default function LawyerCaseDetailPage() {
           </Card>
         )}
 
-        {activeTab === 'messages' && (
+        {activeTab === 'messages' && hasAcceptedProposalForMe && (
           <CaseMessagesContainer
             caseId={caseId}
             userRole="lawyer"

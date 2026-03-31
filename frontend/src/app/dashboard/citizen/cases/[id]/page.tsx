@@ -225,7 +225,8 @@ function CitizenCaseDetailContent() {
   const tabs = [
     { id: 'overview', label: 'Overview', icon: '📋' },
     { id: 'proposals', label: 'Proposals', icon: '💼' },
-    { id: 'messages', label: 'Messages', icon: '💬' },
+    // Only allow messaging after a proposal has been accepted
+    ...(hasAcceptedProposal ? [{ id: 'messages', label: 'Messages', icon: '💬' } as const] : []),
     { id: 'documents', label: 'Documents', icon: '📄' },
   ];
 
@@ -560,7 +561,9 @@ function CitizenCaseDetailContent() {
           <CaseProposalsContainer caseId={caseId} userRole="citizen" onProposalUpdate={fetchCase} />
         )}
 
-        {activeTab === 'messages' && <CaseMessagesContainer caseId={caseId} userRole="citizen" />}
+        {activeTab === 'messages' && hasAcceptedProposal && (
+          <CaseMessagesContainer caseId={caseId} userRole="citizen" />
+        )}
 
         {activeTab === 'documents' && (
           <Card className="p-6">
