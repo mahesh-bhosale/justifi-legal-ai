@@ -190,14 +190,28 @@ export class AIService {
       throw new Error('QA service is not configured');
     }
 
+    // Build a stable cache key based on PDF content + question text
+    const pdfHash = createHash(Buffer.from(file));
+    const questionHash = createHash(question);
+    const cacheKey = `qa:pdf:${pdfHash}:${questionHash}`;
+
     const formData = new FormData();
-    
     // Convert Buffer to Blob for file upload
     const blob = this.bufferToBlob(file, 'application/pdf');
     formData.append('file', blob, filename);
     formData.append('question', question);
 
     try {
+      // Try cache first
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        console.log(`✅ Redis cache hit for askPdfQuestion - key: ${cacheKey}`);
+        const parsed = JSON.parse(cached) as AIAskResponse;
+        return parsed;
+      }
+
+      console.log(`ℹ️ Redis cache miss for askPdfQuestion - key: ${cacheKey}`);
+
       console.log(`Sending request to: ${NGROK_QA}/ask/pdf`);
       console.log('Headers:', {
         'Content-Type': 'multipart/form-data',
@@ -220,11 +234,21 @@ export class AIService {
       if (!response.ok) {
         throw new Error(`AI service error (${response.status}): ${responseText}`);
       }
-      
+
       const result = JSON.parse(responseText);
-      return {
+      const responsePayload: AIAskResponse = {
         answer: result.answer
       };
+
+      // Store in cache; reuse summary TTL so answers live for a similar window
+      try {
+        await redis.set(cacheKey, JSON.stringify(responsePayload), 'EX', SUMMARY_CACHE_TTL_SECONDS);
+        console.log(`✅ Stored askPdfQuestion result in Redis - key: ${cacheKey}, ttl: ${SUMMARY_CACHE_TTL_SECONDS}s`);
+      } catch (cacheError) {
+        console.error('Failed to write askPdfQuestion result to Redis cache:', cacheError);
+      }
+
+      return responsePayload;
     } catch (error) {
       console.error('Error calling external AI service:', error);
       throw new Error(error instanceof Error ? error.message : 'Failed to process PDF question. Please try again later.');
@@ -237,6 +261,19 @@ export class AIService {
     }
 
     try {
+      const messageHash = createHash(message);
+      const cacheKey = `qa:chat:${messageHash}`;
+
+      // Try cache first
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        console.log(`✅ Redis cache hit for simpleChat - key: ${cacheKey}`);
+        const parsed = JSON.parse(cached) as AIChatResponse;
+        return parsed;
+      }
+
+      console.log(`ℹ️ Redis cache miss for simpleChat - key: ${cacheKey}`);
+
       const formData = new FormData();
       formData.append('message', message);
 
@@ -255,11 +292,21 @@ export class AIService {
       }
 
       const result = await response.json();
-      return {
+      const responsePayload: AIChatResponse = {
         reply: result.reply || '',
         message: result.message || message,
         status: 'success'
       };
+
+      // Store in cache; reuse summary TTL so answers live for a similar window
+      try {
+        await redis.set(cacheKey, JSON.stringify(responsePayload), 'EX', SUMMARY_CACHE_TTL_SECONDS);
+        console.log(`✅ Stored simpleChat result in Redis - key: ${cacheKey}, ttl: ${SUMMARY_CACHE_TTL_SECONDS}s`);
+      } catch (cacheError) {
+        console.error('Failed to write simpleChat result to Redis cache:', cacheError);
+      }
+
+      return responsePayload;
     } catch (error) {
       console.error('Error calling chat service:', error);
       throw new Error(error instanceof Error ? error.message : 'Chat service is currently unavailable. Please try again later.');
