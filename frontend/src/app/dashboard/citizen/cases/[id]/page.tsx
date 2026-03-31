@@ -19,7 +19,8 @@ import Button from '../../../../../components/Button';
 import {
   uploadDocument,
   fetchCaseDocuments,
-  generateSignedUrl,
+  getViewUrl,
+  getDownloadUrl,
   type CaseDocument,
 } from '../../../../../lib/caseDocuments';
 import { useAuth } from '../../../../../contexts/AuthContext';
@@ -667,7 +668,7 @@ function CitizenCaseDetailContent() {
                                   size="sm"
                                   onClick={async () => {
                                     try {
-                                      const url = await generateSignedUrl(caseId, doc.id);
+                                      const url = await getViewUrl(caseId, doc);
                                       window.open(url, '_blank');
                                     } catch (error) {
                                       console.error('Error opening document:', error);
@@ -682,7 +683,7 @@ function CitizenCaseDetailContent() {
                                   size="sm"
                                   onClick={async () => {
                                     try {
-                                      const url = await generateSignedUrl(caseId, doc.id);
+                                      const url = await getDownloadUrl(caseId, doc.id);
                                       const link = document.createElement('a');
                                       link.href = url;
                                       link.download = doc.fileName;

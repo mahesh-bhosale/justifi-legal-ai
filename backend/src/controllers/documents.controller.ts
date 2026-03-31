@@ -73,9 +73,23 @@ class DocumentsController {
         return;
       }
 
+      const dispositionRaw = String(req.query.disposition || 'inline').toLowerCase();
+      const disposition = dispositionRaw === 'attachment' ? 'attachment' : 'inline';
+
       const expiresInSeconds = 300;
-      const url = await generateSignedUrl({ path: doc.fileUrl, expiresInSeconds });
-      res.json({ success: true, url, expiresIn: expiresInSeconds });
+      const url = await generateSignedUrl({
+        path: doc.fileUrl,
+        expiresInSeconds,
+        downloadFileName: disposition === 'attachment' ? doc.fileName : undefined,
+      });
+      res.json({
+        success: true,
+        url,
+        expiresIn: expiresInSeconds,
+        disposition,
+        fileName: doc.fileName,
+        mimeType: doc.mimeType,
+      });
     } catch (err: any) {
       console.error('Generate signed URL error:', err);
       res.status(500).json({ success: false, message: 'Failed to generate signed URL' });

@@ -50,3 +50,49 @@ export const generateSignedUrl = async (
   return response.data.url as string;
 };
 
+type Disposition = 'inline' | 'attachment';
+
+export const getDocumentUrl = async (
+  caseId: number,
+  documentId: number,
+  options: { disposition: Disposition }
+): Promise<{ url: string; fileName?: string; mimeType?: string }> => {
+  const response = await api.get(`/api/cases/${caseId}/documents/${documentId}/url`, {
+    params: { disposition: options.disposition },
+  });
+  return {
+    url: response.data.url as string,
+    fileName: response.data.fileName as string | undefined,
+    mimeType: response.data.mimeType as string | undefined,
+  };
+};
+
+export const getViewUrl = async (
+  caseId: number,
+  doc: Pick<CaseDocument, 'id' | 'fileName' | 'mimeType'>
+): Promise<string> => {
+  const { url, mimeType } = await getDocumentUrl(caseId, doc.id, { disposition: 'inline' });
+  const type = (doc.mimeType || mimeType || '').toLowerCase();
+
+  // Word docs: open in a browser tab using Google Docs viewer.
+  if (
+    type === 'application/msword' ||
+    type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+    doc.fileName.toLowerCase().endsWith('.doc') ||
+    doc.fileName.toLowerCase().endsWith('.docx')
+  ) {
+    return `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(url)}`;
+  }
+
+  // PDFs and other types: just open the signed URL in a new tab.
+  return url;
+};
+
+export const getDownloadUrl = async (
+  caseId: number,
+  documentId: number
+): Promise<string> => {
+  const { url } = await getDocumentUrl(caseId, documentId, { disposition: 'attachment' });
+  return url;
+};
+

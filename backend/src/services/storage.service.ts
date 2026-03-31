@@ -36,6 +36,7 @@ export async function uploadDocument(options: {
 export async function generateSignedUrl(options: {
   path: string;
   expiresInSeconds?: number;
+  downloadFileName?: string;
 }): Promise<string> {
   if (!supabase) {
     throw new Error('Supabase client is not configured');
@@ -43,6 +44,11 @@ export async function generateSignedUrl(options: {
 
   const expiresIn = options.expiresInSeconds ?? 60;
 
+  // IMPORTANT:
+  // Do NOT pass 3rd-party "download" options to `createSignedUrl`.
+  // Your current supabase-js version throws:
+  // `Cannot read properties of undefined (reading 'handleOperation')`
+  // when called with the unsupported signature.
   const { data, error } = await supabase.storage
     .from(CASE_DOCUMENTS_BUCKET)
     .createSignedUrl(options.path, expiresIn);
@@ -52,6 +58,13 @@ export async function generateSignedUrl(options: {
     throw new Error('Failed to generate signed URL');
   }
 
-  return data.signedUrl;
+  // Fallback: if `downloadFileName` is provided, append `download=` query param.
+  // Some browsers/signed-url handlers will interpret this and trigger download behavior.
+  if (options.downloadFileName && typeof data.signedUrl === 'string' && !data.signedUrl.includes('download=')) {
+    const join = data.signedUrl.includes('?') ? '&' : '?';
+    return `${data.signedUrl}${join}download=${encodeURIComponent(options.downloadFileName)}`;
+  }
+
+  return data.signedUrl as string;
 }
 
