@@ -14,6 +14,7 @@ import casesRoutes from './routes/cases.routes';
 import proposalsRoutes from './routes/proposals.routes';
 import messagesRoutes from './routes/messages.routes';
 import documentsRoutes from './routes/documents.routes';
+import reviewsRoutes from './routes/reviews.routes';
 import socketService from './services/socket.service';
 import aiRoutes from './routes/ai.routes';
 import predictionRoutes from './routes/prediction.routes';
@@ -62,7 +63,7 @@ app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: process.env.NODE_ENV === 'production' ? 100 : 500,
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -83,6 +84,7 @@ app.use('/api/cases', casesRoutes);
 app.use('/api', messagesRoutes);
 app.use('/api', documentsRoutes);
 app.use('/api', notificationsRoutes);
+app.use('/api/reviews', reviewsRoutes);
 
 app.get('/api/health', (_req, res) => {
   res.json({

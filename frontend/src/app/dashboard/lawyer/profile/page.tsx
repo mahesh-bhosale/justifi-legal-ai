@@ -227,10 +227,10 @@ export default function LawyerProfilePage() {
                     <span className="text-gray-500">Experience:</span>
                     <span className="ml-2 font-medium">{profile.yearsExperience} years</span>
                   </div>
-                  <div>
+                  {/* <div>
                     <span className="text-gray-500">Success Rate:</span>
                     <span className="ml-2 font-medium">{profile.successRate}%</span>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </Card>
@@ -359,10 +359,10 @@ export default function LawyerProfilePage() {
                   <span className="text-gray-500">Cases Handled:</span>
                   <span className="font-medium">{profile.casesHandled}</span>
                 </div>
-                <div className="flex justify-between">
+                {/* <div className="flex justify-between">
                   <span className="text-gray-500">Success Rate:</span>
                   <span className="font-medium">{profile.successRate}%</span>
-                </div>
+                </div> */}
                 <div className="flex justify-between">
                   <span className="text-gray-500">Experience:</span>
                   <span className="font-medium">{profile.yearsExperience} years</span>

@@ -23,6 +23,8 @@ import {
   type CaseDocument,
 } from '../../../../../lib/caseDocuments';
 import { useAuth } from '../../../../../contexts/AuthContext';
+import ReviewForm from '../../../../../components/ReviewForm';
+import { getCaseReviewEligibility, type CaseReviewEligibility } from '../../../../../lib/reviews';
 
 function CitizenCaseDetailContent() {
   const params = useParams();
@@ -60,6 +62,11 @@ function CitizenCaseDetailContent() {
   const [description, setDescription] = useState('');
   const [documentsError, setDocumentsError] = useState<string | null>(null);
 
+  const [reviewEligibility, setReviewEligibility] = useState<CaseReviewEligibility | null>(null);
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewError, setReviewError] = useState<string | null>(null);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+
   const loadProposals = useCallback(async () => {
     try {
       const data = await getCaseProposals(caseId);
@@ -94,6 +101,34 @@ function CitizenCaseDetailContent() {
       void fetchCase();
     }
   }, [caseId, fetchCase]);
+
+  useEffect(() => {
+    const loadReviewEligibility = async () => {
+      // Only citizens who own the case can rate.
+      if (!caseData || !user) return;
+      const role = user.role?.toLowerCase().trim();
+      if (role !== 'citizen') return;
+      if (user.id !== caseData.citizenId) return;
+      if (!(caseData.status === 'resolved' || caseData.status === 'closed')) return;
+      if (!caseData.lawyerId) return;
+
+      setReviewLoading(true);
+      setReviewError(null);
+      try {
+        const data = await getCaseReviewEligibility(caseId);
+        setReviewEligibility(data);
+      } catch (error: unknown) {
+        console.error('Error loading review eligibility:', error);
+        const ax = error as { response?: { data?: { message?: string } } };
+        setReviewError(ax.response?.data?.message || 'Failed to load review status.');
+        setReviewEligibility(null);
+      } finally {
+        setReviewLoading(false);
+      }
+    };
+
+    void loadReviewEligibility();
+  }, [caseData, caseId, user]);
 
   useEffect(() => {
     if (searchParams.get('edit') === '1') {
@@ -486,6 +521,37 @@ function CitizenCaseDetailContent() {
                 </dl>
               </div>
             </div>
+
+            {user?.role?.toLowerCase().trim() === 'citizen' &&
+              user.id === caseData.citizenId &&
+              (caseData.status === 'resolved' || caseData.status === 'closed') &&
+              caseData.lawyerId && (
+                <div className="mt-6 rounded-lg border border-gray-200 bg-white p-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <h3 className="text-md font-semibold text-gray-900">Rate Lawyer</h3>
+                      <p className="text-sm text-gray-600">
+                        Help other citizens by sharing your experience.
+                      </p>
+                    </div>
+                    {reviewLoading || reviewEligibility === null ? (
+                      <span className="text-sm text-gray-500">Checking eligibility…</span>
+                    ) : reviewEligibility.hasReviewForCase || reviewEligibility.hasUserReviewedLawyer ? (
+                      <span className="text-sm font-medium text-gray-700">
+                        You have already reviewed this lawyer
+                      </span>
+                    ) : (
+                      <Button
+                        className="bg-blue-600 hover:bg-blue-700"
+                        onClick={() => setShowReviewForm(true)}
+                      >
+                        Rate Lawyer
+                      </Button>
+                    )}
+                  </div>
+                  {reviewError && <p className="mt-2 text-sm text-red-600">{reviewError}</p>}
+                </div>
+              )}
           </Card>
         )}
 
@@ -644,6 +710,50 @@ function CitizenCaseDetailContent() {
           </Card>
         )}
       </div>
+
+      {showReviewForm && caseData && caseData.lawyerId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="max-w-lg w-full rounded-lg bg-white shadow-xl p-6 space-y-4">
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="text-lg font-semibold text-gray-900">Rate Lawyer</h3>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowReviewForm(false);
+                  setReviewError(null);
+                }}
+              >
+                Close
+              </Button>
+            </div>
+
+            {reviewError && <p className="text-sm text-red-600">{reviewError}</p>}
+
+            <ReviewForm
+              caseId={caseId}
+              lawyerId={caseData.lawyerId}
+              onSubmitSuccess={() => {
+                setShowReviewForm(false);
+                setReviewError(null);
+                setReviewLoading(true);
+
+                void getCaseReviewEligibility(caseId)
+                  .then((data) => setReviewEligibility(data))
+                  .catch((error: unknown) => {
+                    console.error('Error refreshing review eligibility:', error);
+                    const ax = error as { response?: { data?: { message?: string } } };
+                    setReviewError(ax.response?.data?.message || 'Failed to refresh review status.');
+                  })
+                  .finally(() => setReviewLoading(false));
+              }}
+              onCancel={() => {
+                setShowReviewForm(false);
+                setReviewError(null);
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       {showWithdrawModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">

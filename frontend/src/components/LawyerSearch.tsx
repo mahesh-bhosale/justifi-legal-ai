@@ -44,12 +44,12 @@ export default function LawyerSearch({
     }
   };
 
-  const searchProfiles = useCallback(async (searchFilters?: LawyerProfileFilters) => {
+  const searchProfiles = useCallback(async (searchFilters: LawyerProfileFilters) => {
     setLoading(true);
     setError(null);
     
     try {
-      const response = await lawyerProfileApi.getProfiles(searchFilters || filters);
+      const response = await lawyerProfileApi.getProfiles(searchFilters);
       if (response.success) {
         setProfiles(response.data);
       } else {
@@ -62,12 +62,14 @@ export default function LawyerSearch({
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, []);
 
   useEffect(() => {
-    loadOptions();
-    searchProfiles();
-  }, [searchProfiles]);
+    void loadOptions();
+    // Initial search: show default list with no filters.
+    void searchProfiles({});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleFilterChange = (key: keyof LawyerProfileFilters, value: unknown) => {
     setFilters(prev => ({
@@ -85,16 +87,16 @@ export default function LawyerSearch({
 
   const clearFilters = () => {
     setFilters({});
-    searchProfiles({});
+    void searchProfiles({});
   };
 
   const applyFilters = () => {
-    searchProfiles(filters);
+    void searchProfiles(filters);
   };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    searchProfiles(filters);
+    void searchProfiles(filters);
   };
 
   return (

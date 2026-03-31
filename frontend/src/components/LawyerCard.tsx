@@ -122,10 +122,10 @@ export default function LawyerCard({
             <span className="text-gray-500">Experience:</span>
             <span className="ml-1 font-medium">{profile.yearsExperience} years</span>
           </div>
-          <div>
+          {/* <div>
             <span className="text-gray-500">Success Rate:</span>
             <span className="ml-1 font-medium">{profile.successRate}%</span>
-          </div>
+          </div> */}
         </div>
 
         {/* Service Areas */}

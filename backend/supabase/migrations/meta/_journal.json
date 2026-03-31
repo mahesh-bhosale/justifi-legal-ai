@@ -36,6 +36,20 @@
       "when": 1773661001474,
       "tag": "0004_smart_satana",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1774940383862,
+      "tag": "0005_jittery_master_mold",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1774941609651,
+      "tag": "0006_uneven_sister_grimm",
+      "breakpoints": true
     }
   ]
 }

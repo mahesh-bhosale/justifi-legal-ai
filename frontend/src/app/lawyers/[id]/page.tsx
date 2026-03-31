@@ -6,6 +6,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { lawyerProfileApi, type LawyerProfile } from '@/lib/lawyer-profiles';
 import Button from '@/components/Button';
 import Card from '@/components/Card';
+import ReviewList from '@/components/ReviewList';
+import { getLawyerReviews, getLawyerReviewStats, type LawyerReviewStats, type Review } from '@/lib/reviews';
 
 export default function LawyerDetailPage() {
   const params = useParams();
@@ -14,6 +16,10 @@ export default function LawyerDetailPage() {
   const [profile, setProfile] = useState<LawyerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [reviewsError, setReviewsError] = useState<string | null>(null);
+  const [lawyerReviewStats, setLawyerReviewStats] = useState<LawyerReviewStats | null>(null);
+  const [lawyerReviews, setLawyerReviews] = useState<Review[]>([]);
 
   useEffect(() => {
     if (params.id) {
@@ -40,6 +46,33 @@ export default function LawyerDetailPage() {
       setLoading(false);
     }
   };
+
+  const loadReviews = async (lawyerUserId: string) => {
+    setReviewsLoading(true);
+    setReviewsError(null);
+    try {
+      const [stats, reviews] = await Promise.all([
+        getLawyerReviewStats(lawyerUserId),
+        getLawyerReviews(lawyerUserId),
+      ]);
+      setLawyerReviewStats(stats);
+      setLawyerReviews(reviews);
+    } catch (error: unknown) {
+      console.error('Error loading lawyer reviews:', error);
+      const errorObj = error as { response?: { data?: { message?: string } } };
+      setReviewsError(errorObj.response?.data?.message || 'Failed to load reviews');
+      setLawyerReviewStats(null);
+      setLawyerReviews([]);
+    } finally {
+      setReviewsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (profile?.userId) {
+      void loadReviews(profile.userId);
+    }
+  }, [profile?.userId]);
 
   const handleContact = () => {
     // Wait for auth to load
@@ -200,10 +233,10 @@ export default function LawyerDetailPage() {
                     <span className="text-gray-500">Experience:</span>
                     <span className="ml-2 font-medium">{profile.yearsExperience} years</span>
                   </div>
-                  <div>
+                  {/* <div>
                     <span className="text-gray-500">Success Rate:</span>
                     <span className="ml-2 font-medium">{profile.successRate}%</span>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </Card>
@@ -343,16 +376,28 @@ export default function LawyerDetailPage() {
                   <span className="text-gray-500">Cases Handled:</span>
                   <span className="font-medium">{profile.casesHandled}</span>
                 </div>
-                <div className="flex justify-between">
+                {/* <div className="flex justify-between">
                   <span className="text-gray-500">Success Rate:</span>
                   <span className="font-medium">{profile.successRate}%</span>
-                </div>
+                </div> */}
                 <div className="flex justify-between">
                   <span className="text-gray-500">Experience:</span>
                   <span className="font-medium">{profile.yearsExperience} years</span>
                 </div>
               </div>
             </Card>
+
+            {/* Reviews */}
+            {reviewsLoading ? (
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Loading reviews...</h3>
+              </Card>
+            ) : (
+              <>
+                {reviewsError && <p className="text-sm text-red-600">{reviewsError}</p>}
+                <ReviewList stats={lawyerReviewStats} reviews={lawyerReviews} />
+              </>
+            )}
 
             {/* Profile Info */}
             <Card>

@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "uq_reviews_citizen_lawyer" ON "reviews" USING btree ("citizen_id","lawyer_id");

@@ -6,9 +6,10 @@ export interface Review {
   lawyerId: string;
   citizenId: string;
   rating: number;
-  comment: string;
+  comment: string | null;
   createdAt: string;
   updatedAt: string;
+  citizenName?: string;
 }
 
 export interface CreateReviewInput {
@@ -19,11 +20,17 @@ export interface CreateReviewInput {
 }
 
 export interface LawyerReviewStats {
-  averageRating: number;
+  averageRating: number | null;
   totalReviews: number;
   ratingDistribution: {
     [key: number]: number;
   };
+}
+
+export interface CaseReviewEligibility {
+  hasReviewForCase: boolean;
+  hasUserReviewedLawyer: boolean;
+  review: Review | null;
 }
 
 // Create a review for a lawyer after case resolution
@@ -44,8 +51,8 @@ export const getLawyerReviewStats = async (lawyerId: string): Promise<LawyerRevi
   return response.data.data;
 };
 
-// Get reviews for a specific case
-export const getCaseReviews = async (caseId: number): Promise<Review[]> => {
+// Get review eligibility for a citizen on a specific case
+export const getCaseReviewEligibility = async (caseId: number): Promise<CaseReviewEligibility> => {
   const response = await api.get(`/api/reviews/case/${caseId}`);
   return response.data.data;
 };

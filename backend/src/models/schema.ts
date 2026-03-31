@@ -186,7 +186,9 @@ export const reviews = pgTable('reviews', {
   comment: text('comment'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-});
+}, (t) => ({
+  citizenLawyerUnique: uniqueIndex('uq_reviews_citizen_lawyer').on(t.citizenId, t.lawyerId),
+}));
 
 // Subscription status enum
 export const subscriptionStatusEnum = pgEnum('subscription_status', [
