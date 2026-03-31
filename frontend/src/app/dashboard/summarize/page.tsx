@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SourceSelector, { type SourceType } from '@/components/ai/SourceSelector';
 import SummaryOptions, { type SummaryLevel } from '@/components/ai/SummaryOptions';
 import SummaryResult from '@/components/ai/SummaryResult';
@@ -37,6 +37,12 @@ export default function SummarizePage() {
   });
 
   const [showChat, setShowChat] = useState(true); // Show chat by default
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    }
+  }, []);
 
   const handleTextChange = (text: string) => {
     setState(prev => ({ ...prev, textInput: text, sourceType: 'text' }));

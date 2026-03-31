@@ -20,6 +20,7 @@ import aiRoutes from './routes/ai.routes';
 import predictionRoutes from './routes/prediction.routes';
 import analyticsRoutes from './analytics/analytics.routes';
 import usersRoutes from './routes/users.routes';
+import profileRoutes from './routes/profile.routes';
 import notificationsRoutes from './routes/notifications.routes';
 import { connectKafka, startConsumers } from './services/kafka.service';
 
@@ -79,6 +80,7 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/prediction', predictionRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/users', usersRoutes);
+app.use('/api', profileRoutes);
 app.use('/api', proposalsRoutes);
 app.use('/api/cases', casesRoutes);
 app.use('/api', messagesRoutes);

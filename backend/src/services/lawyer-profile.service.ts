@@ -106,17 +106,43 @@ class LawyerProfileService {
   }
 
   /**
-   * Get a lawyer profile by user ID
+   * Get a lawyer profile by user ID (includes user details)
    */
-  async getProfileByUserId(userId: string): Promise<LawyerProfile | null> {
+  async getProfileByUserId(userId: string): Promise<LawyerProfileWithUser | null> {
     try {
-      const [profile] = await db
-        .select()
+      const result = await db
+        .select({
+          id: lawyerProfiles.id,
+          userId: lawyerProfiles.userId,
+          specializations: lawyerProfiles.specializations,
+          yearsExperience: lawyerProfiles.yearsExperience,
+          bio: lawyerProfiles.bio,
+          officeAddress: lawyerProfiles.officeAddress,
+          serviceAreas: lawyerProfiles.serviceAreas,
+          languages: lawyerProfiles.languages,
+          education: lawyerProfiles.education,
+          barAdmissions: lawyerProfiles.barAdmissions,
+          hourlyRate: lawyerProfiles.hourlyRate,
+          consultationFee: lawyerProfiles.consultationFee,
+          availabilityStatus: lawyerProfiles.availabilityStatus,
+          rating: lawyerProfiles.rating,
+          casesHandled: lawyerProfiles.casesHandled,
+          successRate: lawyerProfiles.successRate,
+          verified: lawyerProfiles.verified,
+          createdAt: lawyerProfiles.createdAt,
+          updatedAt: lawyerProfiles.updatedAt,
+          user: {
+            id: users.id,
+            name: users.name,
+            email: users.email,
+          },
+        })
         .from(lawyerProfiles)
+        .innerJoin(users, eq(lawyerProfiles.userId, users.id))
         .where(eq(lawyerProfiles.userId, userId))
         .limit(1);
 
-      return profile || null;
+      return result[0] || null;
     } catch (error) {
       console.error('Error getting lawyer profile by user ID:', error);
       throw new Error('Failed to get lawyer profile');

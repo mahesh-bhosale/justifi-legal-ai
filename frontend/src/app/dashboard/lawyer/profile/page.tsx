@@ -6,13 +6,19 @@ import { lawyerProfileApi, type LawyerProfile } from '@/lib/lawyer-profiles';
 import LawyerProfileForm from '@/components/LawyerProfileForm';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
+import { useAuth } from '@/contexts/AuthContext';
+import { profileApi } from '@/lib/profile';
 
 export default function LawyerProfilePage() {
   const router = useRouter();
+  const { user, setUser } = useAuth();
   const [profile, setProfile] = useState<LawyerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState(user?.name || '');
+  const [nameSaving, setNameSaving] = useState(false);
+  const [nameError, setNameError] = useState<string | null>(null);
 
   useEffect(() => {
     loadProfile();
@@ -26,6 +32,9 @@ export default function LawyerProfilePage() {
       const response = await lawyerProfileApi.getMyProfile();
       if (response.success) {
         setProfile(response.data);
+        if (response.data.user?.name) {
+          setName(response.data.user.name);
+        }
       } else {
         setError(response.message || 'Failed to load profile');
       }
@@ -46,6 +55,35 @@ export default function LawyerProfilePage() {
   const handleProfileSuccess = (updatedProfile: LawyerProfile) => {
     setProfile(updatedProfile);
     setIsEditing(false);
+  };
+
+  const handleSaveName = async () => {
+    if (!name.trim()) {
+      setNameError('Name is required');
+      return;
+    }
+
+    setNameSaving(true);
+    setNameError(null);
+    try {
+      const res = await profileApi.updateProfile({ name: name.trim() });
+      if (res.success) {
+        setUser({
+          ...(user || {
+            id: res.data.id,
+            email: res.data.email,
+            role: res.data.role,
+          }),
+          name: res.data.name,
+        });
+      } else {
+        setNameError(res.message || 'Failed to update name');
+      }
+    } catch (err: any) {
+      setNameError(err?.response?.data?.message || 'Failed to update name');
+    } finally {
+      setNameSaving(false);
+    }
   };
 
   const handleEdit = () => {
@@ -146,6 +184,38 @@ export default function LawyerProfilePage() {
             </h1>
           </div>
 
+          <Card className="mb-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">Account Name</h2>
+            <p className="text-sm text-gray-500 mb-3">
+              This name is shown in search results, your public profile, and the dashboard
+              navbar.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (nameError) setNameError(null);
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {nameError && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {nameError}
+                  </p>
+                )}
+              </div>
+              <Button onClick={handleSaveName} disabled={nameSaving}>
+                {nameSaving ? 'Saving...' : 'Save Name'}
+              </Button>
+            </div>
+          </Card>
+
           <LawyerProfileForm
             initialData={profile ? {
               specializations: profile.specializations,
@@ -198,7 +268,7 @@ export default function LawyerProfilePage() {
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-2xl font-semibold text-gray-900">
-                      {profile.user?.name || 'Your Name'}
+                      {profile.user?.name || user?.name || 'Lawyer'}
                     </h2>
                     <div className="flex items-center space-x-2 mt-2">
                       <span className={`px-3 py-1 rounded-full text-sm font-medium ${getAvailabilityColor(profile.availabilityStatus)}`}>

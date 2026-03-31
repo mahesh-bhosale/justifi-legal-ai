@@ -9,6 +9,7 @@ export interface User {
   id: string;
   email: string;
   role: string;
+  name?: string;
   // Add other user properties as needed
   [key: string]: unknown;
 }
@@ -110,10 +111,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const decoded = decodeUser();
 
           if (decoded) {
-            const userData = {
+            const userData: User = {
               id: String(decoded.id || '').trim(),
               email: String(decoded.email || '').trim(),
               role: String(decoded.role || 'citizen').trim(),
+              name: decoded.name?.trim(),
             };
             
             if (!userData.id) {
@@ -123,6 +125,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             }
             
             updateUser(userData);
+
+            // Hydrate latest user data from backend (JWT may not include updated name)
+            try {
+              const res = await api.get('/api/profile');
+              if (res.data?.success && res.data?.data) {
+                const serverUser = res.data.data as { name?: string; email?: string; role?: string; id?: string };
+                if (serverUser?.name) {
+                  updateUser({
+                    ...userData,
+                    name: String(serverUser.name).trim(),
+                  });
+                }
+              }
+            } catch {
+              // ignore (token might be valid locally but backend unreachable)
+            }
           } else {
             updateUser(null);
           }

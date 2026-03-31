@@ -65,7 +65,7 @@ const decodeBase64 = (str: string): string => {
   }
 };
 
-export const decodeUser = (): { id: string; role: string; email: string } | null => {
+export const decodeUser = (): { id: string; role: string; email: string; name?: string } | null => {
   try {
     const token = getToken();
     if (!token) {
@@ -95,6 +95,8 @@ export const decodeUser = (): { id: string; role: string; email: string } | null
       const userId = String(userData.sub || userData.userId || userData.id || '').trim();
       const userRole = String(userData.role || 'citizen').trim();
       const userEmail = String(userData.email || '').trim();
+      const userName =
+        typeof userData.name === 'string' ? userData.name.trim() : undefined;
 
       if (!userId) {
         console.error('No user ID found in token');
@@ -105,6 +107,7 @@ export const decodeUser = (): { id: string; role: string; email: string } | null
         id: userId,
         role: userRole,
         email: userEmail,
+        name: userName,
       };
     } catch (error) {
       console.error('Error parsing JWT payload:', error);
