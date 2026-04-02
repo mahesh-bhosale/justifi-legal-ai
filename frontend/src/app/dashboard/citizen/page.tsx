@@ -179,10 +179,16 @@ export default function CitizenDashboard() {
             Case History Timeline
           </h3>
           <LineChartComponent
-            data={history.map((h) => ({
-              label: new Date(h.createdAt).toLocaleDateString(),
-              count: 1,
-            }))}
+            data={Object.values(
+              history.reduce((acc, h) => {
+                const date = new Date(h.createdAt).toLocaleDateString();
+                if (!acc[date]) {
+                  acc[date] = { label: date, count: 0 };
+                }
+                acc[date].count += 1;
+                return acc;
+              }, {} as Record<string, { label: string; count: number }>)
+            ).sort((a, b) => new Date(a.label).getTime() - new Date(b.label).getTime())}
             xKey="label"
             yKey="count"
             loading={analyticsLoading}
