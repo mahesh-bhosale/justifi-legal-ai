@@ -167,39 +167,39 @@ function CitizenCaseDetailContent() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500';
       case 'pending_lawyer_acceptance':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-500';
       case 'in_progress':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
       case 'resolved':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
       case 'closed':
-        return 'bg-gray-200 text-gray-800';
+        return 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
       case 'rejected':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
     }
   };
 
   const getUrgencyColor = (urgency: string) => {
     switch (urgency) {
       case 'high':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
       case 'medium':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-500';
       case 'low':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
     }
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-600 dark:border-yellow-500"></div>
       </div>
     );
   }
@@ -207,8 +207,8 @@ function CitizenCaseDetailContent() {
   if (!caseData) {
     return (
       <div className="text-center py-12">
-        <h3 className="text-lg font-medium text-gray-900">Case not found</h3>
-        <p className="text-gray-500">The case you&apos;re looking for doesn&apos;t exist.</p>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Case not found</h3>
+        <p className="text-gray-500 dark:text-gray-400">The case you&apos;re looking for doesn&apos;t exist.</p>
         <Button onClick={handleBackToCases} className="mt-4">
           Back to Cases
         </Button>
@@ -242,8 +242,8 @@ function CitizenCaseDetailContent() {
           <Button onClick={handleBackToCases} variant="outline" className="mb-4">
             ← Back to Cases
           </Button>
-          <h1 className="text-2xl font-bold text-gray-900">{caseData.title}</h1>
-          <p className="text-gray-600">Case ID: #{caseData.id}</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{caseData.title}</h1>
+          <p className="text-gray-600 dark:text-gray-400">Case ID: #{caseData.id}</p>
         </div>
         <div className="flex gap-2">
           <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(caseData.status)}`}>
@@ -259,10 +259,10 @@ function CitizenCaseDetailContent() {
         <div
           className={`rounded-md border px-4 py-3 text-sm ${
             caseData.status === 'resolved'
-              ? 'bg-green-50 border-green-200 text-green-900'
+              ? 'bg-green-50 border-green-200 text-green-900 dark:bg-green-900/20 dark:border-green-900/30 dark:text-green-400'
               : caseData.status === 'rejected'
-                ? 'bg-red-50 border-red-200 text-red-900'
-                : 'bg-gray-50 border-gray-200 text-gray-800'
+                ? 'bg-red-50 border-red-200 text-red-900 dark:bg-red-900/20 dark:border-red-900/30 dark:text-red-400'
+                : 'bg-gray-50 border-gray-200 text-gray-800 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300'
           }`}
         >
           {caseData.status === 'resolved' && 'This case is resolved.'}
@@ -272,7 +272,7 @@ function CitizenCaseDetailContent() {
       )}
 
       {caseData.status === 'pending_lawyer_acceptance' && caseData.lawyerId && (
-        <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <div className="rounded-md border border-amber-200 dark:border-amber-900/30 bg-amber-50 dark:bg-amber-900/20 px-4 py-3 text-sm text-amber-900 dark:text-amber-400">
           This case cannot be withdrawn because a lawyer has already been assigned.
         </div>
       )}
@@ -283,16 +283,16 @@ function CitizenCaseDetailContent() {
         </div>
       )}
 
-      <div className="border-b border-gray-200">
+      <div className="border-b border-gray-200 dark:border-gray-800">
         <nav className="-mb-px flex space-x-8">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === tab.id
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-yellow-500 text-yellow-600 dark:text-yellow-500'
+                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
               }`}
             >
               <span className="mr-2">{tab.icon}</span>
@@ -328,7 +328,7 @@ function CitizenCaseDetailContent() {
                 {canWithdraw && (
                   <Button
                     variant="outline"
-                    className="border-red-300 text-red-700 hover:bg-red-50"
+                    className="border-red-300 text-red-700 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
                     onClick={() => {
                       setWithdrawError(null);
                       setShowWithdrawModal(true);
@@ -341,39 +341,39 @@ function CitizenCaseDetailContent() {
             )}
 
             {editing && canEdit && (
-              <div className="mb-8 rounded-lg border border-blue-100 bg-blue-50/50 p-4 space-y-4">
-                <h3 className="text-md font-semibold text-gray-900">Edit case details</h3>
-                {saveError && <p className="text-sm text-red-600">{saveError}</p>}
+              <div className="mb-8 rounded-lg border border-yellow-100 dark:border-yellow-900/30 bg-yellow-50/30 dark:bg-yellow-900/10 p-4 space-y-4">
+                <h3 className="text-md font-semibold text-gray-900 dark:text-white">Edit case details</h3>
+                {saveError && <p className="text-sm text-red-600 dark:text-red-400">{saveError}</p>}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
                     <input
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                      className="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:ring-yellow-500 focus:border-yellow-500"
                       value={editTitle}
                       onChange={(e) => setEditTitle(e.target.value)}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
                     <input
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                      className="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:ring-yellow-500 focus:border-yellow-500"
                       value={editCategory}
                       onChange={(e) => setEditCategory(e.target.value)}
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
                     <textarea
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                      className="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:ring-yellow-500 focus:border-yellow-500"
                       rows={4}
                       value={editDescription}
                       onChange={(e) => setEditDescription(e.target.value)}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Urgency</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Urgency</label>
                     <select
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                      className="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:ring-yellow-500 focus:border-yellow-500"
                       value={editUrgency}
                       onChange={(e) => setEditUrgency(e.target.value as typeof editUrgency)}
                     >
@@ -383,29 +383,29 @@ function CitizenCaseDetailContent() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Budget (INR)</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Budget (INR)</label>
                     <input
                       type="number"
                       min={0}
                       step="0.01"
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                      className="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:ring-yellow-500 focus:border-yellow-500"
                       value={editBudget}
                       onChange={(e) => setEditBudget(e.target.value)}
                       placeholder="Optional"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Location</label>
                     <input
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                      className="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:ring-yellow-500 focus:border-yellow-500"
                       value={editLocation}
                       onChange={(e) => setEditLocation(e.target.value)}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Preferred language</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Preferred language</label>
                     <input
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                      className="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:ring-yellow-500 focus:border-yellow-500"
                       value={editPreferredLanguage}
                       onChange={(e) => setEditPreferredLanguage(e.target.value)}
                     />
@@ -460,64 +460,64 @@ function CitizenCaseDetailContent() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Case details</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Case details</h3>
                 <dl className="space-y-3">
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Category</dt>
-                    <dd className="text-sm text-gray-900 capitalize">{caseData.category}</dd>
+                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Category</dt>
+                    <dd className="text-sm text-gray-900 dark:text-white capitalize">{caseData.category}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Description</dt>
-                    <dd className="text-sm text-gray-900">{caseData.description}</dd>
+                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Description</dt>
+                    <dd className="text-sm text-gray-900 dark:text-white">{caseData.description}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Location</dt>
-                    <dd className="text-sm text-gray-900">{caseData.location || 'Not specified'}</dd>
+                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Location</dt>
+                    <dd className="text-sm text-gray-900 dark:text-white">{caseData.location || 'Not specified'}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Budget</dt>
-                    <dd className="text-sm text-gray-900">
+                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Budget</dt>
+                    <dd className="text-sm text-gray-900 dark:text-white">
                       {caseData.budget ? `₹${caseData.budget}` : 'Not specified'}
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Preferred language</dt>
-                    <dd className="text-sm text-gray-900">{caseData.preferredLanguage || 'Not specified'}</dd>
+                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Preferred language</dt>
+                    <dd className="text-sm text-gray-900 dark:text-white">{caseData.preferredLanguage || 'Not specified'}</dd>
                   </div>
                 </dl>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Timeline</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Timeline</h3>
                 <dl className="space-y-3">
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Created</dt>
-                    <dd className="text-sm text-gray-900">{new Date(caseData.createdAt).toLocaleDateString()}</dd>
+                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Created</dt>
+                    <dd className="text-sm text-gray-900 dark:text-white">{new Date(caseData.createdAt).toLocaleDateString()}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Last updated</dt>
-                    <dd className="text-sm text-gray-900">{new Date(caseData.updatedAt).toLocaleDateString()}</dd>
+                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Last updated</dt>
+                    <dd className="text-sm text-gray-900 dark:text-white">{new Date(caseData.updatedAt).toLocaleDateString()}</dd>
                   </div>
                   {caseData.nextHearingDate && (
                     <div>
-                      <dt className="text-sm font-medium text-gray-500">Next hearing</dt>
-                      <dd className="text-sm text-gray-900">
+                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Next hearing</dt>
+                      <dd className="text-sm text-gray-900 dark:text-white">
                         {new Date(caseData.nextHearingDate).toLocaleDateString()}
                       </dd>
                     </div>
                   )}
                   {caseData.status === 'resolved' && caseData.resolution && (
                     <div>
-                      <dt className="text-sm font-medium text-gray-500">Resolution</dt>
-                      <dd className="text-sm text-gray-900 whitespace-pre-wrap">{caseData.resolution}</dd>
+                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Resolution</dt>
+                      <dd className="text-sm text-gray-900 dark:text-white whitespace-pre-wrap">{caseData.resolution}</dd>
                     </div>
                   )}
                   {caseData.status === 'closed' && resolutionDisplay && (
                     <div>
-                      <dt className="text-sm font-medium text-gray-500">
+                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
                         {caseData.resolution?.startsWith('WITHDRAWAL_REASON:') ? 'Withdrawal reason' : 'Note'}
                       </dt>
-                      <dd className="text-sm text-gray-900 whitespace-pre-wrap">{resolutionDisplay}</dd>
+                      <dd className="text-sm text-gray-900 dark:text-white whitespace-pre-wrap">{resolutionDisplay}</dd>
                     </div>
                   )}
                 </dl>
@@ -528,30 +528,30 @@ function CitizenCaseDetailContent() {
               user.id === caseData.citizenId &&
               (caseData.status === 'resolved' || caseData.status === 'closed') &&
               caseData.lawyerId && (
-                <div className="mt-6 rounded-lg border border-gray-200 bg-white p-4">
+                <div className="mt-6 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-4">
                   <div className="flex items-center justify-between gap-4">
                     <div>
-                      <h3 className="text-md font-semibold text-gray-900">Rate Lawyer</h3>
-                      <p className="text-sm text-gray-600">
+                      <h3 className="text-md font-semibold text-gray-900 dark:text-white">Rate Lawyer</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         Help other citizens by sharing your experience.
                       </p>
                     </div>
                     {reviewLoading || reviewEligibility === null ? (
-                      <span className="text-sm text-gray-500">Checking eligibility…</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">Checking eligibility…</span>
                     ) : reviewEligibility.hasReviewForCase || reviewEligibility.hasUserReviewedLawyer ? (
-                      <span className="text-sm font-medium text-gray-700">
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                         You have already reviewed this lawyer
                       </span>
                     ) : (
                       <Button
-                        className="bg-blue-600 hover:bg-blue-700"
+                        className="bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600"
                         onClick={() => setShowReviewForm(true)}
                       >
                         Rate Lawyer
                       </Button>
                     )}
                   </div>
-                  {reviewError && <p className="mt-2 text-sm text-red-600">{reviewError}</p>}
+                  {reviewError && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{reviewError}</p>}
                 </div>
               )}
           </Card>
@@ -569,32 +569,32 @@ function CitizenCaseDetailContent() {
           <Card className="p-6">
             <div className="space-y-8">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Upload document</h3>
-                <p className="text-sm text-gray-600 mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Upload document</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                   Upload documents related to this case. Supported file types depend on your browser.
                 </p>
                 <div className="space-y-4">
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-medium text-gray-700">File</label>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">File</label>
                     <input
                       type="file"
-                      className="block w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                      className="block w-full text-sm text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 dark:file:bg-yellow-900/30 file:text-yellow-700 dark:file:text-yellow-400 hover:file:bg-yellow-100 dark:hover:file:bg-yellow-900/50"
                       onChange={(e) => setSelectedFile(e.target.files?.[0] ?? null)}
                     />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      Description <span className="text-gray-400 text-xs">(optional)</span>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Description <span className="text-gray-400 dark:text-gray-500 text-xs">(optional)</span>
                     </label>
                     <textarea
-                      className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="block w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm shadow-sm focus:border-yellow-500 focus:ring-yellow-500 dark:text-white"
                       rows={3}
                       placeholder="Add a short description"
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                     />
                   </div>
-                  {documentsError && <p className="text-sm text-red-600">{documentsError}</p>}
+                  {documentsError && <p className="text-sm text-red-600 dark:text-red-400">{documentsError}</p>}
                   <div className="flex justify-end">
                     <Button
                       onClick={async () => {
@@ -631,40 +631,40 @@ function CitizenCaseDetailContent() {
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Documents</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Documents</h3>
                 {documentsLoading ? (
                   <div className="flex items-center justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600 dark:border-yellow-500"></div>
                   </div>
                 ) : documents.length === 0 ? (
-                  <div className="text-center py-8 text-sm text-gray-500">No documents uploaded yet.</div>
+                  <div className="text-center py-8 text-sm text-gray-500 dark:text-gray-400 italic">No documents uploaded yet.</div>
                 ) : (
                   <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 text-sm">
-                      <thead className="bg-gray-50">
+                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800 text-sm">
+                      <thead className="bg-gray-50 dark:bg-gray-800/50">
                         <tr>
-                          <th className="px-4 py-2 text-left font-medium text-gray-700">File name</th>
-                          <th className="px-4 py-2 text-left font-medium text-gray-700">Uploaded by</th>
-                          <th className="px-4 py-2 text-left font-medium text-gray-700">Date</th>
-                          <th className="px-4 py-2 text-left font-medium text-gray-700">Description</th>
-                          <th className="px-4 py-2 text-left font-medium text-gray-700">Actions</th>
+                          <th className="px-4 py-2 text-left font-medium text-gray-700 dark:text-gray-300">File name</th>
+                          <th className="px-4 py-2 text-left font-medium text-gray-700 dark:text-gray-300">Uploaded by</th>
+                          <th className="px-4 py-2 text-left font-medium text-gray-700 dark:text-gray-300">Date</th>
+                          <th className="px-4 py-2 text-left font-medium text-gray-700 dark:text-gray-300">Description</th>
+                          <th className="px-4 py-2 text-left font-medium text-gray-700 dark:text-gray-300">Actions</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-200">
+                      <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
                         {documents.map((doc) => (
-                          <tr key={doc.id}>
-                            <td className="px-4 py-2 text-gray-900">
+                          <tr key={doc.id} className="bg-white dark:bg-gray-900/20 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                            <td className="px-4 py-2 text-gray-900 dark:text-white font-medium">
                               {doc.fileName}
                               {doc.fileSize ? (
-                                <span className="ml-2 text-xs text-gray-500">
+                                <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
                                   ({(doc.fileSize / 1024).toFixed(1)} KB)
                                 </span>
                               ) : null}
                             </td>
-                            <td className="px-4 py-2 text-gray-700">{doc.uploadedByName || 'Unknown'}</td>
-                            <td className="px-4 py-2 text-gray-700">{new Date(doc.createdAt).toLocaleString()}</td>
-                            <td className="px-4 py-2 text-gray-700 max-w-xs">{doc.description || '—'}</td>
-                            <td className="px-4 py-2 text-gray-700">
+                            <td className="px-4 py-2 text-gray-700 dark:text-gray-300">{doc.uploadedByName || 'Unknown'}</td>
+                            <td className="px-4 py-2 text-gray-700 dark:text-gray-300">{new Date(doc.createdAt).toLocaleString()}</td>
+                            <td className="px-4 py-2 text-gray-700 dark:text-gray-300 max-w-xs truncate">{doc.description || '—'}</td>
+                            <td className="px-4 py-2 text-gray-700 dark:text-gray-300">
                               <div className="flex gap-2">
                                 <Button
                                   variant="outline"
@@ -716,10 +716,10 @@ function CitizenCaseDetailContent() {
       </div>
 
       {showReviewForm && caseData && caseData.lawyerId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="max-w-lg w-full rounded-lg bg-white shadow-xl p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="max-w-lg w-full rounded-lg bg-white dark:bg-gray-900 border dark:border-gray-800 shadow-xl p-6 space-y-4">
             <div className="flex items-center justify-between gap-4">
-              <h3 className="text-lg font-semibold text-gray-900">Rate Lawyer</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Rate Lawyer</h3>
               <Button
                 variant="outline"
                 onClick={() => {
@@ -731,7 +731,7 @@ function CitizenCaseDetailContent() {
               </Button>
             </div>
 
-            {reviewError && <p className="text-sm text-red-600">{reviewError}</p>}
+            {reviewError && <p className="text-sm text-red-600 dark:text-red-400">{reviewError}</p>}
 
             <ReviewForm
               caseId={caseId}
@@ -760,17 +760,18 @@ function CitizenCaseDetailContent() {
       )}
 
       {showWithdrawModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="max-w-lg w-full rounded-lg bg-white shadow-xl p-6 space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Withdraw this case?</h3>
-            <p className="text-sm text-gray-600">Why are you withdrawing this case?</p>
-            {withdrawError && <p className="text-sm text-red-600">{withdrawError}</p>}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="max-w-lg w-full rounded-lg bg-white dark:bg-gray-900 border dark:border-gray-800 shadow-xl p-6 space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Withdraw this case?</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Why are you withdrawing this case?</p>
+            {withdrawError && <p className="text-sm text-red-600 dark:text-red-400">{withdrawError}</p>}
             <div className="space-y-2 max-h-48 overflow-y-auto">
               {WITHDRAW_REASON_PRESETS.map((r) => (
-                <label key={r} className="flex items-center gap-2 text-sm text-gray-800 cursor-pointer">
+                <label key={r} className="flex items-center gap-2 text-sm text-gray-800 dark:text-gray-200 cursor-pointer hover:text-yellow-600 dark:hover:text-yellow-500 transition-colors">
                   <input
                     type="radio"
                     name="withdraw-reason"
+                    className="text-yellow-600 focus:ring-yellow-500 dark:bg-gray-800 dark:border-gray-700"
                     checked={withdrawReason === r}
                     onChange={() => setWithdrawReason(r)}
                   />
@@ -779,9 +780,9 @@ function CitizenCaseDetailContent() {
               ))}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Optional note</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Optional note</label>
               <textarea
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                className="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm dark:text-white focus:ring-yellow-500 focus:border-yellow-500"
                 rows={2}
                 value={withdrawNote}
                 onChange={(e) => setWithdrawNote(e.target.value)}

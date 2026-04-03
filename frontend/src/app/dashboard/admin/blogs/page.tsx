@@ -81,7 +81,7 @@ export default function AdminBlogsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
       </div>
     );
   }
@@ -89,14 +89,14 @@ export default function AdminBlogsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0 border-l-4 border-amber-500 pl-4 py-2">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Blog Management</h1>
-          <p className="text-sm sm:text-base text-gray-600">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Blog Management</h1>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">
             Create and manage platform blogs and legal content
           </p>
         </div>
-        <Button onClick={handleCreateBlog} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+        <Button onClick={handleCreateBlog} className="w-full sm:w-auto shadow-lg shadow-amber-500/10">
           <span className="sm:hidden">Create Blog</span>
           <span className="hidden sm:inline">Create New Blog</span>
         </Button>
@@ -104,12 +104,12 @@ export default function AdminBlogsPage() {
 
       {/* Blog Form Modal */}
       {showCreateForm && (
-        <Card className="p-6">
+        <Card className="p-6 border-amber-200 dark:border-amber-900/30 bg-amber-50/30 dark:bg-amber-900/10">
           <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               {editingBlog ? 'Edit Blog' : 'Create New Blog'}
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-400">
               {editingBlog ? 'Update the blog post details below.' : 'Fill in the details for your new blog post.'}
             </p>
           </div>
@@ -127,16 +127,18 @@ export default function AdminBlogsPage() {
       {/* Blogs List */}
       <Card className="p-6">
         {blogs.length === 0 ? (
-          <div className="text-center py-12">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-            </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No blogs found</h3>
-            <p className="mt-1 text-sm text-gray-500">
+          <div className="text-center py-16">
+            <div className="bg-gray-100 dark:bg-gray-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="h-8 w-8 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+              </svg>
+            </div>
+            <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-white">No blogs found</h3>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Get started by creating your first blog post.
             </p>
-            <div className="mt-6">
-              <Button onClick={handleCreateBlog} className="bg-blue-600 hover:bg-blue-700">
+            <div className="mt-8">
+              <Button onClick={handleCreateBlog}>
                 Create Blog
               </Button>
             </div>
@@ -146,16 +148,16 @@ export default function AdminBlogsPage() {
             {/* Mobile Card Layout */}
             <div className="sm:hidden space-y-4">
               {blogs.map((blog: BlogPostDTO) => (
-                <div key={blog.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                <div key={blog.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm transition-colors">
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-medium text-gray-900 truncate">{blog.title}</h3>
-                      <p className="text-xs text-gray-500 mt-1 line-clamp-2">{blog.excerpt}</p>
+                      <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate">{blog.title}</h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{blog.excerpt}</p>
                     </div>
                     <span className={`ml-2 inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                       blog.status === 'published' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-yellow-100 text-yellow-800'
+                        ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400' 
+                        : 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400'
                     }`}>
                       {blog.status}
                     </span>
@@ -187,54 +189,55 @@ export default function AdminBlogsPage() {
 
             {/* Desktop Table Layout */}
             <div className="hidden sm:block overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-800/50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Title
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Author
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Created
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700 transition-colors">
                   {blogs.map((blog: BlogPostDTO) => (
-                    <tr key={blog.id}>
+                    <tr key={blog.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                       <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-gray-900">{blog.title}</div>
-                        <div className="text-sm text-gray-500 truncate max-w-xs">{blog.excerpt}</div>
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">{blog.title}</div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs">{blog.excerpt}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
                         {blog.author}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                           blog.status === 'published' 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-yellow-100 text-yellow-800'
+                            ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400' 
+                            : 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400'
                         }`}>
                           {blog.status}
                         </span>
                       </td>
-                      <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {blog.createdAt ? new Date(blog.createdAt).toLocaleDateString() : '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-2">
+                        <div className="flex space-x-3">
                           <Button
                             onClick={() => handleEditBlog(blog)}
                             variant="outline"
                             size="sm"
+                            className="bg-white dark:bg-gray-800"
                           >
                             Edit
                           </Button>
@@ -242,7 +245,7 @@ export default function AdminBlogsPage() {
                             onClick={() => handleDeleteBlog(blog.id)}
                             variant="outline"
                             size="sm"
-                            className="text-red-600 border-red-300 hover:bg-red-50"
+                            className="text-red-600 dark:text-red-400 border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20 bg-white dark:bg-gray-800"
                           >
                             Delete
                           </Button>

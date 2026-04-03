@@ -111,7 +111,7 @@ export default function LawyerSearch({
                 placeholder="Search lawyers by name, specialization, or bio..."
                 value={filters.search || ''}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 transition-colors"
               />
             </div>
             <Button type="submit" disabled={loading}>
@@ -133,7 +133,7 @@ export default function LawyerSearch({
         <Card>
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Filters</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Filters</h3>
               <Button variant="secondary" onClick={clearFilters}>
                 Clear All
               </Button>
@@ -142,10 +142,10 @@ export default function LawyerSearch({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Specializations */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Specializations
                 </label>
-                <div className="max-h-40 overflow-y-auto border rounded-md p-3 space-y-2">
+                <div className="max-h-40 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-md p-3 space-y-2 bg-gray-50 dark:bg-gray-800/50">
                   {availableSpecializations.map((spec) => (
                     <label key={spec} className="flex items-center space-x-2">
                       <input
@@ -159,9 +159,9 @@ export default function LawyerSearch({
                             handleArrayFilterChange('specializations', current.filter(s => s !== spec));
                           }
                         }}
-                        className="rounded border-gray-300"
+                        className="rounded border-gray-300 dark:border-gray-600 text-amber-600 focus:ring-amber-500 dark:bg-gray-700"
                       />
-                      <span className="text-sm">{spec}</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{spec}</span>
                     </label>
                   ))}
                 </div>
@@ -169,10 +169,10 @@ export default function LawyerSearch({
 
               {/* Service Areas */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Service Areas
                 </label>
-                <div className="max-h-40 overflow-y-auto border rounded-md p-3 space-y-2">
+                <div className="max-h-40 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-md p-3 space-y-2 bg-gray-50 dark:bg-gray-800/50">
                   {availableServiceAreas.map((area) => (
                     <label key={area} className="flex items-center space-x-2">
                       <input
@@ -186,9 +186,9 @@ export default function LawyerSearch({
                             handleArrayFilterChange('serviceAreas', current.filter(a => a !== area));
                           }
                         }}
-                        className="rounded border-gray-300"
+                        className="rounded border-gray-300 dark:border-gray-600 text-amber-600 focus:ring-amber-500 dark:bg-gray-700"
                       />
-                      <span className="text-sm">{area}</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{area}</span>
                     </label>
                   ))}
                 </div>
@@ -196,10 +196,10 @@ export default function LawyerSearch({
 
               {/* Languages */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Languages
                 </label>
-                <div className="max-h-40 overflow-y-auto border rounded-md p-3 space-y-2">
+                <div className="max-h-40 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-md p-3 space-y-2 bg-gray-50 dark:bg-gray-800/50">
                   {availableLanguages.map((lang) => (
                     <label key={lang} className="flex items-center space-x-2">
                       <input
@@ -213,9 +213,9 @@ export default function LawyerSearch({
                             handleArrayFilterChange('languages', current.filter(l => l !== lang));
                           }
                         }}
-                        className="rounded border-gray-300"
+                        className="rounded border-gray-300 dark:border-gray-600 text-amber-600 focus:ring-amber-500 dark:bg-gray-700"
                       />
-                      <span className="text-sm">{lang}</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{lang}</span>
                     </label>
                   ))}
                 </div>
@@ -223,7 +223,7 @@ export default function LawyerSearch({
 
               {/* Experience Range */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Experience Range
                 </label>
                 <div className="space-y-2">
@@ -232,21 +232,21 @@ export default function LawyerSearch({
                     placeholder="Min years"
                     value={filters.minExperience || ''}
                     onChange={(e) => handleFilterChange('minExperience', e.target.value ? parseInt(e.target.value) : undefined)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 transition-colors"
                   />
                   <input
                     type="number"
                     placeholder="Max years"
                     value={filters.maxExperience || ''}
                     onChange={(e) => handleFilterChange('maxExperience', e.target.value ? parseInt(e.target.value) : undefined)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 transition-colors"
                   />
                 </div>
               </div>
 
               {/* Hourly Rate Range */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Hourly Rate Range
                 </label>
                 <div className="space-y-2">
@@ -255,27 +255,27 @@ export default function LawyerSearch({
                     placeholder="Min rate (₹)"
                     value={filters.minHourlyRate || ''}
                     onChange={(e) => handleFilterChange('minHourlyRate', e.target.value ? parseInt(e.target.value) : undefined)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 transition-colors"
                   />
                   <input
                     type="number"
                     placeholder="Max rate (₹)"
                     value={filters.maxHourlyRate || ''}
                     onChange={(e) => handleFilterChange('maxHourlyRate', e.target.value ? parseInt(e.target.value) : undefined)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 transition-colors"
                   />
                 </div>
               </div>
 
               {/* Availability Status */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Availability
                 </label>
                 <select
                   value={filters.availabilityStatus || ''}
                   onChange={(e) => handleFilterChange('availabilityStatus', e.target.value || undefined)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 transition-colors"
                 >
                   <option value="">All</option>
                   <option value="available">Available</option>
@@ -286,13 +286,13 @@ export default function LawyerSearch({
 
               {/* Minimum Rating */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Minimum Rating
                 </label>
                 <select
                   value={filters.minRating || ''}
                   onChange={(e) => handleFilterChange('minRating', e.target.value ? parseFloat(e.target.value) : undefined)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 transition-colors"
                 >
                   <option value="">Any Rating</option>
                   <option value="4.5">4.5+ Stars</option>
@@ -315,7 +315,7 @@ export default function LawyerSearch({
       {/* Results */}
       <div>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white transition-colors">
             {loading ? 'Searching...' : `${profiles.length} Lawyers Found`}
           </h2>
         </div>
@@ -331,7 +331,7 @@ export default function LawyerSearch({
         {!loading && !error && profiles.length === 0 && (
           <Card>
             <div className="text-center py-8">
-              <p className="text-gray-500">No lawyers found matching your criteria.</p>
+              <p className="text-gray-500 dark:text-gray-400">No lawyers found matching your criteria.</p>
               <Button variant="secondary" onClick={clearFilters} className="mt-4">
                 Clear Filters
               </Button>

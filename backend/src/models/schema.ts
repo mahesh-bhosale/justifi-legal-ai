@@ -86,6 +86,7 @@ export const lawyerProfiles = pgTable('lawyer_profiles', {
   casesHandled: integer('cases_handled').default(0),
   successRate: numeric('success_rate', { precision: 5, scale: 2 }).default('0.00'),
   verified: boolean('verified').default(false),
+  avatarUrl: text('avatar_url'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });

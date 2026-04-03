@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { getUserRole } from '../lib/auth';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../lib/api';
+import ThemeToggle from './ui/ThemeToggle';
 
 interface DashboardTopbarProps {
   onMobileMenuToggle: () => void;
@@ -170,14 +171,14 @@ export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarP
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 px-4 lg:px-6 py-4">
+    <header className="bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 px-4 lg:px-6 py-4 transition-colors duration-300">
       <div className="flex items-center justify-between">
         {/* Left side - Mobile menu button and breadcrumb */}
         <div className="flex items-center space-x-4">
           {/* Mobile menu button - only visible on mobile */}
           <button 
             onClick={onMobileMenuToggle}
-            className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+            className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -185,24 +186,27 @@ export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarP
           </button>
           
           {/* Breadcrumb */}
-          <nav className="hidden md:flex items-center space-x-2 text-sm text-gray-500">
+          <nav className="hidden md:flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
             <span>Dashboard</span>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-            <span className="text-gray-900 capitalize">{isClient ? userRole : 'Loading...'}</span>
+            <span className="text-gray-900 dark:text-white capitalize">{isClient ? userRole : 'Loading...'}</span>
           </nav>
         </div>
 
-        {/* Right side - Notifications, user menu */}
+        {/* Right side - Theme toggle, Notifications, user menu */}
         <div className="flex items-center space-x-4">
+          {/* Theme Toggle */}
+          <ThemeToggle />
+          
           {/* Notifications */}
           <div className="relative">
             <button
               type="button"
               aria-label="Notifications"
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-              className="p-2 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-100 relative transition-colors"
+              className="p-2 rounded-lg text-gray-500 hover:text-gray-800 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 relative transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                 <path
@@ -222,27 +226,27 @@ export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarP
 
             {/* Notifications dropdown */}
             {isNotificationsOpen && (
-              <div className="absolute right-0 mt-2 w-[22rem] max-w-[calc(100vw-2rem)] bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden">
-                <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/80 flex items-center justify-between gap-2">
+              <div className="absolute right-0 mt-2 w-[22rem] max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-100 dark:border-gray-800 z-50 overflow-hidden">
+                <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800 bg-gray-50/80 dark:bg-gray-800/80 flex items-center justify-between gap-2">
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">Unread first. Open one to mark read; it clears shortly after.</p>
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Notifications</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Unread first. Open one to mark read; it clears shortly after.</p>
                   </div>
                   <button
                     type="button"
                     onClick={() => void loadNotifications()}
-                    className="shrink-0 text-xs font-medium text-indigo-600 hover:text-indigo-800 px-2 py-1 rounded-md hover:bg-white"
+                    className="shrink-0 text-xs font-semibold text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 px-3 py-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-700 transition-all border border-transparent hover:border-amber-200 dark:hover:border-amber-900/50"
                   >
                     Refresh
                   </button>
                 </div>
                 <div className="max-h-72 overflow-y-auto">
                   {notificationsLoading ? (
-                    <div className="p-6 text-sm text-gray-500 text-center">Loading…</div>
+                    <div className="p-6 text-sm text-gray-500 dark:text-gray-400 text-center">Loading…</div>
                   ) : sortedNotifications.length === 0 ? (
                     <div className="p-8 text-center">
-                      <p className="text-sm font-medium text-gray-700">You&apos;re all caught up</p>
-                      <p className="text-xs text-gray-500 mt-1">New alerts for messages, cases, and documents appear here.</p>
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300">You&apos;re all caught up</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">New alerts for messages, cases, and documents appear here.</p>
                     </div>
                   ) : (
                     sortedNotifications.map((n) => (
@@ -257,30 +261,30 @@ export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarP
                             void markNotificationRead(n.id);
                           }
                         }}
-                        className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50/90 cursor-pointer flex gap-3 transition-colors ${
-                          n.isRead ? 'bg-white' : 'bg-indigo-50/40'
+                        className={`w-full text-left px-4 py-3 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50/90 dark:hover:bg-gray-800/90 cursor-pointer flex gap-3 transition-colors ${
+                          n.isRead ? 'bg-white dark:bg-gray-900' : 'bg-amber-50/40 dark:bg-amber-900/10'
                         }`}
                       >
                         <span
-                          className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
-                            n.isRead ? 'bg-transparent' : 'bg-indigo-500'
+                          className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full shadow-sm ${
+                            n.isRead ? 'bg-transparent' : 'bg-amber-500'
                           }`}
                           aria-hidden
                         />
                         <div className="min-w-0 flex-1">
                           <div className="flex items-start justify-between gap-2">
-                            <p className="text-sm font-medium text-gray-900 leading-snug">{n.title}</p>
-                            <span className="shrink-0 text-[10px] uppercase tracking-wide text-gray-400 font-semibold">
+                            <p className="text-sm font-medium text-gray-900 dark:text-white leading-snug">{n.title}</p>
+                            <span className="shrink-0 text-[10px] uppercase tracking-wide text-gray-400 dark:text-gray-500 font-semibold">
                               {typeLabel(n.type)}
                             </span>
                           </div>
-                          <p className="text-xs text-gray-600 line-clamp-2 mt-0.5">{n.body}</p>
-                          <p className="text-[11px] text-gray-400 mt-1.5">{formatRelativeTime(n.createdAt)}</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mt-0.5">{n.body}</p>
+                          <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1.5">{formatRelativeTime(n.createdAt)}</p>
                         </div>
                         <button
                           type="button"
                           onClick={(e) => void dismissNotificationNow(n.id, e)}
-                          className="shrink-0 self-start text-xs text-gray-400 hover:text-gray-700 px-1 py-0.5 rounded"
+                          className="shrink-0 self-start text-xs text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 px-1 py-0.5 rounded"
                           title="Dismiss now"
                         >
                           ✕
@@ -297,34 +301,34 @@ export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarP
           <div className="relative">
             <button
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100"
+              className="flex items-center space-x-3 p-1.5 pr-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
             >
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-9 h-9 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center shadow-inner">
+                <svg className="w-5 h-5 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
               <div className="hidden md:block text-left">
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">
                   {user?.name || 'User'}
                 </p>
-                <p className="text-xs text-gray-500 capitalize">{isClient ? userRole : 'Loading...'}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{isClient ? userRole : 'Loading...'}</p>
               </div>
-              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
 
             {/* User dropdown */}
             {isUserMenuOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 z-50 overflow-hidden">
                 <div className="py-1">
                   <button 
                     onClick={() => {
                       setIsUserMenuOpen(false);
                       router.push(`/dashboard/${userRole || 'citizen'}/profile`);
                     }}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                   >
                     <div className="flex items-center">
                       <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -339,7 +343,7 @@ export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarP
                       const role = (userRole || 'citizen').toLowerCase();
                       router.push(`/dashboard/${role}/settings`);
                     }}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                   >
                     <div className="flex items-center">
                       <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -349,10 +353,10 @@ export default function DashboardTopbar({ onMobileMenuToggle }: DashboardTopbarP
                       Settings
                     </div>
                   </button>
-                  <hr className="my-1" />
+                  <hr className="my-1 border-gray-200 dark:border-gray-800" />
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                   >
                     <div className="flex items-center">
                       <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

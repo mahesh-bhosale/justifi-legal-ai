@@ -25,7 +25,7 @@ export default function Card({
     lg: 'shadow-lg'
   };
   
-  const classes = `bg-white rounded-lg border border-gray-200 ${paddingClasses[padding]} ${shadowClasses[shadow]} ${className}`;
+  const classes = `bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 transition-colors duration-300 ${paddingClasses[padding]} ${shadowClasses[shadow]} ${className}`;
   
   return (
     <div className={classes}>

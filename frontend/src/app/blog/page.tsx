@@ -31,16 +31,16 @@ export default function BlogPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <LandingNavbar />
         <div className="pt-20 pb-12">
           <div className="max-w-7xl mx-auto px-4">
-            <h1 className="text-3xl font-bold text-gray-900 mb-8">Blog</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Blog</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[...Array(6)].map((_, index) => (
-                <div key={index} className="bg-white rounded-2xl p-6 shadow-lg">
+                <div key={index} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                   <div className="animate-pulse">
-                    <div className="h-6 w-24 bg-gray-200 rounded-full mb-4"></div>
+                    <div className="h-6 w-24 bg-gray-200 dark:bg-gray-700 rounded-full mb-4"></div>
                     <div className="h-6 bg-gray-200 rounded mb-3"></div>
                     <div className="h-4 bg-gray-200 rounded mb-2"></div>
                     <div className="h-4 bg-gray-200 rounded mb-4 w-3/4"></div>
@@ -64,11 +64,11 @@ export default function BlogPage() {
         <LandingNavbar />
         <div className="pt-20 pb-12">
           <div className="max-w-7xl mx-auto px-4 text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Blog</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Blog</h1>
             <p className="text-red-600 mb-8">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors"
+              className="px-6 py-3 bg-amber-600 text-white font-medium rounded-md hover:bg-amber-700 transition-colors shadow-lg"
             >
               Try Again
             </button>
@@ -79,43 +79,43 @@ export default function BlogPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <LandingNavbar />
       <div className="pt-20 pb-12">
         <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Blog</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 border-l-4 border-amber-500 pl-4">Legal Insights & Blog</h1>
           
           {blogPosts.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-600">No blog posts found.</p>
+              <p className="text-gray-600 dark:text-gray-400">No blog posts found.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {blogPosts.map((post) => (
                 <article 
                   key={post.id} 
-                  className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 dark:border-gray-700 group"
                 >
                   <div className="mb-4 flex justify-between items-center">
-                    <span className="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">
-                      {post.author || 'Blog'}
+                    <span className="inline-block bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-400 text-xs font-medium px-3 py-1 rounded-full">
+                      {post.author || 'JustiFi Legal'}
                     </span>
                     <div className="text-xs text-gray-500">
                       {post.readTime ? `${post.readTime} min read` : ''}
                     </div>
                   </div>
                   
-                  <h2 className="text-xl font-semibold text-gray-900 mb-3 leading-tight hover:text-blue-600 transition-colors">
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3 leading-tight group-hover:text-amber-600 dark:group-hover:text-amber-500 transition-colors">
                     <Link href={`/blog/${post.id}`}>
                       {post.title}
                     </Link>
                   </h2>
                   
-                  <p className="text-gray-600 mb-4 leading-relaxed line-clamp-3">
+                  <p className="text-gray-600 dark:text-gray-400 mb-4 leading-relaxed line-clamp-3">
                     {post.excerpt}
                   </p>
                   
-                  <div className="flex items-center justify-between text-sm text-gray-500 mt-4 pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                     <time dateTime={post.createdAt || ''}>
                       {post.createdAt ? new Date(post.createdAt).toLocaleDateString('en-IN', { 
                         month: 'short', 
@@ -125,9 +125,9 @@ export default function BlogPage() {
                     </time>
                     <Link 
                       href={`/blog/${post.id}`}
-                      className="text-blue-600 hover:text-blue-800 font-medium flex items-center transition-colors"
+                      className="text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 font-medium flex items-center transition-colors"
                     >
-                      Read more
+                      Read full story
                       <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>

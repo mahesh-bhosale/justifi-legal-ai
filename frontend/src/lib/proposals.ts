@@ -10,6 +10,7 @@ export interface CaseProposal {
   status: 'pending' | 'accepted' | 'rejected' | 'withdrawn';
   createdAt: string;
   updatedAt: string;
+  lawyerName?: string;
 }
 
 export interface CreateProposalInput {

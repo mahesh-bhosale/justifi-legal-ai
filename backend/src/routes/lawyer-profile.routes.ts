@@ -2,6 +2,16 @@ import { Router } from 'express';
 import lawyerProfileController from '../controllers/lawyer-profile.controller';
 import { verifyToken } from '../middleware/auth.middleware';
 import { requireLawyer, requireAdmin } from '../middleware/role.middleware';
+import multer from 'multer';
+import { MAX_AVATAR_BYTES, avatarFileFilter } from '../config/upload-security';
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: MAX_AVATAR_BYTES,
+  },
+  fileFilter: avatarFileFilter,
+});
 
 const router = Router();
 
@@ -16,6 +26,7 @@ router.use(verifyToken);
 
 // Lawyer-only routes
 router.post('/', requireLawyer, lawyerProfileController.createProfile);
+router.post('/avatar', requireLawyer, upload.single('avatar'), lawyerProfileController.uploadAvatar);
 router.get('/me/profile', requireLawyer, lawyerProfileController.getMyProfile);
 router.patch('/:id', requireLawyer, lawyerProfileController.updateProfile);
 

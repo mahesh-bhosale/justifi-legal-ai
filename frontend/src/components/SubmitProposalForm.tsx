@@ -52,17 +52,17 @@ export function SubmitProposalForm({ caseId, onSubmit, isLoading = false }: Subm
   };
 
   return (
-    <Card className="max-w-2xl mx-auto">
+    <Card className="max-w-2xl mx-auto dark:bg-gray-800">
       <div className="p-6">
-        <h2 className="text-2xl font-bold mb-6">Submit Proposal</h2>
-        <p className="text-gray-600 mb-6">
+        <h2 className="text-2xl font-bold dark:text-white mb-6">Submit Proposal</h2>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">
           Present your approach and qualifications for this case. Be specific about your strategy and experience.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Proposal Text */}
           <div>
-            <label htmlFor="proposalText" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="proposalText" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Your Proposal *
             </label>
             <textarea
@@ -70,13 +70,13 @@ export function SubmitProposalForm({ caseId, onSubmit, isLoading = false }: Subm
               value={formData.proposalText}
               onChange={(e) => handleInputChange('proposalText', e.target.value)}
               rows={6}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.proposalText ? 'border-red-500' : 'border-gray-300'
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:bg-gray-900 dark:text-white dark:placeholder-gray-500 ${
+                errors.proposalText ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
               }`}
               placeholder="Describe your approach to this case, relevant experience, and why you're the right lawyer for this matter..."
             />
             {errors.proposalText && <p className="mt-1 text-sm text-red-600">{errors.proposalText}</p>}
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Minimum 10 characters. Be detailed about your strategy and qualifications.
             </p>
           </div>
@@ -84,18 +84,18 @@ export function SubmitProposalForm({ caseId, onSubmit, isLoading = false }: Subm
           {/* Proposed Fee and Duration */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="proposedFee" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="proposedFee" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Proposed Fee (Optional)
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-2 text-gray-500">₹</span>
+                <span className="absolute left-3 top-2 text-gray-500 dark:text-gray-400">₹</span>
                 <input
                   type="number"
                   id="proposedFee"
                   value={formData.proposedFee || ''}
                   onChange={(e) => handleInputChange('proposedFee', e.target.value ? parseFloat(e.target.value) : undefined)}
-                  className={`w-full pl-8 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.proposedFee ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full pl-8 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:bg-gray-900 dark:text-white dark:placeholder-gray-500 ${
+                    errors.proposedFee ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
                   }`}
                   placeholder="0.00"
                   min="0"
@@ -103,13 +103,13 @@ export function SubmitProposalForm({ caseId, onSubmit, isLoading = false }: Subm
                 />
               </div>
               {errors.proposedFee && <p className="mt-1 text-sm text-red-600">{errors.proposedFee}</p>}
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 Leave blank if you prefer to discuss fees later
               </p>
             </div>
 
             <div>
-              <label htmlFor="estimatedDuration" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="estimatedDuration" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Estimated Duration (Optional)
               </label>
               <input
@@ -117,19 +117,19 @@ export function SubmitProposalForm({ caseId, onSubmit, isLoading = false }: Subm
                 id="estimatedDuration"
                 value={formData.estimatedDuration}
                 onChange={(e) => handleInputChange('estimatedDuration', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 placeholder="e.g., 3-6 months, 1 year"
               />
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 Provide a realistic timeline estimate
               </p>
             </div>
           </div>
 
           {/* Tips Section */}
-          <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-            <h3 className="text-sm font-medium text-blue-800 mb-2">💡 Tips for a Strong Proposal</h3>
-            <ul className="text-sm text-blue-700 space-y-1">
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900/30 rounded-md p-4">
+            <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-400 mb-2">💡 Tips for a Strong Proposal</h3>
+            <ul className="text-sm text-yellow-700 dark:text-yellow-500/80 space-y-1">
               <li>• Highlight relevant experience in this area of law</li>
               <li>• Explain your specific approach to this case</li>
               <li>• Mention any special qualifications or certifications</li>

@@ -226,18 +226,18 @@ export default function DashboardSidebar({
   return (
     <>
       {/* Mobile Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-70 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:hidden ${
+      <aside className={`fixed inset-y-0 left-0 z-50 w-70 bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 transform transition-transform duration-300 ease-in-out lg:hidden ${
         isMobileOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <h1 className="text-xl font-bold text-gray-900">
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+            <h1 className="text-xl font-bold text-amber-600 dark:text-amber-500 font-serif">
               Justifi Legal AI
             </h1>
             <button
               onClick={() => onMobileToggle(false)}
-              className="p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+              className="p-1 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -255,10 +255,10 @@ export default function DashboardSidebar({
                   key={item.href}
                   href={item.href}
                   onClick={handleNavClick}
-                  className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`flex items-center px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
                     isActive
-                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                      ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-500 border border-amber-200/50 dark:border-amber-900/50 shadow-sm shadow-amber-500/5'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900 hover:text-gray-900 dark:hover:text-white'
                   }`}
                 >
                   <span className="flex-shrink-0">{item.icon}</span>
@@ -269,16 +269,16 @@ export default function DashboardSidebar({
           </nav>
 
           {/* User Info */}
-          <div className="p-4 border-t border-gray-200">
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="p-4 border-t border-gray-200 dark:border-gray-800">
+            <div className="flex items-center p-2 rounded-xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800">
+              <div className="w-9 h-9 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center flex-shrink-0 shadow-inner">
+                <svg className="w-5 h-5 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
                               <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-900">User</p>
-                  <p className="text-xs text-gray-500 capitalize">{isClient ? userRole : 'Loading...'}</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">User</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{isClient ? userRole : 'Loading...'}</p>
                 </div>
             </div>
           </div>
@@ -286,20 +286,21 @@ export default function DashboardSidebar({
       </aside>
 
       {/* Desktop Sidebar */}
-      <aside className={`bg-white border-r border-gray-200 transition-all duration-300 hidden lg:block ${
+      <aside className={`bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 hidden lg:block ${
         isCollapsed ? 'w-16' : 'w-70'
       }`}>
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800 h-[73px]">
             {!isCollapsed && (
-              <h1 className="text-xl font-bold text-gray-900">
+              <h1 className="text-xl font-bold text-amber-600 dark:text-amber-500 font-serif truncate pr-2">
                 Justifi Legal AI
               </h1>
             )}
             <button
               onClick={() => onToggleCollapse(!isCollapsed)}
-              className="p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+              className="p-1 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex-shrink-0"
+              aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -308,7 +309,7 @@ export default function DashboardSidebar({
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
+          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
             {filteredNavItems.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               
@@ -316,10 +317,10 @@ export default function DashboardSidebar({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`flex items-center px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
                     isActive
-                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                      ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-500 border border-amber-200/50 dark:border-amber-900/50 shadow-sm shadow-amber-500/5'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900 hover:text-gray-900 dark:hover:text-white'
                   }`}
                   title={isCollapsed ? item.label : undefined}
                 >
@@ -333,17 +334,25 @@ export default function DashboardSidebar({
           </nav>
 
           {/* User Info */}
-          <div className="p-4 border-t border-gray-200">
-            {!isCollapsed && (
-              <div className="flex items-center">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="p-4 border-t border-gray-200 dark:border-gray-800">
+            {!isCollapsed ? (
+              <div className="flex items-center p-2 rounded-xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 font-medium">
+                <div className="w-9 h-9 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center flex-shrink-0 shadow-inner">
+                  <svg className="w-5 h-5 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-900">User</p>
-                  <p className="text-xs text-gray-500 capitalize">{isClient ? userRole : 'Loading...'}</p>
+                <div className="ml-3 overflow-hidden">
+                  <p className="text-sm font-bold text-gray-900 dark:text-white truncate">User</p>
+                  <p className="text-[11px] text-gray-500 dark:text-gray-400 font-semibold tracking-wide uppercase truncate">{isClient ? userRole : 'Loading...'}</p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex justify-center">
+                <div className="w-9 h-9 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center shadow-inner">
+                  <svg className="w-5 h-5 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
                 </div>
               </div>
             )}

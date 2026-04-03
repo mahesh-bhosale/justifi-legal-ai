@@ -84,7 +84,7 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
       </div>
     );
   }
@@ -92,67 +92,67 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p className="text-gray-600">
+      <div className="border-l-4 border-amber-500 pl-4 py-1">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-1">
           Monitor platform performance and manage system operations
         </p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="p-6">
+        <Card className="p-6 border-amber-100 dark:border-amber-900/20">
           <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg shadow-inner">
+              <svg className="w-6 h-6 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Cases</p>
-              <p className="text-2xl font-bold text-gray-900">{stats?.total || 0}</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Cases</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.total || 0}</p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-6">
+        <Card className="p-6 border-amber-100 dark:border-amber-900/20">
           <div className="flex items-center">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg shadow-inner">
+              <svg className="w-6 h-6 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Pending Cases</p>
-              <p className="text-2xl font-bold text-gray-900">{stats?.pending || 0}</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Pending Cases</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.pending || 0}</p>
             </div>
           </div>
         </Card>
 
         <Card className="p-6">
           <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+              <svg className="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">In Progress</p>
-              <p className="text-2xl font-bold text-gray-900">{stats?.in_progress || 0}</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">In Progress</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.in_progress || 0}</p>
             </div>
           </div>
         </Card>
 
         <Card className="p-6">
           <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+              <svg className="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Resolved</p>
-              <p className="text-2xl font-bold text-gray-900">{stats?.resolved || 0}</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Resolved</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.resolved || 0}</p>
             </div>
           </div>
         </Card>
@@ -161,7 +161,7 @@ export default function AdminDashboard() {
       {/* Analytics Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="p-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Users Growth (last months)
           </h3>
           <LineChartComponent
@@ -173,7 +173,7 @@ export default function AdminDashboard() {
         </Card>
 
         <Card className="p-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Cases Created Over Time
           </h3>
           <AreaChartComponent
@@ -187,7 +187,7 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="p-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Top Active Lawyers
           </h3>
           <BarChartComponent
@@ -199,7 +199,7 @@ export default function AdminDashboard() {
         </Card>
 
         <Card className="p-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Case Outcome Distribution
           </h3>
           <PieChartComponent
@@ -220,11 +220,11 @@ export default function AdminDashboard() {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Platform Management</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Platform Management</h3>
           <div className="space-y-3">
             <Button 
               onClick={handleViewCases}
-              className="w-full justify-start bg-blue-600 hover:bg-blue-700"
+              className="w-full justify-start shadow-sm"
             >
               <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -233,18 +233,20 @@ export default function AdminDashboard() {
             </Button>
             <Button 
               onClick={handleViewLawyers}
-              className="w-full justify-start bg-green-600 hover:bg-green-700"
+              variant="outline"
+              className="w-full justify-start dark:bg-gray-800"
             >
-              <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 mr-3 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
               Manage Lawyers
             </Button>
             <Button 
               onClick={handleManageBlogs}
-              className="w-full justify-start bg-purple-600 hover:bg-purple-700"
+              variant="outline"
+              className="w-full justify-start dark:bg-gray-800"
             >
-              <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 mr-3 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
               </svg>
               Manage Blogs
@@ -253,29 +255,29 @@ export default function AdminDashboard() {
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">System Health</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">System Health</h3>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-600">API Status</span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">API Status</span>
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/30">
                 Operational
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-600">Database</span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Database</span>
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/30">
                 Connected
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-600">File Storage</span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">File Storage</span>
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/30">
                 Active
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-600">Last Backup</span>
-              <span className="text-sm text-gray-900">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Last Backup</span>
+              <span className="text-sm text-gray-900 dark:text-white">
                 {new Date().toLocaleDateString()}
               </span>
             </div>

@@ -366,18 +366,18 @@ export default function ChatWindow({
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600 dark:border-yellow-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-96 bg-white border border-gray-200 rounded-lg shadow-sm">
+    <div className="flex flex-col h-96 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50 rounded-t-lg">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-t-lg">
         <div>
-          <h3 className="font-semibold text-gray-900">Chat with {recipientName}</h3>
-          <p className="text-sm text-gray-500">
+          <h3 className="font-semibold text-gray-900 dark:text-white">Chat with {recipientName}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Case #{caseId} • {isConnected ? (
               <span className="text-green-600">● Connected</span>
             ) : (
@@ -393,20 +393,20 @@ export default function ChatWindow({
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-md p-3">
-            <p className="text-sm text-red-600">Connection error: {error}</p>
+          <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-md p-3">
+            <p className="text-sm text-red-600 dark:text-red-400">Connection error: {error}</p>
           </div>
         )}
         
         {!hasValidRecipient && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
-            <p className="text-sm text-yellow-600">
+          <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-md p-3">
+            <p className="text-sm text-yellow-600 dark:text-yellow-500">
               Cannot send messages: No valid recipient found. Please refresh the page.
             </p>
           </div>
         )}
         {messages.length === 0 ? (
-          <div className="text-center text-gray-500 py-8">
+          <div className="text-center text-gray-500 dark:text-gray-400 py-8">
             <p>No messages yet. Start the conversation!</p>
           </div>
         ) : (
@@ -432,7 +432,7 @@ export default function ChatWindow({
               return (
                 <div key={message.id}>
                   {showDate && (
-                    <div className="text-center text-xs text-gray-500 my-4">
+                    <div className="text-center text-xs text-gray-500 dark:text-gray-400 my-4">
                       {formatDate(message.createdAt)}
                     </div>
                   )}
@@ -440,12 +440,12 @@ export default function ChatWindow({
                   <div className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                       isOwnMessage 
-                        ? 'bg-blue-600 text-white' 
-                        : 'bg-gray-100 text-gray-900'
+                        ? 'bg-yellow-600 dark:bg-yellow-500 text-white dark:text-gray-900' 
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
                     }`}>
                       <p className="text-sm">{message.message}</p>
                       <div className={`flex items-center justify-end mt-1 space-x-1 ${
-                        isOwnMessage ? 'text-blue-100' : 'text-gray-500'
+                        isOwnMessage ? 'text-white/80 dark:text-gray-900/80' : 'text-gray-500 dark:text-gray-400'
                       }`}>
                         <span className="text-xs">{formatTime(message.createdAt)}</span>
                         {isOwnMessage && (
@@ -465,20 +465,20 @@ export default function ChatWindow({
       </div>
 
       {/* Message Input */}
-      <form onSubmit={sendMessage} className="p-4 border-t border-gray-200">
+      <form onSubmit={sendMessage} className="p-4 border-t border-gray-200 dark:border-gray-700">
         <div className="flex space-x-2">
           <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder={hasValidRecipient ? "Type your message..." : "Cannot send messages - no valid recipient"}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
             disabled={sending || !isConnected || !hasValidRecipient}
           />
           <button
             type="submit"
             disabled={!newMessage.trim() || sending || !isConnected || !hasValidRecipient}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-yellow-600 dark:bg-yellow-500 text-white dark:text-gray-900 rounded-md hover:bg-yellow-700 dark:hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {sending ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

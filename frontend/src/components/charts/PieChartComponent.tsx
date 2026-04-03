@@ -6,9 +6,9 @@ import {
   ResponsiveContainer,
   Tooltip,
   Cell,
+  Legend,
 } from 'recharts';
-
-const DEFAULT_COLORS = ['#0ea5e9', '#22c55e', '#f97316', '#e11d48', '#6366f1', '#14b8a6'];
+import { CHART_COLORS, CHART_TEXT_COLOR } from '../../lib/chartColors';
 
 interface PieChartComponentProps<T> {
   data: T[];
@@ -27,8 +27,8 @@ export default function PieChartComponent<T extends Record<string, any>>({
 }: PieChartComponentProps<T>) {
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-[260px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500" />
+      <div className="flex items-center justify-center h-[260px] bg-gray-50/50 dark:bg-gray-950/50 rounded-lg">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600 dark:border-amber-500" />
       </div>
     );
   }
@@ -39,29 +39,48 @@ export default function PieChartComponent<T extends Record<string, any>>({
         <PieChart>
           <Tooltip
             contentStyle={{
-              backgroundColor: 'rgba(15,23,42,0.9)',
-              border: 'none',
-              borderRadius: 8,
-              color: '#e5e7eb',
-              fontSize: 12,
+              backgroundColor: '#1e293b', // Slate 800 - solid background for better readability
+              border: '1px solid rgba(226, 179, 74, 0.2)', // Subtle gold border
+              borderRadius: '12px',
+              padding: '10px 14px',
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.4)',
             }}
+            itemStyle={{
+              color: '#f8fafc', // Slate 50 - high contrast
+              fontSize: '13px',
+              fontWeight: 500,
+              padding: '2px 0',
+            }}
+            labelStyle={{
+              color: '#f8fafc',
+              fontSize: '13px',
+              fontWeight: 600,
+              marginBottom: '4px',
+            }}
+            cursor={{ fill: 'rgba(148, 163, 184, 0.1)' }}
           />
           <Pie
             data={data}
             dataKey={valueKey as string}
             nameKey={nameKey as string}
-            innerRadius={50}
-            outerRadius={80}
+            innerRadius={60}
+            outerRadius={85}
             paddingAngle={4}
+            stroke="none"
           >
             {data.map((_, index) => (
               <Cell
                 // eslint-disable-next-line react/no-array-index-key
                 key={`pie-cell-${index}`}
-                fill={DEFAULT_COLORS[index % DEFAULT_COLORS.length]}
+                fill={CHART_COLORS[index % CHART_COLORS.length]}
               />
             ))}
           </Pie>
+          <Legend 
+            verticalAlign="bottom" 
+            height={36} 
+            formatter={(value) => <span style={{ color: CHART_TEXT_COLOR, fontSize: '11px' }}>{value}</span>}
+          />
         </PieChart>
       </ResponsiveContainer>
     </div>

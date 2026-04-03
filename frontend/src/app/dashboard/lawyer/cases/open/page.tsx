@@ -56,7 +56,7 @@ export default function LawyerOpenCasesPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-600 dark:border-yellow-500"></div>
       </div>
     );
   }
@@ -65,8 +65,8 @@ export default function LawyerOpenCasesPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Open Cases</h1>
-        <p className="text-gray-600">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Open Cases</h1>
+        <p className="text-gray-600 dark:text-gray-400">
           Browse available cases and submit proposals to help citizens with their legal issues
         </p>
       </div>
@@ -74,7 +74,7 @@ export default function LawyerOpenCasesPage() {
       {/* Filters */}
       <Card className="p-6">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-medium text-gray-900">Filter Cases</h3>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white">Filter Cases</h3>
           <Button onClick={clearFilters} variant="outline" size="sm">
             Clear Filters
           </Button>
@@ -82,13 +82,13 @@ export default function LawyerOpenCasesPage() {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Category
             </label>
             <select
               value={filters.category}
               onChange={(e) => handleFilterChange('category', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
             >
               <option value="">All Categories</option>
               <option value="criminal">Criminal</option>
@@ -101,13 +101,13 @@ export default function LawyerOpenCasesPage() {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Urgency
             </label>
             <select
               value={filters.urgency}
               onChange={(e) => handleFilterChange('urgency', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
             >
               <option value="">All Urgency Levels</option>
               <option value="high">High Priority</option>
@@ -117,7 +117,7 @@ export default function LawyerOpenCasesPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Location
             </label>
             <input
@@ -125,7 +125,7 @@ export default function LawyerOpenCasesPage() {
               value={filters.location}
               onChange={(e) => handleFilterChange('location', e.target.value)}
               placeholder="Enter city or location"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
             />
           </div>
         </div>
@@ -135,11 +135,11 @@ export default function LawyerOpenCasesPage() {
       <Card className="p-6">
         {cases.length === 0 ? (
           <div className="text-center py-12">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No open cases found</h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No open cases found</h3>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               {filters.category || filters.urgency || filters.location 
                 ? 'Try adjusting your filters.' 
                 : 'There are currently no open cases available.'}
@@ -148,7 +148,7 @@ export default function LawyerOpenCasesPage() {
         ) : (
           <div>
             <div className="mb-4">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Showing {cases.length} open case{cases.length !== 1 ? 's' : ''}
               </p>
             </div>

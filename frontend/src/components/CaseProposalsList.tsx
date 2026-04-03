@@ -18,15 +18,15 @@ interface CaseProposalsListProps {
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'pending':
-      return 'bg-yellow-100 text-yellow-800';
+      return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-500';
     case 'accepted':
-      return 'bg-green-100 text-green-800';
+      return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400';
     case 'rejected':
-      return 'bg-red-100 text-red-800';
+      return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400';
     case 'withdrawn':
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300';
   }
 };
 
@@ -69,8 +69,8 @@ export function CaseProposalsList({
   if (proposals.length === 0) {
     return (
       <Card className="p-8 text-center">
-        <div className="text-gray-500">
-          <p className="text-lg mb-2">No proposals yet</p>
+        <div className="text-gray-500 dark:text-gray-400">
+          <p className="text-lg mb-2 text-gray-900 dark:text-white">No proposals yet</p>
           <p className="text-sm">
             {userRole === 'citizen' 
               ? 'Lawyers will submit proposals for your case. Check back soon!'
@@ -87,7 +87,7 @@ export function CaseProposalsList({
       {/* Pending Proposals */}
       {pendingProposals.length > 0 && (
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Pending Proposals ({pendingProposals.length})
           </h3>
           <div className="space-y-4">
@@ -99,33 +99,33 @@ export function CaseProposalsList({
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(proposal.status)}`}>
                         {proposal.status}
                       </span>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
                         Submitted {formatDate(proposal.createdAt)}
                       </span>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                       <div>
-                        <span className="text-sm font-medium text-gray-700">Proposed Fee:</span>
-                        <p className="text-sm text-gray-900">{formatCurrency(proposal.proposedFee)}</p>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Proposed Fee:</span>
+                        <p className="text-sm text-gray-900 dark:text-white">{formatCurrency(proposal.proposedFee)}</p>
                       </div>
                       <div>
-                        <span className="text-sm font-medium text-gray-700">Estimated Duration:</span>
-                        <p className="text-sm text-gray-900">{proposal.estimatedDuration || 'Not specified'}</p>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Estimated Duration:</span>
+                        <p className="text-sm text-gray-900 dark:text-white">{proposal.estimatedDuration || 'Not specified'}</p>
                       </div>
                       <div>
-                        <span className="text-sm font-medium text-gray-700">Lawyer ID:</span>
-                        <p className="text-sm text-gray-900 font-mono">{proposal.lawyerId}</p>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Lawyer:</span>
+                        <p className="text-sm text-gray-900 dark:text-white font-medium">{proposal.lawyerName || proposal.lawyerId}</p>
                       </div>
                     </div>
 
                     <div className="mb-4">
-                      <span className="text-sm font-medium text-gray-700">Proposal:</span>
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Proposal:</span>
                       <div className="mt-2">
                         {expandedProposal === proposal.id ? (
-                          <p className="text-sm text-gray-900 whitespace-pre-wrap">{proposal.proposalText}</p>
+                          <p className="text-sm text-gray-900 dark:text-white whitespace-pre-wrap">{proposal.proposalText}</p>
                         ) : (
-                          <p className="text-sm text-gray-900">
+                          <p className="text-sm text-gray-900 dark:text-white">
                             {proposal.proposalText.length > 200
                               ? `${proposal.proposalText.substring(0, 200)}...`
                               : proposal.proposalText
@@ -135,7 +135,7 @@ export function CaseProposalsList({
                         {proposal.proposalText.length > 200 && (
                           <button
                             onClick={() => toggleExpanded(proposal.id)}
-                            className="text-sm text-blue-600 hover:text-blue-800 mt-2"
+                            className="text-sm text-yellow-600 dark:text-yellow-500 hover:text-yellow-800 dark:hover:text-yellow-400 mt-2 focus:outline-none"
                           >
                             {expandedProposal === proposal.id ? 'Show less' : 'Read more'}
                           </button>
@@ -185,41 +185,41 @@ export function CaseProposalsList({
       {/* Other Proposals (Accepted, Rejected, Withdrawn) */}
       {otherProposals.length > 0 && (
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Other Proposals ({otherProposals.length})
           </h3>
           <div className="space-y-4">
             {otherProposals.map((proposal) => (
-              <Card key={proposal.id} className="p-6 bg-gray-50">
+              <Card key={proposal.id} className="p-6 bg-gray-50 dark:bg-gray-800/50">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(proposal.status)}`}>
                         {proposal.status}
                       </span>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
                         {proposal.status === 'accepted' ? 'Accepted' : proposal.status === 'rejected' ? 'Rejected' : 'Withdrawn'} on {formatDate(proposal.updatedAt)}
                       </span>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                       <div>
-                        <span className="text-sm font-medium text-gray-700">Proposed Fee:</span>
-                        <p className="text-sm text-gray-900">{formatCurrency(proposal.proposedFee)}</p>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Proposed Fee:</span>
+                        <p className="text-sm text-gray-900 dark:text-white">{formatCurrency(proposal.proposedFee)}</p>
                       </div>
                       <div>
-                        <span className="text-sm font-medium text-gray-700">Estimated Duration:</span>
-                        <p className="text-sm text-gray-900">{proposal.estimatedDuration || 'Not specified'}</p>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Estimated Duration:</span>
+                        <p className="text-sm text-gray-900 dark:text-white">{proposal.estimatedDuration || 'Not specified'}</p>
                       </div>
                       <div>
-                        <span className="text-sm font-medium text-gray-700">Lawyer ID:</span>
-                        <p className="text-sm text-gray-900 font-mono">{proposal.lawyerId}</p>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Lawyer:</span>
+                        <p className="text-sm text-gray-900 dark:text-white font-medium">{proposal.lawyerName || proposal.lawyerId}</p>
                       </div>
                     </div>
 
                     <div>
-                      <span className="text-sm font-medium text-gray-700">Proposal:</span>
-                      <p className="text-sm text-gray-900 mt-2 line-clamp-3">
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Proposal:</span>
+                      <p className="text-sm text-gray-900 dark:text-white mt-2 line-clamp-3">
                         {proposal.proposalText}
                       </p>
                     </div>

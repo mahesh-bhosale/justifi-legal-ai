@@ -47,15 +47,15 @@ export default function SummaryOptions({
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Summary Length</h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Summary Length</h3>
         <div className="space-y-3">
           {summaryLevels.map((level) => (
             <label
               key={level.value}
               className={`flex items-start space-x-3 p-3 border rounded-lg cursor-pointer transition-colors ${
                 selectedLevel === level.value
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                  ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20'
+                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:bg-gray-800'
               } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <input
@@ -65,18 +65,18 @@ export default function SummaryOptions({
                 checked={selectedLevel === level.value}
                 onChange={(e) => setSelectedLevel(e.target.value as SummaryLevel)}
                 disabled={disabled}
-                className="mt-1 h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 disabled:opacity-50"
+                className="mt-1 h-4 w-4 text-yellow-600 dark:text-yellow-500 border-gray-300 dark:border-gray-600 focus:ring-yellow-500 disabled:opacity-50"
               />
               <div className="flex-1">
                 <div className="flex items-center space-x-2">
-                  <span className="font-medium text-gray-900">{level.label}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{level.label}</span>
                   {selectedLevel === level.value && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-400">
                       Selected
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 mt-1">{level.description}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{level.description}</p>
               </div>
             </label>
           ))}
@@ -91,7 +91,7 @@ export default function SummaryOptions({
           className={`inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white transition-colors ${
             disabled || loading
               ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+              : 'bg-yellow-600 dark:bg-yellow-500 hover:bg-yellow-700 dark:hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500'
           }`}
         >
           {loading ? (
@@ -140,10 +140,10 @@ export default function SummaryOptions({
       </div>
 
       {/* Summary Level Info */}
-      <div className="bg-gray-50 rounded-lg p-4">
+      <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
         <div className="flex items-start space-x-3">
           <svg
-            className="w-5 h-5 text-blue-500 mt-0.5"
+            className="w-5 h-5 text-yellow-500 dark:text-yellow-500 mt-0.5"
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -154,8 +154,8 @@ export default function SummaryOptions({
             />
           </svg>
           <div>
-            <h4 className="text-sm font-medium text-gray-900">Summary Tips</h4>
-            <ul className="mt-2 text-sm text-gray-600 space-y-1">
+            <h4 className="text-sm font-medium text-gray-900 dark:text-white">Summary Tips</h4>
+            <ul className="mt-2 text-sm text-gray-600 dark:text-gray-400 space-y-1">
               <li>• Choose &quot;Short&quot; for quick overviews and key points</li>
               <li>• Select &quot;Medium&quot; for balanced analysis with main details</li>
               <li>• Pick &quot;Long&quot; for comprehensive understanding</li>

@@ -50,7 +50,7 @@ export default function ReviewForm({ caseId, lawyerId, onSubmitSuccess, onCancel
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
           Rating *
         </label>
         <div className="flex items-center space-x-2">
@@ -62,7 +62,7 @@ export default function ReviewForm({ caseId, lawyerId, onSubmitSuccess, onCancel
               className={`p-1 rounded-full transition-colors ${
                 star <= rating
                   ? 'text-yellow-400 hover:text-yellow-500'
-                  : 'text-gray-300 hover:text-gray-400'
+                  : 'text-gray-300 dark:text-gray-600 hover:text-gray-400 dark:hover:text-gray-500'
               }`}
             >
               <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -71,7 +71,7 @@ export default function ReviewForm({ caseId, lawyerId, onSubmitSuccess, onCancel
             </button>
           ))}
         </div>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           {rating === 0 && 'Click on a star to rate'}
           {rating === 1 && 'Poor'}
           {rating === 2 && 'Fair'}
@@ -82,7 +82,7 @@ export default function ReviewForm({ caseId, lawyerId, onSubmitSuccess, onCancel
       </div>
 
       <div>
-        <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="comment" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
           Review Comment
         </label>
         <textarea
@@ -91,9 +91,9 @@ export default function ReviewForm({ caseId, lawyerId, onSubmitSuccess, onCancel
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           placeholder="Share your experience with this lawyer (optional)"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
         />
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           {comment.length}/500 characters
         </p>
       </div>
@@ -110,7 +110,7 @@ export default function ReviewForm({ caseId, lawyerId, onSubmitSuccess, onCancel
         <Button
           type="submit"
           disabled={loading || rating === 0}
-          className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+          className="bg-yellow-600 hover:bg-yellow-700 text-white dark:bg-yellow-500 dark:hover:bg-yellow-400 dark:text-gray-900 disabled:opacity-50"
         >
           {loading ? 'Submitting...' : 'Submit Review'}
         </Button>

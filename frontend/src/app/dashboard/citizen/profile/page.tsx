@@ -92,11 +92,11 @@ export default function CitizenProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 transition-colors">
         <div className="max-w-3xl mx-auto px-4">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-gray-200 rounded w-1/3" />
-            <div className="h-40 bg-gray-200 rounded" />
+            <div className="h-8 bg-gray-200 dark:bg-gray-800 rounded w-1/3" />
+            <div className="h-40 bg-gray-200 dark:bg-gray-800 rounded" />
           </div>
         </div>
       </div>
@@ -105,12 +105,12 @@ export default function CitizenProfilePage() {
 
   if (error && !profile) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 transition-colors">
         <div className="max-w-3xl mx-auto px-4">
           <Card>
             <div className="p-6 text-center">
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Error loading profile</h1>
-              <p className="text-gray-600 mb-4">{error}</p>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Error loading profile</h1>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
               <Button onClick={() => window.location.reload()}>Try Again</Button>
             </div>
           </Card>
@@ -120,46 +120,46 @@ export default function CitizenProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 transition-colors">
       <div className="max-w-3xl mx-auto px-4">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
-          <p className="text-gray-600 mt-1">Manage your basic account information.</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Profile</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Manage your basic account information.</p>
         </div>
 
         <Card>
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
             {error && (
-              <div className="p-3 rounded-md bg-red-50 border border-red-200 text-sm text-red-700">
+              <div className="p-3 rounded-md bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-900/50 text-sm text-red-700 dark:text-red-400">
                 {error}
               </div>
             )}
             {success && (
-              <div className="p-3 rounded-md bg-green-50 border border-green-200 text-sm text-green-700">
+              <div className="p-3 rounded-md bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-900/50 text-sm text-green-700 dark:text-green-400">
                 {success}
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
               <input
                 type="text"
                 value={form.name}
                 onChange={(e) => handleChange('name', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:text-white"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
               <input
                 type="email"
                 value={form.email}
                 disabled
-                className="w-full px-3 py-2 border border-gray-200 bg-gray-50 rounded-md text-gray-500 cursor-not-allowed"
+                className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 rounded-md text-gray-500 dark:text-gray-500 cursor-not-allowed"
               />
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-600">
                 Email changes are handled by support for security reasons.
               </p>
             </div>

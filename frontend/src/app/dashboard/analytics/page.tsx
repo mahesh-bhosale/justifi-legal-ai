@@ -48,30 +48,30 @@ export default function PlatformAnalyticsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">AI & Platform Analytics</h1>
-        <p className="text-gray-600">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">AI & Platform Analytics</h1>
+        <p className="text-gray-600 dark:text-gray-400">
           Monitor AI model performance and summarization usage across the platform.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="p-6">
-          <p className="text-sm font-medium text-gray-600">Total Predictions</p>
-          <p className="mt-2 text-3xl font-bold text-gray-900">
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Predictions</p>
+          <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
             {modelPerf?.totalPredictions ?? 0}
           </p>
         </Card>
 
         <Card className="p-6">
-          <p className="text-sm font-medium text-gray-600">Summarization Endpoints</p>
-          <p className="mt-2 text-3xl font-bold text-gray-900">
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Summarization Endpoints</p>
+          <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
             {summarization.length}
           </p>
         </Card>
 
         <Card className="p-6">
-          <p className="text-sm font-medium text-gray-600">Prediction Confidence</p>
-          <p className="mt-2 text-3xl font-bold text-gray-900">
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Prediction Confidence</p>
+          <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
             {modelPerf?.confidenceBuckets.reduce((acc, b) => acc + b.count, 0) ?? 0}
           </p>
         </Card>
@@ -79,7 +79,7 @@ export default function PlatformAnalyticsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="p-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Case Outcome Distribution
           </h3>
           <PieChartComponent
@@ -94,7 +94,7 @@ export default function PlatformAnalyticsPage() {
         </Card>
 
         <Card className="p-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Confidence Buckets
           </h3>
           <BarChartComponent
@@ -111,7 +111,7 @@ export default function PlatformAnalyticsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="p-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Summarization Usage by Endpoint
           </h3>
           <BarChartComponent
@@ -126,7 +126,7 @@ export default function PlatformAnalyticsPage() {
         </Card>
 
         <Card className="p-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Predictions Over Time (proxy)
           </h3>
           <LineChartComponent

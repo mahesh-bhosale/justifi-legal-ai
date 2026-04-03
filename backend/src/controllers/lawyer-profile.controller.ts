@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import lawyerProfileService from '../services/lawyer-profile.service';
+import { uploadAvatar as uploadToStorage } from '../services/storage.service';
 import { z } from 'zod';
 
 // Validation schemas
@@ -335,6 +336,51 @@ class LawyerProfileController {
       res.status(500).json({
         success: false,
         message: 'Failed to get languages'
+      });
+    }
+  }
+
+  /**
+   * Upload and update lawyer avatar
+   */
+  async uploadAvatar(req: Request, res: Response): Promise<void> {
+    try {
+      if (!req.user) {
+        res.status(401).json({
+          success: false,
+          message: 'Authentication required'
+        });
+        return;
+      }
+
+      if (!req.file) {
+        res.status(400).json({
+          success: false,
+          message: 'No image file provided'
+        });
+        return;
+      }
+
+      const uploadResult = await uploadToStorage({
+        userId: req.user.userId,
+        fileBuffer: req.file.buffer,
+        mimeType: req.file.mimetype,
+      });
+
+      await lawyerProfileService.updateAvatarUrl(req.user.userId, uploadResult.path);
+
+      res.json({
+        success: true,
+        message: 'Avatar uploaded successfully',
+        data: {
+          avatarUrl: uploadResult.path
+        }
+      });
+    } catch (error: any) {
+      console.error('Error uploading lawyer avatar:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to upload avatar'
       });
     }
   }

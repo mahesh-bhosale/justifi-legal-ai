@@ -268,8 +268,8 @@ export function CaseMessages({
   if (!user) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="text-center text-gray-500">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+        <div className="text-center text-gray-500 dark:text-gray-400">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500 mx-auto mb-2"></div>
           <p>Loading user data...</p>
         </div>
       </div>
@@ -281,36 +281,36 @@ export function CaseMessages({
       {/* Messages Container */}
       <div 
         ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto p-4 pb-24 space-y-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 transition-colors relative"
+        className="flex-1 overflow-y-auto p-4 pb-24 space-y-4 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-gray-500 transition-colors relative"
       >
         {/* Scroll to Bottom Button */}
         {showScrollToBottom && (
           <button
             onClick={() => scrollToBottom('smooth')}
-            className="fixed right-6 bottom-24 z-10 p-3 bg-white rounded-full shadow-lg border border-gray-200 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-transform hover:scale-105"
+            className="fixed right-6 bottom-24 z-10 p-3 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-transform hover:scale-105"
             aria-label="Scroll to bottom"
             title="Go to latest messages"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
           </button>
         )}
         {isLoading && messages.length === 0 ? (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex flex-col items-center space-y-2 text-gray-500">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            <div className="flex flex-col items-center space-y-2 text-gray-500 dark:text-gray-400">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
               <span>Loading messages...</span>
             </div>
           </div>
         ) : messages.length === 0 ? (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center text-gray-500">
-              <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="text-center text-gray-500 dark:text-gray-400">
+              <svg className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
               </svg>
               <h3 className="mt-2 text-sm font-medium">No messages yet</h3>
-              <p className="mt-1 text-sm">Send a message to start the conversation</p>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Send a message to start the conversation</p>
             </div>
           </div>
         ) : (
@@ -319,7 +319,7 @@ export function CaseMessages({
               <div key={date}>
                 {/* Date Header */}
                 <div className="flex justify-center mb-4">
-                  <span className="bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full">
+                  <span className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs px-3 py-1 rounded-full">
                     {formatMessageDate(date)}
                   </span>
                 </div>
@@ -350,19 +350,19 @@ export function CaseMessages({
                     <div
                       className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                         isOwnMessage
-                          ? 'bg-blue-500 text-white rounded-br-none hover:bg-blue-600 transition-colors'
-                          : 'bg-gray-100 text-gray-800 rounded-bl-none hover:bg-gray-200 transition-colors'
+                          ? 'bg-yellow-600 dark:bg-yellow-500 text-white dark:text-gray-900 rounded-br-none hover:bg-yellow-700 dark:hover:bg-yellow-400 transition-colors'
+                          : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-none hover:bg-gray-200 dark:hover:bg-gray-700 border border-transparent dark:border-gray-700 transition-colors'
                       } shadow-sm`}
                     >
                       <div className="text-sm whitespace-pre-wrap break-words">
                         {message.message}
                       </div>
                       <div className="flex justify-between items-center mt-1">
-                        <span className={`text-xs ${isOwnMessage ? 'text-blue-200' : 'text-gray-500'}`}>
+                        <span className={`text-xs ${isOwnMessage ? 'text-gray-400 dark:text-gray-400' : 'text-gray-500 dark:text-gray-400'}`}>
                           {isOwnMessage ? 'You' : message.senderType || 'User'}
                         </span>
                         <span 
-                          className={`text-xs ${isOwnMessage ? 'text-blue-200' : 'text-gray-500'}`}
+                          className={`text-xs ${isOwnMessage ? 'text-gray-400 dark:text-gray-400' : 'text-gray-500 dark:text-gray-400'}`}
                           title={new Date(message.createdAt).toLocaleString()}
                         >
                           {formatTime(message.createdAt)}
@@ -370,7 +370,7 @@ export function CaseMessages({
                       </div>
                       {!message.isRead && isOwnMessage && (
                         <div className="text-right">
-                          <span className="text-xs text-blue-200">
+                          <span className="text-xs text-gray-400 dark:text-gray-400">
                             Sent
                           </span>
                         </div>
@@ -389,7 +389,7 @@ export function CaseMessages({
         {/* Loading indicator when loading more messages */}
         {isLoading && messages.length > 0 && (
           <div className="flex justify-center py-2">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-yellow-500"></div>
           </div>
         )}
       </div>
@@ -401,9 +401,9 @@ export function CaseMessages({
         <div className="px-4 py-1 bg-gray-50 border-t border-gray-100">
           <div className="flex items-center space-x-1">
             <div className="flex space-x-1">
-              <div className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0ms' }}></div>
-              <div className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '150ms' }}></div>
-              <div className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '300ms' }}></div>
+              <div className="w-2 h-2 rounded-full bg-yellow-400 animate-bounce" style={{ animationDelay: '0ms' }}></div>
+              <div className="w-2 h-2 rounded-full bg-yellow-400 animate-bounce" style={{ animationDelay: '150ms' }}></div>
+              <div className="w-2 h-2 rounded-full bg-yellow-400 animate-bounce" style={{ animationDelay: '300ms' }}></div>
             </div>
             <span className="text-xs text-gray-500">
               Someone is typing...
@@ -414,7 +414,7 @@ export function CaseMessages({
       */}
       
       {/* Fixed Message Input */}
-      <div className="border-t border-gray-200 p-4 bg-white fixed bottom-0 left-0 right-0 z-10">
+      <div className="border-t border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-950 fixed bottom-0 left-0 right-0 z-10 transition-colors duration-300">
         <form onSubmit={handleSubmit} className="flex items-end space-x-2 max-w-4xl mx-auto w-full px-4">
           <div className="flex-1 relative">
             <textarea
@@ -431,19 +431,19 @@ export function CaseMessages({
               }}
               placeholder="Type your message..."
               rows={1}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none overflow-hidden"
+              className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent resize-none overflow-hidden transition-colors duration-300"
               disabled={sending || isLoading}
               style={{ minHeight: '44px', maxHeight: '120px' }}
             />
             <div className="absolute right-2 bottom-2 flex items-center space-x-2">
               {newMessage.length > 0 && (
-                <span className={`text-xs ${isMessageTooLong ? 'text-red-500' : 'text-gray-500'}`}>
+                <span className={`text-xs ${isMessageTooLong ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'}`}>
                   {Math.max(0, remainingChars)}
                 </span>
               )}
               <button
                 type="button"
-                className={`p-1 rounded-full ${sending || isLoading ? 'text-gray-400' : 'text-gray-500 hover:text-gray-700'} focus:outline-none`}
+                className={`p-1 rounded-full ${sending || isLoading ? 'text-gray-400 dark:text-gray-600' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'} focus:outline-none`}
                 title="Attach file"
                 disabled={sending || isLoading}
               >
@@ -456,7 +456,7 @@ export function CaseMessages({
           <button
             type="submit"
             disabled={isSendDisabled}
-            className={`h-11 w-11 flex-shrink-0 inline-flex items-center justify-center rounded-full ${isSendDisabled ? 'bg-gray-300' : 'bg-blue-500 hover:bg-blue-600'} text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors`}
+            className={`h-11 w-11 flex-shrink-0 inline-flex items-center justify-center rounded-full ${isSendDisabled ? 'bg-gray-300 dark:bg-gray-700' : 'bg-yellow-600 dark:bg-yellow-500 hover:bg-yellow-700 dark:hover:bg-yellow-600'} text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 dark:focus:ring-offset-gray-950 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300`}
             aria-label="Send message"
             title={isMessageTooLong ? 'Message is too long' : 'Send message'}
           >

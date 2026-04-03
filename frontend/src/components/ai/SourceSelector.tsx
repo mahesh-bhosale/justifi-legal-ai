@@ -44,15 +44,15 @@ export default function SourceSelector({
   return (
     <div className="w-full">
       {/* Tab Headers */}
-      <div className="flex border-b border-gray-200 mb-4">
+      <div className="flex border-b border-gray-200 dark:border-gray-700 mb-4">
         <button
           type="button"
           onClick={() => handleTabChange('text')}
           disabled={disabled}
           className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors ${
             activeTab === 'text'
-              ? 'border-blue-500 text-blue-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              ? 'border-yellow-500 text-yellow-600 dark:text-yellow-500'
+              : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-200 hover:border-gray-300 dark:border-gray-600'
           } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         >
           Text Input
@@ -63,8 +63,8 @@ export default function SourceSelector({
           disabled={disabled}
           className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors ${
             activeTab === 'pdf'
-              ? 'border-blue-500 text-blue-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              ? 'border-yellow-500 text-yellow-600 dark:text-yellow-500'
+              : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-200 hover:border-gray-300 dark:border-gray-600'
           } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         >
           PDF Upload
@@ -75,7 +75,7 @@ export default function SourceSelector({
       <div className="min-h-[200px]">
         {activeTab === 'text' && (
           <div className="space-y-2">
-            <label htmlFor="text-input" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="text-input" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
               Enter your text to summarize
             </label>
             <textarea
@@ -84,9 +84,9 @@ export default function SourceSelector({
               onChange={(e) => onTextChange(e.target.value)}
               disabled={disabled}
               placeholder="Paste your legal document, contract, or any text you want to summarize and analyze..."
-              className="w-full h-48 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 resize-none disabled:bg-gray-50 disabled:text-gray-500"
+              className="w-full h-48 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 resize-none disabled:bg-gray-50 dark:bg-gray-900 disabled:text-gray-500 dark:text-gray-400"
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               {textValue.length} characters
             </p>
           </div>
@@ -94,19 +94,19 @@ export default function SourceSelector({
 
         {activeTab === 'pdf' && (
           <div className="space-y-4">
-            <label htmlFor="pdf-input" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="pdf-input" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
               Upload a PDF document
             </label>
             <div className="flex items-center justify-center w-full">
               <label
                 htmlFor="pdf-input"
-                className={`flex flex-col items-center justify-center w-full h-48 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors ${
+                className={`flex flex-col items-center justify-center w-full h-48 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:bg-gray-800 transition-colors ${
                   disabled ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                   <svg
-                    className="w-8 h-8 mb-4 text-gray-500"
+                    className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -120,10 +120,10 @@ export default function SourceSelector({
                       d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
                     />
                   </svg>
-                  <p className="mb-2 text-sm text-gray-500">
+                  <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
                     <span className="font-semibold">Click to upload</span> or drag and drop
                   </p>
-                  <p className="text-xs text-gray-500">PDF files only (MAX. 10MB)</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">PDF files only (MAX. 10MB)</p>
                 </div>
                 <input
                   id="pdf-input"
@@ -137,9 +137,9 @@ export default function SourceSelector({
             </div>
             
             {selectedFile && (
-              <div className="flex items-center space-x-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+              <div className="flex items-center space-x-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900/30 rounded-md">
                 <svg
-                  className="w-5 h-5 text-blue-600"
+                  className="w-5 h-5 text-yellow-600 dark:text-yellow-500"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -150,8 +150,8 @@ export default function SourceSelector({
                   />
                 </svg>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-blue-900">{selectedFile.name}</p>
-                  <p className="text-xs text-blue-700">
+                  <p className="text-sm font-medium text-yellow-900 dark:text-white">{selectedFile.name}</p>
+                  <p className="text-xs text-yellow-700 dark:text-yellow-400">
                     {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                   </p>
                 </div>
@@ -159,7 +159,7 @@ export default function SourceSelector({
                   type="button"
                   onClick={() => onFileChange(null)}
                   disabled={disabled}
-                  className="text-blue-600 hover:text-blue-800 disabled:opacity-50"
+                  className="text-yellow-600 dark:text-yellow-500 hover:text-yellow-800 dark:hover:text-yellow-400 disabled:opacity-50"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path

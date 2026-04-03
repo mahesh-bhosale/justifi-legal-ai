@@ -110,16 +110,16 @@ export default function LawyerDashboard() {
 
   const getStatusBadge = (status: string) => {
     const badges: Record<string, { text: string; className: string }> = {
-      pending_lawyer_acceptance: { text: 'Pending', className: 'bg-yellow-100 text-yellow-800' },
-      in_progress: { text: 'In Progress', className: 'bg-blue-100 text-blue-800' },
-      rejected: { text: 'Rejected', className: 'bg-red-100 text-red-800' },
-      resolved: { text: 'Resolved', className: 'bg-green-100 text-green-800' },
-      closed: { text: 'Closed', className: 'bg-gray-100 text-gray-800' },
+      pending_lawyer_acceptance: { text: 'Pending', className: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-500' },
+      in_progress: { text: 'In Progress', className: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400' },
+      rejected: { text: 'Rejected', className: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400' },
+      resolved: { text: 'Resolved', className: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400' },
+      closed: { text: 'Closed', className: 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-400' },
     };
 
-    const badge = badges[status] || { text: status, className: 'bg-gray-100 text-gray-800' };
+    const badge = badges[status] || { text: status, className: 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-400' };
     return (
-      <span className={`px-2 py-1 text-xs font-medium rounded-full ${badge.className}`}>
+      <span className={`px-2.5 py-0.5 text-xs font-medium rounded-full border border-transparent dark:border-current/10 ${badge.className}`}>
         {badge.text}
       </span>
     );
@@ -127,11 +127,11 @@ export default function LawyerDashboard() {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6 transition-colors">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
           Lawyer Dashboard
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-400">
           Manage your cases, review AI-generated documents, and provide legal expertise to clients.
         </p>
       </div>
@@ -140,14 +140,14 @@ export default function LawyerDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="p-6">
           <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+              <svg className="w-6 h-6 text-yellow-600 dark:text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Active Cases</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Cases</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 {summary?.activeCases ?? 0}
               </p>
             </div>
@@ -156,14 +156,14 @@ export default function LawyerDashboard() {
 
         <Card className="p-6">
           <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+              <svg className="w-6 h-6 text-yellow-600 dark:text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Cases</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Cases</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 {summary?.totalCases ?? 0}
               </p>
             </div>
@@ -172,14 +172,14 @@ export default function LawyerDashboard() {
 
         <Card className="p-6">
           <div className="flex items-center">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+              <svg className="w-6 h-6 text-yellow-600 dark:text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Completed</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Completed</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 {summary?.completedCases ?? 0}
               </p>
             </div>
@@ -188,14 +188,14 @@ export default function LawyerDashboard() {
 
         <Card className="p-6">
           <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+              <svg className="w-6 h-6 text-yellow-600 dark:text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Avg Rating</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Rating</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 {summary?.averageRating ? summary.averageRating.toFixed(2) : '—'}
               </p>
             </div>
@@ -206,7 +206,7 @@ export default function LawyerDashboard() {
       {/* Analytics Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="p-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Case Status Distribution
           </h3>
           <PieChartComponent
@@ -218,7 +218,7 @@ export default function LawyerDashboard() {
         </Card>
 
         <Card className="p-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Proposal Outcomes
           </h3>
           <BarChartComponent
@@ -232,7 +232,7 @@ export default function LawyerDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="p-4 lg:col-span-2">
-          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
             Reviews Over Time
           </h3>
           <LineChartComponent
@@ -252,9 +252,9 @@ export default function LawyerDashboard() {
       {/* Direct Contact Requests */}
       <Card className="p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Direct Contact Requests</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white transition-colors">Direct Contact Requests</h3>
           {!loadingRequests && directRequests.length > 0 && (
-            <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-full">
+            <span className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-500 text-sm font-medium rounded-full border border-yellow-200 dark:border-yellow-800/30">
               {directRequests.length} New
             </span>
           )}
@@ -262,15 +262,15 @@ export default function LawyerDashboard() {
         
         {loadingRequests ? (
           <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600 dark:border-yellow-500"></div>
           </div>
         ) : directRequests.length === 0 ? (
           <div className="text-center py-8">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No direct contact requests</h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No direct contact requests</h3>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               When citizens contact you directly, their case requests will appear here.
             </p>
           </div>
@@ -279,21 +279,21 @@ export default function LawyerDashboard() {
             {directRequests.map((request) => (
               <div
                 key={request.id}
-                className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                className="p-4 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <h4 className="font-medium text-gray-900">{request.title}</h4>
+                      <h4 className="font-medium text-gray-900 dark:text-white">{request.title}</h4>
                       {getStatusBadge(request.status)}
                     </div>
-                    <p className="text-sm text-gray-600 mb-2 line-clamp-2">{request.description}</p>
-                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">{request.description}</p>
+                    <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
                       <span>Category: {request.category}</span>
                       <span>Urgency: {request.urgency}</span>
                       {request.location && <span>Location: {request.location}</span>}
                     </div>
-                    <div className="mt-2 text-xs text-gray-400">
+                    <div className="mt-2 text-xs text-gray-400 dark:text-gray-500">
                       Received: {new Date(request.createdAt).toLocaleDateString()}
                     </div>
                   </div>
@@ -301,7 +301,7 @@ export default function LawyerDashboard() {
                     <Button
                       onClick={() => handleAccept(request.id)}
                       disabled={processingId === request.id}
-                      className="bg-green-600 hover:bg-green-700 text-white"
+                      className="bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600 text-white dark:text-gray-950 font-medium transition-colors"
                     >
                       {processingId === request.id ? 'Processing...' : 'Accept'}
                     </Button>
@@ -323,40 +323,40 @@ export default function LawyerDashboard() {
 
       {/* Quick Actions */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <button
             onClick={() => router.push('/dashboard/summarize')}
-            className="w-full text-left p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+            className="w-full text-left p-3 rounded-lg border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
           >
             <div className="flex items-center">
-              <svg className="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-yellow-600 dark:text-yellow-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <span className="font-medium">Review AI Documents</span>
+              <span className="font-medium text-gray-900 dark:text-white transition-colors">Review AI Documents</span>
             </div>
           </button>
 
           <button
             onClick={() => router.push('/dashboard/lawyer/prediction')}
-            className="w-full text-left p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+            className="w-full text-left p-3 rounded-lg border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
           >
             <div className="flex items-center">
-              <svg className="w-5 h-5 text-purple-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-yellow-600 dark:text-yellow-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3v18h18" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 14l3-3 3 3 5-6" />
               </svg>
-              <span className="font-medium">Get Prediction</span>
+              <span className="font-medium text-gray-900 dark:text-white transition-colors">Get Prediction</span>
             </div>
           </button>
 
           <Link href="/dashboard/lawyer/profile" className="block">
-            <button className="w-full text-left p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+            <button className="w-full text-left p-3 rounded-lg border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
               <div className="flex items-center">
-                <svg className="w-5 h-5 text-purple-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-yellow-600 dark:text-yellow-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-                <span className="font-medium">Manage Profile</span>
+                <span className="font-medium text-gray-900 dark:text-white transition-colors">Manage Profile</span>
               </div>
             </button>
           </Link>

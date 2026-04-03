@@ -135,7 +135,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ className = '' }) => {
   }, []);
 
   return (
-    <div className={`relative rounded-2xl shadow-2xl overflow-hidden border-4 border-white bg-black ${className}`}>
+    <div className={`relative rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-black transition-colors ${className}`}>
       <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
         <video 
           ref={videoRef}
@@ -153,7 +153,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ className = '' }) => {
         {isLoading && !hasError && (
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
             <div className="flex flex-col items-center gap-2">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-yellow-600 dark:border-yellow-500"></div>
               <div className="text-white text-sm">Loading video...</div>
             </div>
           </div>
@@ -172,7 +172,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ className = '' }) => {
                     videoRef.current.load();
                   }
                 }}
-                className="text-blue-400 hover:text-blue-300 text-sm underline"
+                className="text-yellow-600 dark:text-yellow-500 hover:text-yellow-500 dark:hover:text-yellow-400 text-sm underline transition-colors"
               >
                 Retry
               </button>
@@ -180,16 +180,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ className = '' }) => {
           </div>
         )}
         
-        {/* Play button overlay - only when paused and not loading */}
         {showOverlay && !isPlaying && !isLoading && !hasError && (
           <div 
             className="absolute inset-0 flex items-center justify-center bg-opacity-40 hover:bg-opacity-30 transition-all duration-300 cursor-pointer z-10"
             onClick={handleOverlayClick}
             aria-label="Play video"
           >
-            <div className="w-20 h-20 md:w-24 md:h-24 bg-blue-600 bg-opacity-95 rounded-full flex items-center justify-center transform hover:scale-110 transition-transform shadow-2xl">
+            <div className="w-20 h-20 md:w-24 md:h-24 bg-yellow-600 bg-opacity-95 rounded-full flex items-center justify-center transform hover:scale-110 transition-transform shadow-2xl">
               <svg 
-                className="w-10 h-10 md:w-12 md:h-12 text-white ml-1 md:ml-2" 
+                className="w-10 h-10 md:w-12 md:h-12 text-gray-950 ml-1 md:ml-2" 
                 fill="currentColor" 
                 viewBox="0 0 20 20"
                 aria-hidden="true"

@@ -43,50 +43,78 @@ export function ConfidenceChart({ chunks }: ConfidenceChartProps) {
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
-      <div className="h-64 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-        <h3 className="mb-2 text-sm font-semibold text-gray-800">
+      <div className="h-64 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 shadow-sm transition-colors">
+        <h3 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white transition-colors">
           Chunk Confidence Scores
         </h3>
-        <p className="mb-3 text-xs text-gray-500">
+        <p className="mb-3 text-xs text-gray-500 dark:text-gray-400">
           Confidence per analyzed text chunk (higher is more confident).
         </p>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={barData}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#374151" strokeOpacity={0.1} />
+            <XAxis 
+              dataKey="name" 
+              tick={{ fontSize: 10, fill: 'currentColor' }} 
+              className="text-gray-500 dark:text-gray-400"
+            />
             <YAxis
               unit="%"
               domain={[0, 100]}
-              tick={{ fontSize: 10 }}
+              tick={{ fontSize: 10, fill: 'currentColor' }}
+              className="text-gray-500 dark:text-gray-400"
             />
-            <Tooltip formatter={(value) => `${value}%`} />
+            <Tooltip 
+              formatter={(value) => [`${value}%`, 'Confidence']}
+              contentStyle={{ 
+                backgroundColor: 'rgba(17, 24, 39, 0.9)', 
+                borderColor: '#374151',
+                color: '#fff',
+                borderRadius: '8px'
+              }}
+            />
             <Bar
               dataKey="confidence"
-              fill="#16a34a"
+              fill="#EAB308"
               radius={[4, 4, 0, 0]}
             />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
-      <div className="h-64 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-        <h3 className="mb-2 text-sm font-semibold text-gray-800">
+      <div className="h-64 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 shadow-sm transition-colors">
+        <h3 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white transition-colors">
           Confidence Distribution
         </h3>
-        <p className="mb-3 text-xs text-gray-500">
+        <p className="mb-3 text-xs text-gray-500 dark:text-gray-400">
           Number of chunks predicted as ACCEPT vs REJECT.
         </p>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={distributionData}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis dataKey="label" tick={{ fontSize: 12 }} />
-            <YAxis allowDecimals={false} tick={{ fontSize: 10 }} />
-            <Tooltip />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#374151" strokeOpacity={0.1} />
+            <XAxis 
+              dataKey="label" 
+              tick={{ fontSize: 12, fill: 'currentColor' }}
+              className="text-gray-500 dark:text-gray-400"
+            />
+            <YAxis 
+              allowDecimals={false} 
+              tick={{ fontSize: 10, fill: 'currentColor' }}
+              className="text-gray-500 dark:text-gray-400"
+            />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: 'rgba(17, 24, 39, 0.9)', 
+                borderColor: '#374151',
+                color: '#fff',
+                borderRadius: '8px'
+              }}
+            />
             <Legend />
             <Bar
               dataKey="count"
               name="Chunks"
-              fill="#2563eb"
+              fill="#CA8A04"
               radius={[4, 4, 0, 0]}
             />
           </BarChart>

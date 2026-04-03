@@ -1,6 +1,6 @@
 import { and, eq, not } from 'drizzle-orm';
 import { db } from '../db';
-import { caseProposals, cases, type CaseProposal, type Case } from '../models/schema';
+import { caseProposals, cases, users, type CaseProposal, type Case } from '../models/schema';
 import { buildEvent, publishEvent } from './kafka.service';
 import { notifyLawyerApplied, notifyLawyerSelected } from './notification-dispatch.service';
 
@@ -60,7 +60,9 @@ class ProposalsService {
       proposalId: created.id,
     }).catch((err) => console.error('In-app notifyLawyerApplied failed:', err));
 
-    return created;
+    const [u] = await db.select({ name: users.name }).from(users).where(eq(users.id, input.lawyerId)).limit(1);
+
+    return { ...created, lawyerName: u?.name } as any;
   }
 
   async listForCase(caseId: number, requester: { role: 'citizen' | 'lawyer' | 'admin'; userId: string }): Promise<CaseProposal[]> {
@@ -77,8 +79,24 @@ class ProposalsService {
       ));
     if (!canView) throw new Error('Access denied');
 
-    const rows = await db.select().from(caseProposals).where(eq(caseProposals.caseId, caseId));
-    return rows;
+    const rows = await db
+      .select({
+        id: caseProposals.id,
+        caseId: caseProposals.caseId,
+        lawyerId: caseProposals.lawyerId,
+        proposalText: caseProposals.proposalText,
+        proposedFee: caseProposals.proposedFee,
+        estimatedDuration: caseProposals.estimatedDuration,
+        status: caseProposals.status,
+        createdAt: caseProposals.createdAt,
+        updatedAt: caseProposals.updatedAt,
+        lawyerName: users.name,
+      })
+      .from(caseProposals)
+      .innerJoin(users, eq(caseProposals.lawyerId, users.id))
+      .where(eq(caseProposals.caseId, caseId));
+      
+    return rows as any;
   }
 
   async setStatus(
@@ -133,14 +151,16 @@ class ProposalsService {
           console.error('Kafka publish failed (lawyer_selected):', err);
         });
 
-        return { proposal: accepted, updatedCase };
+        const [u] = await tx.select({ name: users.name }).from(users).where(eq(users.id, p.lawyerId)).limit(1);
+        return { proposal: { ...accepted, lawyerName: u?.name } as any, updatedCase };
       } else {
         const [rejected] = await tx
           .update(caseProposals)
           .set({ status: 'rejected' as any, updatedAt: new Date() as any })
           .where(eq(caseProposals.id, proposalId))
           .returning();
-        return { proposal: rejected };
+        const [u] = await tx.select({ name: users.name }).from(users).where(eq(users.id, p.lawyerId)).limit(1);
+        return { proposal: { ...rejected, lawyerName: u?.name } as any };
       }
     });
 
@@ -167,7 +187,8 @@ class ProposalsService {
       .set({ status: 'withdrawn' as any, updatedAt: new Date() as any })
       .where(eq(caseProposals.id, proposalId))
       .returning();
-    return updated ?? null;
+    const [u] = await db.select({ name: users.name }).from(users).where(eq(users.id, requester.userId)).limit(1);
+    return { ...updated, lawyerName: u?.name } as any;
   }
 }
 

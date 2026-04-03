@@ -21,19 +21,19 @@ const STATUS_FILTER_OPTIONS: { value: string; label: string }[] = [
 function statusBadgeClass(status: string) {
   switch (status) {
     case 'pending':
-      return 'bg-yellow-100 text-yellow-800';
+      return 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400';
     case 'pending_lawyer_acceptance':
-      return 'bg-orange-100 text-orange-800';
+      return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400';
     case 'in_progress':
-      return 'bg-blue-100 text-blue-800';
+      return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400';
     case 'resolved':
-      return 'bg-green-100 text-green-800';
+      return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400';
     case 'closed':
-      return 'bg-gray-200 text-gray-800';
+      return 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300';
     case 'rejected':
-      return 'bg-red-100 text-red-800';
+      return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-400';
   }
 }
 
@@ -72,175 +72,216 @@ export default function AdminCasesPage() {
   }, [load]);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">All cases</h1>
-        <p className="text-gray-600">Search, filter, open details, or permanently delete a case.</p>
+    <div className="space-y-8 animate-in fade-in duration-500 pb-12">
+      {/* Header section with distinct lead line */}
+      <div className="border-l-4 border-amber-500 pl-6 py-2">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">Institutional Case Registry</h1>
+        <p className="text-gray-500 dark:text-gray-400 mt-2 font-medium max-w-2xl">
+          Comprehensive administrative oversight of all legal matters within the Justifi ecosystem.
+          Audit, filter, and manage case lifecycles with institutional precision.
+        </p>
       </div>
 
-      <Card className="p-4 space-y-4">
-        <div className="flex flex-col lg:flex-row lg:items-end gap-4">
-          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+      {/* Filter and Search Section */}
+      <Card className="p-6 bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 shadow-sm">
+        <div className="flex flex-col lg:flex-row lg:items-end gap-6">
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-2">
+              <label className="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest px-1">Case Status</label>
               <select
                 value={status}
                 onChange={(e) => {
                   setPage(0);
                   setStatus(e.target.value);
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all font-bold text-sm appearance-none cursor-pointer"
               >
                 {STATUS_FILTER_OPTIONS.map((o) => (
                   <option key={o.value || 'all'} value={o.value}>
-                    {o.label}
+                    {o.label.toUpperCase()}
                   </option>
                 ))}
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Search title or category</label>
-              <div className="flex gap-2">
-                <input
-                  type="search"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      setPage(0);
-                      setSearch(searchInput);
-                    }
-                  }}
-                  placeholder="e.g. custody, property…"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+            <div className="md:col-span-2 space-y-2">
+              <label className="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest px-1">Registry Search</label>
+              <div className="flex gap-3">
+                <div className="relative flex-1">
+                  <span className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </span>
+                  <input
+                    type="search"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        setPage(0);
+                        setSearch(searchInput);
+                      }
+                    }}
+                    placeholder="Search by title, category, or case details..."
+                    className="w-full pl-11 pr-4 py-3 border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all font-medium text-sm"
+                  />
+                </div>
                 <Button
                   type="button"
-                  className="shrink-0 bg-blue-600 hover:bg-blue-700"
+                  className="shrink-0 bg-amber-600 hover:bg-amber-700 text-white font-black px-6 rounded-xl shadow-lg shadow-amber-600/20 uppercase tracking-widest text-xs"
                   onClick={() => {
                     setPage(0);
                     setSearch(searchInput);
                   }}
                 >
-                  Search
+                  Query
                 </Button>
               </div>
             </div>
           </div>
         </div>
 
-        {loading ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
-          </div>
-        ) : error ? (
-          <div className="text-red-600 text-sm">{error}</div>
-        ) : cases.length === 0 ? (
-          <p className="text-sm text-gray-600">No cases match your filters.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 text-sm">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-2 text-left font-semibold text-gray-700">ID</th>
-                  <th className="px-4 py-2 text-left font-semibold text-gray-700">Title</th>
-                  <th className="px-4 py-2 text-left font-semibold text-gray-700">Category</th>
-                  <th className="px-4 py-2 text-left font-semibold text-gray-700">Status</th>
-                  <th className="px-4 py-2 text-left font-semibold text-gray-700">Citizen</th>
-                  <th className="px-4 py-2 text-left font-semibold text-gray-700">Lawyer</th>
-                  <th className="px-4 py-2 text-left font-semibold text-gray-700">Created</th>
-                  <th className="px-4 py-2 text-left font-semibold text-gray-700">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {cases.map((c) => (
-                  <tr key={c.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-2 text-gray-900">{c.id}</td>
-                    <td className="px-4 py-2 text-gray-900 max-w-[200px] truncate" title={c.title}>
-                      {c.title}
-                    </td>
-                    <td className="px-4 py-2 text-gray-700">{c.category}</td>
-                    <td className="px-4 py-2">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${statusBadgeClass(
-                          c.status
-                        )}`}
-                      >
-                        {caseStatusLabel(c.status)}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2 text-gray-700">
-                      {c.citizenName ?? <span className="font-mono text-xs text-gray-500">{c.citizenId.slice(0, 8)}…</span>}
-                    </td>
-                    <td className="px-4 py-2 text-gray-700">
-                      {c.lawyerId ? (
-                        c.lawyerName ?? <span className="font-mono text-xs text-gray-500">{c.lawyerId.slice(0, 8)}…</span>
-                      ) : (
-                        <span className="text-xs text-gray-400">Unassigned</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-2 text-gray-700 whitespace-nowrap">
-                      {new Date(c.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-4 py-2 text-gray-700 whitespace-nowrap">
-                      <div className="flex flex-col sm:flex-row gap-2">
-                        <Link
-                          href={`/dashboard/admin/cases/${c.id}`}
-                          className="text-blue-600 hover:text-blue-800 font-medium"
-                        >
-                          View details
-                        </Link>
-                        <button
-                          type="button"
-                          className="text-left text-red-600 hover:text-red-800 font-medium"
-                          onClick={() => setDeleteTarget(c)}
-                        >
-                          Delete case
-                        </button>
-                      </div>
-                    </td>
+        <div className="mt-8">
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-24 space-y-4">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600" />
+              <p className="text-xs font-black text-amber-600 uppercase tracking-widest animate-pulse">Syncing Registry...</p>
+            </div>
+          ) : error ? (
+            <div className="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 p-4 rounded-xl text-red-600 dark:text-red-400 text-sm font-bold flex items-center gap-2">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {error}
+            </div>
+          ) : cases.length === 0 ? (
+            <div className="text-center py-20 bg-gray-50 dark:bg-gray-800/30 rounded-3xl border border-dashed border-gray-200 dark:border-gray-700">
+              <p className="text-sm text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest">No matching dossiers found</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto -mx-6">
+              <table className="w-full text-left border-collapse">
+                <thead className="bg-gray-50 dark:bg-gray-800/50">
+                  <tr className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] border-y border-gray-100 dark:border-gray-800">
+                    <th className="px-6 py-4">Ref ID</th>
+                    <th className="px-6 py-4">Title & Classification</th>
+                    <th className="px-6 py-4">Status</th>
+                    <th className="px-6 py-4">Involved Parties</th>
+                    <th className="px-6 py-4">Temporal Mark</th>
+                    <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                </thead>
+                <tbody className="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-gray-900">
+                  {cases.map((c) => (
+                    <tr key={c.id} className="hover:bg-amber-50/5 dark:hover:bg-amber-900/5 transition-colors group">
+                      <td className="px-6 py-5 font-mono text-xs text-gray-400 dark:text-gray-500 font-bold">#{c.id.toString().padStart(4, '0')}</td>
+                      <td className="px-6 py-5">
+                        <p className="text-gray-900 dark:text-white font-bold text-sm group-hover:text-amber-600 dark:group-hover:text-amber-500 transition-colors truncate max-w-[240px]" title={c.title}>
+                          {c.title}
+                        </p>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-1 block">{c.category}</span>
+                      </td>
+                      <td className="px-6 py-5">
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm border border-black/5 dark:border-white/5 ${statusBadgeClass(c.status)}`}>
+                          {caseStatusLabel(c.status)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-5">
+                        <div className="space-y-1">
+                          <p className="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                            <span className="w-3.5 h-3.5 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-[8px]">C</span>
+                            {c.citizenName ?? <span className="font-mono opacity-50">{c.citizenId.slice(0, 8)}</span>}
+                          </p>
+                          <p className="text-[10px] font-medium text-gray-400 flex items-center gap-1.5">
+                            <span className="w-3.5 h-3.5 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-[8px]">L</span>
+                            {c.lawyerId ? (c.lawyerName ?? <span className="font-mono opacity-50">{c.lawyerId.slice(0, 8)}</span>) : 'UNASSIGNED'}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="px-6 py-5 whitespace-nowrap text-[11px] font-bold text-gray-500 dark:text-gray-400">
+                        {new Date(c.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()}
+                      </td>
+                      <td className="px-6 py-5 whitespace-nowrap text-right">
+                        <div className="flex justify-end gap-4">
+                          <Link
+                            href={`/dashboard/admin/cases/${c.id}`}
+                            className="bg-gray-100 dark:bg-gray-800 hover:bg-amber-600 dark:hover:bg-amber-600 text-gray-700 dark:text-gray-300 hover:text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-sm"
+                          >
+                            Investigate
+                          </Link>
+                          <button
+                            type="button"
+                            className="bg-red-50 dark:bg-red-900/10 hover:bg-red-600 text-red-600 dark:text-red-400 hover:text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-sm"
+                            onClick={() => setDeleteTarget(c)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
 
-        <div className="flex justify-between items-center pt-2 border-t border-gray-100">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page === 0 || loading}
-            onClick={() => setPage((p) => Math.max(0, p - 1))}
-          >
-            Previous
-          </Button>
-          <span className="text-sm text-gray-600">Page {page + 1}</span>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={loading || cases.length < PAGE_SIZE}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            Next
-          </Button>
+        {/* Improved Pagination */}
+        <div className="flex justify-between items-center pt-8 mt-4 border-t border-gray-100 dark:border-gray-800">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page === 0 || loading}
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setPage((p) => Math.max(0, p - 1));
+              }}
+              className="bg-white dark:bg-gray-900 rounded-xl font-bold uppercase tracking-widest text-[10px] border-gray-200 dark:border-gray-800"
+            >
+              ← Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={loading || cases.length < PAGE_SIZE}
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setPage((p) => p + 1);
+              }}
+              className="bg-white dark:bg-gray-900 rounded-xl font-bold uppercase tracking-widest text-[10px] border-gray-200 dark:border-gray-800"
+            >
+              Next →
+            </Button>
+          </div>
+          <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
+            Registry Section {page + 1}
+          </p>
         </div>
       </Card>
 
+      {/* Institutional Deletion Modal */}
       {deleteTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="max-w-md w-full rounded-lg bg-white shadow-xl p-6 space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Delete case permanently?</h3>
-            <p className="text-sm text-gray-600">
-              Case #{deleteTarget.id}: <strong>{deleteTarget.title}</strong>. This removes the case and related proposals,
-              messages, and documents (database cascade). This cannot be undone.
-            </p>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setDeleteTarget(null)} disabled={deleteLoading}>
-                Cancel
-              </Button>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-gray-950/90 backdrop-blur-md animate-in fade-in duration-300" />
+          <div className="relative max-w-lg w-full rounded-[2.5rem] bg-white dark:bg-gray-900 shadow-2xl p-10 space-y-8 border-2 border-red-500/10 dark:border-red-900/20 transition-all animate-in zoom-in duration-300">
+            <div className="text-center space-y-6">
+              <div className="bg-red-100 dark:bg-red-900/20 w-24 h-24 rounded-[2rem] flex items-center justify-center mx-auto shadow-inner border border-red-200/50 dark:border-red-950/50">
+                <svg className="w-12 h-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight uppercase">Permanent Removal</h3>
+                <p className="text-red-500 dark:text-red-400 text-[10px] font-black tracking-[0.4em] uppercase">Irreversible Action</p>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed font-semibold">
+                Confirm purging of <span className="text-gray-950 dark:text-white font-black underline decoration-amber-500 underline-offset-4">Case Dossier #{deleteTarget.id}</span>. This command deletes all associated document indices and legal records.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 pt-6 border-t border-gray-50 dark:border-gray-800">
               <Button
-                className="bg-red-600 hover:bg-red-700"
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-black py-5 rounded-3xl shadow-xl shadow-red-600/30 transition-all active:scale-95 disabled:opacity-50 uppercase tracking-widest text-xs"
                 disabled={deleteLoading}
                 onClick={async () => {
                   try {
@@ -255,7 +296,15 @@ export default function AdminCasesPage() {
                   }
                 }}
               >
-                {deleteLoading ? 'Deleting…' : 'Delete case'}
+                {deleteLoading ? 'Executing Wipe...' : 'Confirm Permanent Deletion'}
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full py-5 rounded-3xl font-bold border-gray-200 dark:border-gray-800 uppercase tracking-widest text-[10px]"
+                onClick={() => setDeleteTarget(null)}
+                disabled={deleteLoading}
+              >
+                Abort Deletion
               </Button>
             </div>
           </div>

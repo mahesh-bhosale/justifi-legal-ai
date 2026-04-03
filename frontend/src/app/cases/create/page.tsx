@@ -73,8 +73,8 @@ function CreateCaseWithLawyerContent() {
   // Show loading while auth is being checked
   if (authLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
       </div>
     );
   }
@@ -82,9 +82,9 @@ function CreateCaseWithLawyerContent() {
   // If not authenticated, show nothing (redirect will happen in useEffect)
   if (!user) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
-          <p className="text-gray-600">Redirecting to login...</p>
+          <p className="text-gray-600 dark:text-gray-400">Redirecting to login...</p>
         </div>
       </div>
     );
@@ -94,31 +94,31 @@ function CreateCaseWithLawyerContent() {
   const userRole = user.role?.toLowerCase().trim();
   if (userRole !== 'citizen') {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
-          <p className="text-gray-600">Redirecting...</p>
+          <p className="text-gray-600 dark:text-gray-400">Redirecting...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Create New Case</h1>
+        <div className="mb-8 border-l-4 border-amber-500 pl-4">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Create New Case</h1>
           {lawyerName && (
-            <div className="mt-2 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Contacting:</span> {lawyerName}
+            <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/30 rounded-lg">
+              <p className="text-sm text-amber-900 dark:text-amber-400">
+                <span className="font-semibold">Contacting:</span> {lawyerName}
               </p>
-              <p className="text-xs text-gray-600 mt-1">
+              <p className="text-xs text-amber-800 dark:text-amber-500 mt-1">
                 This case will be sent directly to {lawyerName} for review. They will respond to your request.
               </p>
             </div>
           )}
-          <p className="text-gray-600 mt-2">
+          <p className="text-gray-600 dark:text-gray-400 mt-3 text-lg">
             Describe your legal issue to help {lawyerName ? 'the lawyer' : 'lawyers'} understand how they can assist you
           </p>
         </div>
@@ -146,8 +146,8 @@ function CreateCaseWithLawyerContent() {
 export default function CreateCaseWithLawyerPage() {
   return (
     <Suspense fallback={
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
       </div>
     }>
       <CreateCaseWithLawyerContent />

@@ -132,20 +132,20 @@ export default function SummarizePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">AI Summarizer & Assistant</h1>
-          <p className="mt-2 text-lg text-gray-600">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">AI Summarizer & Assistant</h1>
+          <p className="mt-2 text-lg text-gray-600 dark:text-gray-400">
             Upload a document or paste text to get AI-powered summaries and ask questions.
           </p>
         </div>
 
         <div className="space-y-8">
           {/* Source Input Section */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Document Input</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Document Input</h2>
             <SourceSelector
               onTextChange={handleTextChange}
               onFileChange={handleFileChange}
@@ -156,8 +156,8 @@ export default function SummarizePage() {
           </div>
 
           {/* Summary Options Section */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Summary Settings</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Summary Settings</h2>
             <SummaryOptions
               onSummarize={handleSummarize}
               disabled={!canSummarize()}
@@ -167,7 +167,7 @@ export default function SummarizePage() {
 
           {/* Error Display */}
           {state.error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-4">
               <div className="flex items-center">
                 <svg
                   className="w-5 h-5 text-red-400 mr-3"
@@ -181,8 +181,8 @@ export default function SummarizePage() {
                   />
                 </svg>
                 <div>
-                  <h3 className="text-sm font-medium text-red-800">Error</h3>
-                  <p className="text-sm text-red-700 mt-1">{state.error}</p>
+                  <h3 className="text-sm font-medium text-red-800 dark:text-red-400">Error</h3>
+                  <p className="text-sm text-red-700 dark:text-red-300 mt-1">{state.error}</p>
                 </div>
               </div>
             </div>
@@ -201,10 +201,10 @@ export default function SummarizePage() {
 
           {/* Rate Limit Info */}
           {state.summary?.rateLimit && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
               <div className="flex items-center">
                 <svg
-                  className="w-5 h-5 text-blue-400 mr-3"
+                  className="w-5 h-5 text-yellow-400 mr-3"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -215,8 +215,8 @@ export default function SummarizePage() {
                   />
                 </svg>
                 <div>
-                  <h3 className="text-sm font-medium text-blue-800">Usage Information</h3>
-                  <p className="text-sm text-blue-700 mt-1">
+                  <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-400">Usage Information</h3>
+                  <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
                     {state.summary.rateLimit.remaining} of {state.summary.rateLimit.limit} requests remaining today
                   </p>
                 </div>
@@ -227,11 +227,11 @@ export default function SummarizePage() {
           {/* Chat Section - Always visible */}
           <div className="mt-8">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Ask Questions</h2>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Ask Questions</h2>
               {!showChat && (
                 <button
                   onClick={() => setShowChat(true)}
-                  className="text-sm text-blue-600 hover:text-blue-800"
+                  className="text-sm text-yellow-600 dark:text-yellow-500 hover:text-yellow-800 dark:hover:text-yellow-400"
                 >
                   Show Chat
                 </button>
@@ -239,7 +239,7 @@ export default function SummarizePage() {
             </div>
             
             {showChat && (
-              <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
                 <ChatBox
                   onSendMessage={handleChatMessage}
                   documentContext={state.sourceType === 'pdf' && state.selectedFile ? state.selectedFile : state.textInput}
@@ -256,7 +256,7 @@ export default function SummarizePage() {
                   }}
                 />
                 {state.chatError && (
-                  <div className="mt-2 text-sm text-red-600">
+                  <div className="mt-2 text-sm text-red-600 dark:text-red-400">
                     {state.chatError}
                   </div>
                 )}
@@ -265,36 +265,36 @@ export default function SummarizePage() {
           </div>
 
           {/* Help Section */}
-          <div className="bg-gray-50 rounded-lg p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-3">How to Use</h3>
+          <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-6 mb-8">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">How to Use</h3>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">📝 Text Input</h4>
-                <ul className="text-sm text-gray-600 space-y-1">
+                <h4 className="font-medium text-gray-900 dark:text-white mb-2">📝 Text Input</h4>
+                <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                   <li>• Paste any legal document or text</li>
                   <li>• Choose your preferred summary length</li>
                   <li>• Get instant AI-powered summaries</li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">📄 PDF Upload</h4>
-                <ul className="text-sm text-gray-600 space-y-1">
+                <h4 className="font-medium text-gray-900 dark:text-white mb-2">📄 PDF Upload</h4>
+                <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                   <li>• Upload PDF documents (max 10MB)</li>
                   <li>• AI extracts and summarizes content</li>
                   <li>• Ask specific questions about the document</li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">💬 AI Chat</h4>
-                <ul className="text-sm text-gray-600 space-y-1">
+                <h4 className="font-medium text-gray-900 dark:text-white mb-2">💬 AI Chat</h4>
+                <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                   <li>• Ask follow-up questions after summarizing</li>
                   <li>• Get detailed explanations</li>
                   <li>• Clarify specific terms or concepts</li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">📋 Export Options</h4>
-                <ul className="text-sm text-gray-600 space-y-1">
+                <h4 className="font-medium text-gray-900 dark:text-white mb-2">📋 Export Options</h4>
+                <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                   <li>• Copy summaries to clipboard</li>
                   <li>• Download as text files</li>
                   <li>• Share with colleagues or clients</li>

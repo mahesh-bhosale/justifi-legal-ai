@@ -14,8 +14,16 @@ export const ALLOWED_CASE_DOCUMENT_MIMES = [
 
 export const ALLOWED_AI_PDF_MIMES = ['application/pdf'] as const;
 
+export const ALLOWED_AVATAR_MIMES = [
+  'image/png',
+  'image/jpeg',
+  'image/jpg',
+  'image/webp'
+] as const;
+
 export const MAX_CASE_DOCUMENT_BYTES = 10 * 1024 * 1024;
 export const MAX_AI_UPLOAD_BYTES = 10 * 1024 * 1024;
+export const MAX_AVATAR_BYTES = 5 * 1024 * 1024; // 5MB
 
 export function sanitizeUploadedFileName(originalName: string, maxLen = 200): string {
   const trimmed = originalName.trim();
@@ -45,4 +53,16 @@ export function pdfOnlyFileFilter(
     return;
   }
   cb(new Error('Only PDF uploads are allowed'));
+}
+
+export function avatarFileFilter(
+  _req: Request,
+  file: Express.Multer.File,
+  cb: FileFilterCallback
+): void {
+  if ((ALLOWED_AVATAR_MIMES as readonly string[]).includes(file.mimetype)) {
+    cb(null, true);
+    return;
+  }
+  cb(new Error(`File type not allowed: ${file.mimetype}. Allowed types: png, jpg, jpeg, webp`));
 }

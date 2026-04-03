@@ -196,25 +196,25 @@ export default function LawyerProfileForm({
   };
 
   return (
-    <Card className="max-w-4xl mx-auto">
+    <Card className="max-w-4xl mx-auto dark:bg-gray-800">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             {profileId ? 'Update Lawyer Profile' : 'Create Lawyer Profile'}
           </h2>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-gray-600 dark:text-gray-300">
             {profileId ? 'Update your professional information' : 'Complete your professional profile to start connecting with clients'}
           </p>
         </div>
 
         {/* Specializations */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Specializations *
           </label>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-40 overflow-y-auto border rounded-md p-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-40 overflow-y-auto border dark:border-gray-700 rounded-md p-3">
             {availableSpecializations.map((spec) => (
-              <label key={spec} className="flex items-center space-x-2">
+              <label key={spec} className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
                 <input
                   type="checkbox"
                   checked={formData.specializations.includes(spec)}
@@ -225,20 +225,20 @@ export default function LawyerProfileForm({
                       handleArrayChange('specializations', formData.specializations.filter(s => s !== spec));
                     }
                   }}
-                  className="rounded border-gray-300"
+                  className="rounded border-gray-300 dark:border-gray-600 text-yellow-600 focus:ring-yellow-500 bg-white dark:bg-gray-700"
                 />
                 <span className="text-sm">{spec}</span>
               </label>
             ))}
           </div>
           {errors.specializations && (
-            <p className="mt-1 text-sm text-red-600">{errors.specializations}</p>
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.specializations}</p>
           )}
         </div>
 
         {/* Years of Experience */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Years of Experience *
           </label>
           <input
@@ -246,59 +246,59 @@ export default function LawyerProfileForm({
             min="0"
             value={formData.yearsExperience}
             onChange={(e) => handleInputChange('yearsExperience', parseInt(e.target.value) || 0)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
             placeholder="Enter years of experience"
           />
           {errors.yearsExperience && (
-            <p className="mt-1 text-sm text-red-600">{errors.yearsExperience}</p>
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.yearsExperience}</p>
           )}
         </div>
 
         {/* Bio */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Professional Bio *
           </label>
           <textarea
             value={formData.bio}
             onChange={(e) => handleInputChange('bio', e.target.value)}
             rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
             placeholder="Describe your professional background, expertise, and approach to law..."
           />
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             {formData.bio.length}/50 characters minimum
           </p>
           {errors.bio && (
-            <p className="mt-1 text-sm text-red-600">{errors.bio}</p>
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.bio}</p>
           )}
         </div>
 
         {/* Office Address */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Office Address *
           </label>
           <textarea
             value={formData.officeAddress}
             onChange={(e) => handleInputChange('officeAddress', e.target.value)}
             rows={2}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
             placeholder="Enter your office address"
           />
           {errors.officeAddress && (
-            <p className="mt-1 text-sm text-red-600">{errors.officeAddress}</p>
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.officeAddress}</p>
           )}
         </div>
 
         {/* Service Areas */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Service Areas *
           </label>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-40 overflow-y-auto border rounded-md p-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-40 overflow-y-auto border dark:border-gray-700 rounded-md p-3">
             {availableServiceAreas.map((area) => (
-              <label key={area} className="flex items-center space-x-2">
+              <label key={area} className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
                 <input
                   type="checkbox"
                   checked={formData.serviceAreas.includes(area)}
@@ -309,25 +309,25 @@ export default function LawyerProfileForm({
                       handleArrayChange('serviceAreas', formData.serviceAreas.filter(a => a !== area));
                     }
                   }}
-                  className="rounded border-gray-300"
+                  className="rounded border-gray-300 dark:border-gray-600 text-yellow-600 focus:ring-yellow-500 bg-white dark:bg-gray-700"
                 />
                 <span className="text-sm">{area}</span>
               </label>
             ))}
           </div>
           {errors.serviceAreas && (
-            <p className="mt-1 text-sm text-red-600">{errors.serviceAreas}</p>
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.serviceAreas}</p>
           )}
         </div>
 
         {/* Languages */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Languages Spoken *
           </label>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-40 overflow-y-auto border rounded-md p-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-40 overflow-y-auto border dark:border-gray-700 rounded-md p-3">
             {availableLanguages.map((lang) => (
-              <label key={lang} className="flex items-center space-x-2">
+              <label key={lang} className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
                 <input
                   type="checkbox"
                   checked={formData.languages.includes(lang)}
@@ -338,51 +338,51 @@ export default function LawyerProfileForm({
                       handleArrayChange('languages', formData.languages.filter(l => l !== lang));
                     }
                   }}
-                  className="rounded border-gray-300"
+                  className="rounded border-gray-300 dark:border-gray-600 text-yellow-600 focus:ring-yellow-500 bg-white dark:bg-gray-700"
                 />
                 <span className="text-sm">{lang}</span>
               </label>
             ))}
           </div>
           {errors.languages && (
-            <p className="mt-1 text-sm text-red-600">{errors.languages}</p>
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.languages}</p>
           )}
         </div>
 
         {/* Education */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Education *
           </label>
           {formData.education.map((edu, index) => (
-            <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 p-4 border rounded-md">
+            <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 p-4 border dark:border-gray-700 rounded-md">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Degree</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Degree</label>
                 <input
                   type="text"
                   value={edu.degree}
                   onChange={(e) => handleEducationChange(index, 'degree', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   placeholder="e.g., J.D., LL.M."
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">University</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">University</label>
                 <input
                   type="text"
                   value={edu.university}
                   onChange={(e) => handleEducationChange(index, 'university', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   placeholder="University name"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Year</label>
                 <input
                   type="number"
                   value={edu.year}
                   onChange={(e) => handleEducationChange(index, 'year', parseInt(e.target.value) || new Date().getFullYear())}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 />
               </div>
               <div className="flex items-end">
@@ -390,7 +390,7 @@ export default function LawyerProfileForm({
                   type="button"
                   onClick={() => removeEducation(index)}
                   disabled={formData.education.length === 1}
-                  className="px-3 py-2 text-red-600 hover:text-red-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-2 text-red-600 dark:text-red-400 hover:text-red-800 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Remove
                 </button>
@@ -400,48 +400,48 @@ export default function LawyerProfileForm({
           <button
             type="button"
             onClick={addEducation}
-            className="px-4 py-2 text-blue-600 hover:text-blue-800 border border-blue-300 rounded-md"
+            className="px-4 py-2 text-yellow-600 dark:text-yellow-500 hover:text-yellow-800 dark:hover:text-yellow-400 border border-yellow-300 dark:border-yellow-700 rounded-md"
           >
             Add Education
           </button>
           {errors.education && (
-            <p className="mt-1 text-sm text-red-600">{errors.education}</p>
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.education}</p>
           )}
         </div>
 
         {/* Bar Admissions */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Bar Admissions *
           </label>
           {formData.barAdmissions.map((bar, index) => (
-            <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 p-4 border rounded-md">
+            <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 p-4 border dark:border-gray-700 rounded-md">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">State</label>
                 <input
                   type="text"
                   value={bar.state}
                   onChange={(e) => handleBarAdmissionChange(index, 'state', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   placeholder="e.g., California, New York"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Year</label>
                 <input
                   type="number"
                   value={bar.year}
                   onChange={(e) => handleBarAdmissionChange(index, 'year', parseInt(e.target.value) || new Date().getFullYear())}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Bar Number (Optional)</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Bar Number (Optional)</label>
                 <input
                   type="text"
                   value={bar.barNumber || ''}
                   onChange={(e) => handleBarAdmissionChange(index, 'barNumber', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   placeholder="Bar number"
                 />
               </div>
@@ -450,7 +450,7 @@ export default function LawyerProfileForm({
                   type="button"
                   onClick={() => removeBarAdmission(index)}
                   disabled={formData.barAdmissions.length === 1}
-                  className="px-3 py-2 text-red-600 hover:text-red-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-2 text-red-600 dark:text-red-400 hover:text-red-800 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Remove
                 </button>
@@ -460,18 +460,18 @@ export default function LawyerProfileForm({
           <button
             type="button"
             onClick={addBarAdmission}
-            className="px-4 py-2 text-blue-600 hover:text-blue-800 border border-blue-300 rounded-md"
+            className="px-4 py-2 text-yellow-600 dark:text-yellow-500 hover:text-yellow-800 dark:hover:text-yellow-400 border border-yellow-300 dark:border-yellow-700 rounded-md"
           >
             Add Bar Admission
           </button>
           {errors.barAdmissions && (
-            <p className="mt-1 text-sm text-red-600">{errors.barAdmissions}</p>
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.barAdmissions}</p>
           )}
         </div>
 
         {/* Hourly Rate */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Hourly Rate (Optional)
           </label>
           <input
@@ -479,17 +479,17 @@ export default function LawyerProfileForm({
             min="0"
             value={formData.hourlyRate || ''}
             onChange={(e) => handleInputChange('hourlyRate', e.target.value ? parseInt(e.target.value) : undefined)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
             placeholder="Enter hourly rate in INR"
           />
           {errors.hourlyRate && (
-            <p className="mt-1 text-sm text-red-600">{errors.hourlyRate}</p>
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.hourlyRate}</p>
           )}
         </div>
 
         {/* Consultation Fee */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Consultation Fee (Optional)
           </label>
           <input
@@ -497,23 +497,23 @@ export default function LawyerProfileForm({
             min="0"
             value={formData.consultationFee || ''}
             onChange={(e) => handleInputChange('consultationFee', e.target.value ? parseInt(e.target.value) : undefined)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
             placeholder="Enter consultation fee in INR"
           />
           {errors.consultationFee && (
-            <p className="mt-1 text-sm text-red-600">{errors.consultationFee}</p>
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.consultationFee}</p>
           )}
         </div>
 
         {/* Availability Status */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Availability Status
           </label>
           <select
             value={formData.availabilityStatus}
             onChange={(e) => handleInputChange('availabilityStatus', e.target.value as 'available' | 'limited' | 'unavailable')}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
           >
             <option value="available">Available</option>
             <option value="limited">Limited</option>
@@ -523,8 +523,8 @@ export default function LawyerProfileForm({
 
         {/* Submit Error */}
         {errors.submit && (
-          <div className="p-4 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-sm text-red-600">{errors.submit}</p>
+          <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-900/50 rounded-md">
+            <p className="text-sm text-red-600 dark:text-red-400">{errors.submit}</p>
           </div>
         )}
 

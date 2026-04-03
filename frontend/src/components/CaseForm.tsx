@@ -161,14 +161,14 @@ export function CaseForm({ initialData, onSubmit, onCancel, isLoading = false, m
   return (
     <Card className="max-w-2xl mx-auto">
       <div className="p-6">
-        <h2 className="text-2xl font-bold mb-6">
+        <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
           {mode === 'create' ? 'Create New Case' : 'Edit Case'}
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Title */}
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Case Title *
             </label>
             <input
@@ -176,17 +176,17 @@ export function CaseForm({ initialData, onSubmit, onCancel, isLoading = false, m
               id="title"
               value={formData.title}
               onChange={(e) => handleInputChange('title', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.title ? 'border-red-500' : 'border-gray-300'
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-gray-900 dark:text-white transition-colors ${
+                errors.title ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
               }`}
               placeholder="Brief description of your legal issue"
             />
-            {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
+            {errors.title && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.title}</p>}
           </div>
 
           {/* Description */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Detailed Description *
             </label>
             <textarea
@@ -194,26 +194,26 @@ export function CaseForm({ initialData, onSubmit, onCancel, isLoading = false, m
               value={formData.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
               rows={4}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.description ? 'border-red-500' : 'border-gray-300'
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-gray-900 dark:text-white transition-colors ${
+                errors.description ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
               }`}
               placeholder="Provide detailed information about your legal situation..."
             />
-            {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
+            {errors.description && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.description}</p>}
           </div>
 
           {/* Category and Urgency */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Legal Category *
               </label>
               <select
                 id="category"
                 value={formData.category}
                 onChange={(e) => handleInputChange('category', e.target.value)}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.category ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-gray-900 dark:text-white transition-colors ${
+                  errors.category ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
                 }`}
               >
                 <option value="">Select a category</option>
@@ -223,18 +223,18 @@ export function CaseForm({ initialData, onSubmit, onCancel, isLoading = false, m
                   </option>
                 ))}
               </select>
-              {errors.category && <p className="mt-1 text-sm text-red-600">{errors.category}</p>}
+              {errors.category && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.category}</p>}
             </div>
 
             <div>
-              <label htmlFor="urgency" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="urgency" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Urgency Level
               </label>
               <select
                 id="urgency"
                 value={formData.urgency}
                 onChange={(e) => handleInputChange('urgency', e.target.value as 'low' | 'medium' | 'high')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-gray-900 dark:text-white transition-colors"
               >
                 <option value="low">Low - No immediate deadline</option>
                 <option value="medium">Medium - Some time sensitivity</option>
@@ -246,7 +246,7 @@ export function CaseForm({ initialData, onSubmit, onCancel, isLoading = false, m
           {/* Location and Language */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="location" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Location
               </label>
               <input
@@ -254,20 +254,20 @@ export function CaseForm({ initialData, onSubmit, onCancel, isLoading = false, m
                 id="location"
                 value={formData.location}
                 onChange={(e) => handleInputChange('location', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-gray-900 dark:text-white transition-colors"
                 placeholder="City, State or specific location"
               />
             </div>
 
             <div>
-              <label htmlFor="preferredLanguage" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="preferredLanguage" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Preferred Language
               </label>
               <select
                 id="preferredLanguage"
                 value={formData.preferredLanguage}
                 onChange={(e) => handleInputChange('preferredLanguage', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-gray-900 dark:text-white transition-colors"
               >
                 <option value="">Any language</option>
                 {LANGUAGES.map((language) => (
@@ -281,26 +281,26 @@ export function CaseForm({ initialData, onSubmit, onCancel, isLoading = false, m
 
           {/* Budget */}
           <div>
-            <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="budget" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Budget (Optional)
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-2 text-gray-500">₹</span>
+              <span className="absolute left-3 top-2 text-gray-500 dark:text-gray-400">₹</span>
               <input
                 type="number"
                 id="budget"
                 value={formData.budget || ''}
                 onChange={(e) => handleInputChange('budget', e.target.value ? parseFloat(e.target.value) : undefined)}
-                className={`w-full pl-8 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.budget ? 'border-red-500' : 'border-gray-300'
+                className={`w-full pl-8 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-gray-900 dark:text-white transition-colors ${
+                  errors.budget ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
                 }`}
                 placeholder="0.00"
                 min="0"
                 step="0.01"
               />
             </div>
-            {errors.budget && <p className="mt-1 text-sm text-red-600">{errors.budget}</p>}
-            <p className="mt-1 text-sm text-gray-500">
+            {errors.budget && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.budget}</p>}
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Leave blank if you'd like to discuss fees with lawyers
             </p>
           </div>

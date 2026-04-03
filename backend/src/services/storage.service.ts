@@ -1,4 +1,4 @@
-import { supabase, CASE_DOCUMENTS_BUCKET } from '../utils/supabaseClient';
+import { supabase, CASE_DOCUMENTS_BUCKET, AVATARS_BUCKET } from '../utils/supabaseClient';
 
 export interface StorageUploadResult {
   path: string;
@@ -31,6 +31,42 @@ export async function uploadDocument(options: {
   }
 
   return { path };
+}
+
+export async function uploadAvatar(options: {
+  userId: string;
+  fileBuffer: Buffer;
+  mimeType: string;
+}): Promise<StorageUploadResult> {
+  if (!supabase) {
+    throw new Error('Supabase client is not configured');
+  }
+
+  // avatars/lawyers/{userId}.png
+  const path = `lawyers/${options.userId}.png`;
+
+  const { error } = await supabase.storage
+    .from(AVATARS_BUCKET)
+    .upload(path, options.fileBuffer, {
+      contentType: 'image/png', // Always save as png as per requirement
+      upsert: true, // Overwrite if exists
+    });
+
+  if (error) {
+    console.error('Supabase Avatar upload error:', error);
+    throw new Error('Failed to upload avatar to storage');
+  }
+
+  // Get public URL with cache-busting timestamp
+  const { data } = supabase.storage
+    .from(AVATARS_BUCKET)
+    .getPublicUrl(path);
+
+  // Add cache-busting timestamp to prevent browser/CDN caching
+  const timestamp = Date.now();
+  const publicUrl = `${data.publicUrl}?t=${timestamp}`;
+
+  return { path: publicUrl };
 }
 
 export async function generateSignedUrl(options: {

@@ -2,6 +2,17 @@ import { eq, and, ilike, or, gte, lte, sql } from 'drizzle-orm';
 import { db } from '../db';
 import { lawyerProfiles, users, type LawyerProfile, type NewLawyerProfile, type AvailabilityStatus } from '../models/schema';
 
+/**
+ * Add cache-busting timestamp to avatar URL
+ */
+function addCacheBustingToUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  // If URL already has cache-busting parameter, return as is
+  if (url.includes('?t=')) return url;
+  // Add timestamp for cache busting
+  return `${url}?t=${Date.now()}`;
+}
+
 export interface LawyerProfileFilters {
   specializations?: string[];
   serviceAreas?: string[];
@@ -62,6 +73,21 @@ class LawyerProfileService {
   }
 
   /**
+   * Update avatar URL for a lawyer profile
+   */
+  async updateAvatarUrl(userId: string, avatarUrl: string): Promise<void> {
+    try {
+      await db
+        .update(lawyerProfiles)
+        .set({ avatarUrl, updatedAt: new Date() })
+        .where(eq(lawyerProfiles.userId, userId));
+    } catch (error) {
+      console.error('Error updating lawyer avatar URL:', error);
+      throw new Error('Failed to update avatar URL');
+    }
+  }
+
+  /**
    * Get a lawyer profile by ID
    */
   async getProfileById(profileId: number): Promise<LawyerProfileWithUser | null> {
@@ -85,6 +111,7 @@ class LawyerProfileService {
           casesHandled: lawyerProfiles.casesHandled,
           successRate: lawyerProfiles.successRate,
           verified: lawyerProfiles.verified,
+          avatarUrl: lawyerProfiles.avatarUrl,
           createdAt: lawyerProfiles.createdAt,
           updatedAt: lawyerProfiles.updatedAt,
           user: {
@@ -98,7 +125,11 @@ class LawyerProfileService {
         .where(eq(lawyerProfiles.id, profileId))
         .limit(1);
 
-      return result[0] || null;
+      const profile = result[0] || null;
+      if (profile && profile.avatarUrl) {
+        profile.avatarUrl = addCacheBustingToUrl(profile.avatarUrl);
+      }
+      return profile;
     } catch (error) {
       console.error('Error getting lawyer profile:', error);
       throw new Error('Failed to get lawyer profile');
@@ -129,6 +160,7 @@ class LawyerProfileService {
           casesHandled: lawyerProfiles.casesHandled,
           successRate: lawyerProfiles.successRate,
           verified: lawyerProfiles.verified,
+          avatarUrl: lawyerProfiles.avatarUrl,
           createdAt: lawyerProfiles.createdAt,
           updatedAt: lawyerProfiles.updatedAt,
           user: {
@@ -142,7 +174,11 @@ class LawyerProfileService {
         .where(eq(lawyerProfiles.userId, userId))
         .limit(1);
 
-      return result[0] || null;
+      const profile = result[0] || null;
+      if (profile && profile.avatarUrl) {
+        profile.avatarUrl = addCacheBustingToUrl(profile.avatarUrl);
+      }
+      return profile;
     } catch (error) {
       console.error('Error getting lawyer profile by user ID:', error);
       throw new Error('Failed to get lawyer profile');
@@ -237,6 +273,7 @@ class LawyerProfileService {
           casesHandled: lawyerProfiles.casesHandled,
           successRate: lawyerProfiles.successRate,
           verified: lawyerProfiles.verified,
+          avatarUrl: lawyerProfiles.avatarUrl,
           createdAt: lawyerProfiles.createdAt,
           updatedAt: lawyerProfiles.updatedAt,
           user: {
@@ -252,7 +289,12 @@ class LawyerProfileService {
         .offset(filters.offset || 0);
 
       const profiles = await query;
-      return profiles;
+      
+      // Add cache-busting to all avatar URLs
+      return profiles.map(profile => ({
+        ...profile,
+        avatarUrl: profile.avatarUrl ? addCacheBustingToUrl(profile.avatarUrl) : profile.avatarUrl
+      }));
     } catch (error) {
       console.error('Error getting lawyer profiles:', error);
       throw new Error('Failed to get lawyer profiles');

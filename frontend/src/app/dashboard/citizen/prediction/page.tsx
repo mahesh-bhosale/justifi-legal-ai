@@ -33,10 +33,10 @@ export default function CitizenPredictionPage() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold text-gray-900">
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
           Case Outcome Prediction
         </h1>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           Upload a legal case PDF and let the AI estimate the likelihood of
           ACCEPT vs REJECT. Results are stored securely for your account.
         </p>
@@ -57,7 +57,7 @@ export default function CitizenPredictionPage() {
           <ConfidenceChart chunks={result.chunk_predictions} />
 
           <div className="space-y-3">
-            <h2 className="text-sm font-semibold text-gray-800">
+            <h2 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
               Chunk-level Predictions
             </h2>
             <ChunkPredictionTable chunks={result.chunk_predictions} />

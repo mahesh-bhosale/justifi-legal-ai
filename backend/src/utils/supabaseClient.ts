@@ -12,6 +12,9 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
 export const CASE_DOCUMENTS_BUCKET =
   process.env.SUPABASE_CASE_DOCUMENTS_BUCKET || 'case-documents';
 
+export const AVATARS_BUCKET =
+  process.env.SUPABASE_AVATARS_BUCKET || 'avatars';
+
 export const supabase = SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
   ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       auth: {

@@ -35,14 +35,14 @@ export default function BlogDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
         <div className="max-w-4xl mx-auto px-4">
           <div className="animate-pulse">
-            <div className="h-8 w-3/4 bg-gray-200 rounded mb-6"></div>
-            <div className="h-4 w-1/4 bg-gray-200 rounded mb-12"></div>
-            <div className="h-4 bg-gray-200 rounded mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded mb-2"></div>
+            <div className="h-8 w-3/4 bg-gray-200 dark:bg-gray-700 rounded mb-6"></div>
+            <div className="h-4 w-1/4 bg-gray-200 dark:bg-gray-700 rounded mb-12"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
           </div>
         </div>
       </div>
@@ -51,13 +51,13 @@ export default function BlogDetailPage() {
 
   if (error || !blogPost) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
-          <p className="text-gray-600 mb-8">{error || 'Blog post not found'}</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-8">{error || 'Blog post not found'}</p>
           <Link 
             href="/blog"
-            className="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors"
+            className="px-6 py-3 bg-amber-600 text-white font-medium rounded-md hover:bg-amber-700 transition-colors shadow-lg"
           >
             Back to Blog
           </Link>
@@ -67,11 +67,11 @@ export default function BlogDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
       <div className="max-w-4xl mx-auto px-4">
         <Link 
           href="/blog"
-          className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-8 transition-colors"
+          className="inline-flex items-center text-amber-600 dark:text-amber-500 hover:text-amber-800 dark:hover:text-amber-400 mb-8 transition-colors font-medium"
         >
           <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -79,21 +79,21 @@ export default function BlogDetailPage() {
           Back to Blog
         </Link>
 
-        <article className="bg-white rounded-2xl p-8 shadow-lg">
+        <article className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-100 dark:border-gray-700">
           <div className="mb-6 flex justify-between items-center">
-            <span className="inline-block bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
-              {blogPost.author || 'Unknown Author'}
+            <span className="inline-block bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-400 text-sm font-medium px-4 py-1 rounded-full">
+              {blogPost.author || 'JustiFi Legal'}
             </span>
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-gray-500 dark:text-gray-400 font-medium">
               {blogPost.readTime ? `${blogPost.readTime} min read` : ''}
             </div>
           </div>
           
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
             {blogPost.title}
           </h1>
           
-          <time className="text-gray-500 text-sm mb-8 block" dateTime={blogPost.createdAt || ''}>
+          <time className="text-gray-500 dark:text-gray-400 text-sm mb-8 block font-medium" dateTime={blogPost.createdAt || ''}>
             {blogPost.createdAt ? new Date(blogPost.createdAt).toLocaleDateString('en-IN', { 
               year: 'numeric',
               month: 'long', 
@@ -103,13 +103,13 @@ export default function BlogDetailPage() {
           
           {blogPost.content && (
             <div 
-              className="prose max-w-none text-gray-700 leading-relaxed"
+              className="prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed"
               dangerouslySetInnerHTML={{ __html: blogPost.content }}
             />
           )}
           
           {!blogPost.content && blogPost.excerpt && (
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg">
               {blogPost.excerpt}
             </p>
           )}

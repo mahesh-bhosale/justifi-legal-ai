@@ -126,30 +126,30 @@ export function PredictionUploader({ onResult }: PredictionUploaderProps) {
   };
 
   return (
-    <Card className="w-full shadow-md border border-gray-200 bg-white">
+    <Card className="w-full shadow-md border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 transition-colors">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold text-gray-900">
+        <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">
           Upload Case Document (PDF)
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div
-          className={`flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 text-center transition-colors ${
+          className={`flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 text-center transition-colors cursor-pointer ${
             isDragging
-              ? 'border-blue-500 bg-blue-50'
-              : 'border-gray-300 bg-gray-50'
+              ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/10'
+              : 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800'
           }`}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
         >
-          <p className="text-sm font-medium text-gray-800">
+          <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
             Drag &amp; drop a PDF here, or click to browse
           </p>
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
             Supported format: PDF • Max size: 10MB
           </p>
-          <label className="mt-4 inline-flex cursor-pointer items-center rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50">
+          <label className="mt-4 inline-flex cursor-pointer items-center rounded-md bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm ring-1 ring-gray-300 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 focus-within:ring-2 focus-within:ring-yellow-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-gray-900 transition-colors">
             Choose File
             <Input
               type="file"
@@ -159,9 +159,9 @@ export function PredictionUploader({ onResult }: PredictionUploaderProps) {
             />
           </label>
           {file && (
-            <p className="mt-2 text-xs text-gray-600">
+            <p className="mt-2 text-xs text-gray-600 dark:text-gray-400">
               Selected:{' '}
-              <span className="font-medium text-gray-800">
+              <span className="font-medium text-gray-800 dark:text-gray-200">
                 {file.name}
               </span>
             </p>
@@ -170,13 +170,13 @@ export function PredictionUploader({ onResult }: PredictionUploaderProps) {
 
         {progress !== null && (
           <div className="w-full">
-            <div className="mb-1 flex items-center justify-between text-xs text-gray-500">
+            <div className="mb-1 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
               <span>Uploading &amp; processing...</span>
               <span>{progress}%</span>
             </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
+            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
               <div
-                className="h-2 rounded-full bg-blue-500 transition-all"
+                className="h-2 rounded-full bg-yellow-500 transition-all"
                 style={{ width: `${progress}%` }}
               />
             </div>

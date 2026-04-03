@@ -31,6 +31,7 @@ export interface LawyerProfile {
   casesHandled: number;
   successRate: number;
   verified: boolean;
+  avatarUrl?: string | null;
   createdAt: string;
   updatedAt: string;
   user?: {
@@ -144,6 +145,16 @@ export const lawyerProfileApi = {
   // Get available languages
   getLanguages: async (): Promise<ApiResponse<string[]>> => {
     const response = await api.get('/api/lawyer-profiles/languages');
+    return response.data;
+  },
+  
+  // Upload lawyer avatar
+  uploadAvatar: async (formData: FormData): Promise<ApiResponse<{ avatarUrl: string }>> => {
+    const response = await api.post('/api/lawyer-profiles/avatar', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   },
 };

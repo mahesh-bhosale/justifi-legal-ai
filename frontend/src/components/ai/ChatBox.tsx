@@ -119,9 +119,9 @@ export default function ChatBox({
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-200">
+      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             {isPdfMode ? (
@@ -157,13 +157,13 @@ export default function ChatBox({
                 />
               </svg>
             )}
-            <h3 className="text-lg font-semibold text-gray-900">Ask AI Assistant</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Ask AI Assistant</h3>
           </div>
           
           {messages.length > 0 && (
             <button
               onClick={clearChat}
-              className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
             >
               Clear Chat
             </button>
@@ -174,9 +174,9 @@ export default function ChatBox({
       {/* Messages */}
       <div className="h-96 overflow-y-auto p-6 space-y-4">
         {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-gray-500">
+          <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400">
             <svg
-              className="w-12 h-12 mb-4 text-gray-300"
+              className="w-12 h-12 mb-4 text-gray-300 dark:text-gray-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -204,8 +204,8 @@ export default function ChatBox({
               <div
                 className={`max-w-[80%] rounded-lg px-4 py-3 ${
                   message.type === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-900'
+                    ? 'bg-yellow-600 dark:bg-yellow-500 text-white dark:text-gray-900'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
                 }`}
               >
                 <div className="whitespace-pre-wrap break-words">
@@ -213,7 +213,7 @@ export default function ChatBox({
                 </div>
                 <div
                   className={`text-xs mt-2 ${
-                    message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
+                    message.type === 'user' ? 'text-white/80 dark:text-gray-900/80' : 'text-gray-500 dark:text-gray-400'
                   }`}
                 >
                   {message.timestamp.toLocaleTimeString()}
@@ -225,14 +225,14 @@ export default function ChatBox({
         
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-gray-100 rounded-lg px-4 py-3">
+            <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-3">
               <div className="flex items-center space-x-2">
                 <div className="flex space-x-1">
                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                 </div>
-                <span className="text-sm text-gray-500">AI is thinking...</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">AI is thinking...</span>
               </div>
             </div>
           </div>
@@ -242,7 +242,7 @@ export default function ChatBox({
       </div>
 
       {/* Input */}
-      <div className="px-6 py-4 border-t border-gray-200">
+      <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
         <div className="flex space-x-3">
           <div className="flex-1">
             <textarea
@@ -253,16 +253,16 @@ export default function ChatBox({
               placeholder={placeholder}
               disabled={disabled || isLoading}
               rows={2}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 resize-none disabled:bg-gray-50 disabled:text-gray-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 resize-none disabled:bg-gray-50 dark:disabled:bg-gray-900 disabled:text-gray-500 dark:disabled:text-gray-400"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Press Enter to send, Shift+Enter for new line
             </p>
           </div>
           <button
             onClick={handleSendMessage}
             disabled={!inputValue.trim() || disabled || isLoading}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white dark:text-gray-900 bg-yellow-600 dark:bg-yellow-500 hover:bg-yellow-700 dark:hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
           >
             {isLoading ? (
               <svg

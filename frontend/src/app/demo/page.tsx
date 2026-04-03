@@ -239,39 +239,39 @@ export default function DemoPage() {
   const getClauseColor = (type: string) => {
     switch (type) {
       case 'risk':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 border-red-200 dark:border-red-900/50';
       case 'benefit':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 border-green-200 dark:border-green-900/50';
       case 'neutral':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 border-yellow-200 dark:border-yellow-900/50';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-700';
     }
   };
 
   const getRiskLevelColor = (level: string) => {
     switch (level) {
       case 'high':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400';
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400';
       case 'low':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Try a Live Demo (No Sign-in)
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
               Experience how our AI analyzes legal documents with these sample agreements
             </p>
           </div>
@@ -283,10 +283,10 @@ export default function DemoPage() {
           /* Document Selection */
           <div>
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
                 Choose a Sample Document
               </h2>
-              <p className="text-lg text-gray-600">
+              <p className="text-lg text-gray-600 dark:text-gray-400">
                 Click on any document below to see our AI analysis in action
               </p>
             </div>
@@ -295,13 +295,13 @@ export default function DemoPage() {
               {sampleDocuments.map((doc) => (
                 <div
                   key={doc.id}
-                  className="bg-white border-2 border-gray-200 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all cursor-pointer hover:border-blue-300"
+                  className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all cursor-pointer hover:border-yellow-400 dark:hover:border-yellow-500"
                   onClick={() => setSelectedDoc(doc)}
                 >
                   <div className="text-5xl mb-6 text-center">{doc.icon}</div>
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-3 text-center">{doc.title}</h3>
-                  <p className="text-gray-600 mb-6 text-center">{doc.description}</p>
-                  <div className="inline-block bg-blue-100 text-blue-800 text-sm font-medium px-4 py-2 rounded-full mx-auto block text-center">
+                  <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-3 text-center">{doc.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-6 text-center">{doc.description}</p>
+                  <div className="inline-block bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-400 text-sm font-medium px-4 py-2 rounded-full mx-auto block text-center">
                     {doc.type}
                   </div>
                 </div>
@@ -314,7 +314,7 @@ export default function DemoPage() {
             {/* Back Button */}
             <button
               onClick={() => setSelectedDoc(null)}
-              className="flex items-center text-blue-600 hover:text-blue-800 transition-colors"
+              className="flex items-center text-yellow-600 dark:text-yellow-500 hover:text-yellow-700 dark:hover:text-yellow-400 transition-colors"
             >
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -323,22 +323,22 @@ export default function DemoPage() {
             </button>
 
             {/* Document Header */}
-            <div className="bg-white rounded-2xl p-8 shadow-lg">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700">
               <div className="flex items-center space-x-4 mb-6">
                 <span className="text-4xl">{selectedDoc.icon}</span>
                 <div>
-                  <h2 className="text-3xl font-bold text-gray-900">{selectedDoc.title}</h2>
-                  <p className="text-gray-600">{selectedDoc.type} Document</p>
+                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{selectedDoc.title}</h2>
+                  <p className="text-gray-600 dark:text-gray-400">{selectedDoc.type} Document</p>
                 </div>
               </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Document Content */}
-              <div className="bg-white rounded-2xl p-8 shadow-lg">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">Document Content</h3>
-                <div className="bg-gray-50 rounded-lg p-6 max-h-96 overflow-y-auto">
-                  <pre className="text-sm text-gray-700 whitespace-pre-wrap font-mono">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Document Content</h3>
+                <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-6 max-h-96 overflow-y-auto border border-gray-100 dark:border-gray-800">
+                  <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-mono">
                     {selectedDoc.content}
                   </pre>
                 </div>
@@ -347,26 +347,26 @@ export default function DemoPage() {
               {/* AI Analysis */}
               <div className="space-y-6">
                 {/* Plain-English Summary */}
-                <div className="bg-white rounded-2xl p-8 shadow-lg">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Plain-English Summary</h3>
-                  <p className="text-gray-700 leading-relaxed">{selectedDoc.summary}</p>
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Plain-English Summary</h3>
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{selectedDoc.summary}</p>
                 </div>
 
                 {/* Highlighted Clauses */}
-                <div className="bg-white rounded-2xl p-8 shadow-lg">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Key Clauses Analysis</h3>
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Key Clauses Analysis</h3>
                   <div className="space-y-4">
                     {selectedDoc.highlightedClauses.map((clause, index) => (
-                      <div key={index} className="border rounded-lg p-4">
+                      <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                         <div className="flex items-start space-x-3">
                           <span className={`inline-block px-2 py-1 text-xs font-medium rounded border ${getClauseColor(clause.type)}`}>
                             {clause.type.toUpperCase()}
                           </span>
                           <div className="flex-1">
-                            <p className="text-sm text-gray-900 mb-1">
+                            <p className="text-sm text-gray-900 dark:text-white mb-1">
                               <span className="font-semibold">&quot;{clause.text}&quot;</span>
                             </p>
-                            <p className="text-sm text-gray-600">{clause.explanation}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{clause.explanation}</p>
                           </div>
                         </div>
                       </div>
@@ -375,17 +375,17 @@ export default function DemoPage() {
                 </div>
 
                 {/* Risk Flags */}
-                <div className="bg-white rounded-2xl p-8 shadow-lg">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Risk Assessment</h3>
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Risk Assessment</h3>
                   <div className="space-y-3">
                     {selectedDoc.riskFlags.map((risk, index) => (
-                      <div key={index} className="flex items-start space-x-3 p-3 border rounded-lg">
+                      <div key={index} className="flex items-start space-x-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
                         <span className={`inline-block px-2 py-1 text-xs font-medium rounded ${getRiskLevelColor(risk.level)}`}>
                           {risk.level.toUpperCase()}
                         </span>
                         <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">{risk.description}</p>
-                          <p className="text-sm text-gray-600">{risk.impact}</p>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">{risk.description}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{risk.impact}</p>
                         </div>
                       </div>
                     ))}
@@ -395,24 +395,27 @@ export default function DemoPage() {
             </div>
 
             {/* CTA Section */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-center text-white">
-              <h3 className="text-2xl font-bold mb-4">
-                Ready to Analyze Your Own Documents?
-              </h3>
-              <p className="text-lg mb-6 opacity-90">
-                Create your free account to upload and analyze your legal documents with the same AI-powered insights.
-              </p>
-              <Button 
-                variant="secondary" 
-                size="lg"
-                className="bg-white text-blue-600 hover:bg-gray-100"
-                onClick={() => router.push('/auth/register')}
-              >
-                Create Your Free Account to Analyze Your Own Documents
-              </Button>
-              <p className="text-sm opacity-75 mt-3">
-                No credit card required • Start analyzing in minutes
-              </p>
+            <div className="bg-gray-900 dark:bg-gray-800 rounded-2xl p-10 text-center text-white border border-yellow-500/30 relative overflow-hidden">
+              <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-yellow-500/10 rounded-full blur-2xl"></div>
+              <div className="relative z-10">
+                <h3 className="text-2xl font-bold mb-4">
+                  Ready to Analyze Your Own Documents?
+                </h3>
+                <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
+                  Create your free account to upload and analyze your legal documents with the same AI-powered insights.
+                </p>
+                <Button 
+                  variant="secondary" 
+                  size="lg"
+                  className="bg-yellow-600 text-white hover:bg-yellow-500 border-none px-8 py-4 text-lg"
+                  onClick={() => router.push('/auth/register')}
+                >
+                  Create Your Free Account
+                </Button>
+                <p className="text-sm opacity-75 mt-4">
+                  No credit card required • Start analyzing in minutes
+                </p>
+              </div>
             </div>
           </div>
         )}

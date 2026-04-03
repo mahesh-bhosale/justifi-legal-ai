@@ -1,81 +1,91 @@
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-transparent py-12 transition-colors duration-300">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white shadow-lg rounded-lg p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Terms of Service</h1>
+        <div className="bg-white dark:bg-gray-900 shadow-2xl rounded-[2.5rem] p-8 md:p-16 border border-gray-100 dark:border-gray-800 backdrop-blur-sm relative overflow-hidden">
+          {/* Decorative element */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-bl-full pointer-events-none"></div>
           
-          <div className="prose prose-lg max-w-none">
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">1. Acceptance of Terms</h2>
-              <p className="text-gray-600 mb-4">
-                By accessing and using Justifi Legal AI, you accept and agree to be bound by the terms and provision of this agreement. 
-                If you do not agree to abide by the above, please do not use this service.
-              </p>
+          <div className="border-l-4 border-amber-500 pl-8 mb-12">
+            <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight">Terms of Service</h1>
+            <p className="text-amber-600 dark:text-amber-500 mt-2 font-bold uppercase tracking-[0.3em] text-[10px]">Justifi Legal Framework</p>
+          </div>
+          
+          <div className="space-y-12">
+            <section className="relative">
+              <div className="flex items-start gap-4">
+                <span className="text-amber-600 dark:text-amber-500 font-serif italic text-4xl opacity-20 flex-shrink-0 mt-1">I</span>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Acceptance of Terms</h2>
+                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg font-medium">
+                    By accessing and using Justifi Legal AI (&quot;the Platform&quot;), you agree to be bound by these Terms of Service. 
+                    Our Platform provides AI-driven legal summarization and management tools. If you disagree with any segment 
+                    of these institutional terms, you must terminate usage immediately.
+                  </p>
+                </div>
+              </div>
             </section>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">2. Use License</h2>
-              <p className="text-gray-600 mb-4">
-                Permission is granted to temporarily download one copy of the materials (information or software) on Justifi Legal AI&apos;s 
-                website for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title.
-              </p>
+            <section className="relative border-t border-gray-50 dark:border-gray-800/50 pt-12">
+              <div className="flex items-start gap-4">
+                <span className="text-amber-600 dark:text-amber-500 font-serif italic text-4xl opacity-20 flex-shrink-0 mt-1">II</span>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Service Scope & AI Accuracy</h2>
+                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg font-medium">
+                    Justifi Legal AI utilizes advanced language models to provide summaries. While we strive for institutional precision, 
+                    AI-generated content does not constitute formal legal advice. Users must verify critical outputs with qualified 
+                    legal professionals.
+                  </p>
+                </div>
+              </div>
             </section>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">3. Disclaimer</h2>
-              <p className="text-gray-600 mb-4">
-                The materials on Justifi Legal AI&apos;s website are provided on an &apos;as is&apos; basis. Justifi Legal AI makes no warranties, 
-                expressed or implied, and hereby disclaims and negates all other warranties including without limitation, implied 
-                warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual 
-                property or other violation of rights.
-              </p>
+            <section className="relative border-t border-gray-50 dark:border-gray-800/50 pt-12">
+              <div className="flex items-start gap-4">
+                <span className="text-amber-600 dark:text-amber-500 font-serif italic text-4xl opacity-20 flex-shrink-0 mt-1">III</span>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Intellectual Property</h2>
+                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg font-medium">
+                    All Platform software, algorithms, and branding are the exclusive property of Justifi. Permission is granted 
+                    for personal, non-commercial transitory viewing of summarized reports. Title transfer of Platform data 
+                    is strictly prohibited.
+                  </p>
+                </div>
+              </div>
             </section>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">4. Limitations</h2>
-              <p className="text-gray-600 mb-4">
-                In no event shall Justifi Legal AI or its suppliers be liable for any damages (including, without limitation, damages 
-                for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials 
-                on Justifi Legal AI&apos;s website.
-              </p>
+            <section className="relative border-t border-gray-50 dark:border-gray-800/50 pt-12">
+              <div className="flex items-start gap-4">
+                <span className="text-amber-600 dark:text-amber-500 font-serif italic text-4xl opacity-20 flex-shrink-0 mt-1">IV</span>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Liability Disclaimer</h2>
+                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg font-medium text-sm italic">
+                    THE MATERIALS ON JUSTIFI LEGAL AI ARE PROVIDED ON AN &quot;AS IS&quot; BASIS. JUSTIFI DISCLAIMS ALL WARRANTIES, 
+                    EXPRESSED OR IMPLIED, INCLUDING WITHOUT LIMITATION, IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS 
+                    FOR A PARTICULAR LEGAL PURPOSE.
+                  </p>
+                </div>
+              </div>
             </section>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">5. Revisions and Errata</h2>
-              <p className="text-gray-600 mb-4">
-                The materials appearing on Justifi Legal AI&apos;s website could include technical, typographical, or photographic errors. 
-                Justifi Legal AI does not warrant that any of the materials on its website are accurate, complete or current.
+            <div className="bg-gray-50 dark:bg-gray-800/40 rounded-[2rem] p-8 mt-16 border border-gray-100 dark:border-gray-700">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Legal Inquiries</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6 font-medium">
+                For contract disputes, licensing questions, or institutional partnerships, please contact our legal department.
               </p>
-            </section>
+              <div className="flex items-center gap-2 group cursor-pointer">
+                <div className="bg-amber-600 text-white p-2 rounded-lg group-hover:scale-110 transition-transform shadow-lg shadow-amber-600/20">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <span className="text-amber-600 dark:text-amber-500 font-black tracking-widest text-sm underline-offset-4 decoration-2">legal@justifi-legal-ai.com</span>
+              </div>
+            </div>
 
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">6. Links</h2>
-              <p className="text-gray-600 mb-4">
-                Justifi Legal AI has not reviewed all of the sites linked to its website and is not responsible for the contents of 
-                any such linked site. The inclusion of any link does not imply endorsement by Justifi Legal AI of the site.
-              </p>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">7. Modifications</h2>
-              <p className="text-gray-600 mb-4">
-                Justifi Legal AI may revise these terms of service for its website at any time without notice. By using this website 
-                you are agreeing to be bound by the then current version of these Terms and Conditions of Use.
-              </p>
-            </section>
-
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">8. Contact Information</h2>
-              <p className="text-gray-600 mb-4">
-                If you have any questions about these Terms of Service, please contact us at legal@justifi-legal-ai.com.
-              </p>
-            </section>
-
-            <div className="mt-12 pt-8 border-t border-gray-200">
-              <p className="text-sm text-gray-500">
-                Last updated: {new Date().toLocaleDateString()}
-              </p>
+            <div className="mt-12 pt-10 border-t border-gray-100 dark:border-gray-800 flex justify-between items-center text-[10px] font-black tracking-[0.3em] uppercase text-gray-400 dark:text-gray-500">
+              <span>Jurisdictional Compliance: Global</span>
+              <span>Revised: {new Date().toLocaleDateString()}</span>
             </div>
           </div>
         </div>

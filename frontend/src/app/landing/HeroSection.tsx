@@ -36,9 +36,9 @@ export default function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-indigo-50 py-20 px-4 pt-36"
+      className="relative overflow-hidden bg-gray-50 dark:bg-gray-900 transition-colors duration-300 py-20 px-4 pt-36"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(79,70,229,0.08),transparent_25%),radial-gradient(circle_at_80%_10%,rgba(14,165,233,0.08),transparent_25%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(234,179,8,0.03),transparent_25%),radial-gradient(circle_at_80%_10%,rgba(234,179,8,0.03),transparent_25%)]" />
       <div className="max-w-7xl mx-auto relative">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left: Content */}
@@ -48,19 +48,19 @@ export default function HeroSection() {
                 isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
               }`}
             >
-              <p className="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-2 text-sm font-semibold text-indigo-700">
+              <p className="inline-flex items-center gap-2 rounded-full bg-gray-200 dark:bg-gray-800 border border-yellow-600/30 dark:border-yellow-500/30 px-4 py-2 text-sm font-semibold text-yellow-700 dark:text-yellow-500">
                 ✨ Trusted AI for legal teams
               </p>
             </div>
-            <h1
-              className={`text-5xl lg:text-6xl font-bold text-gray-900 leading-tight transition-all duration-700 ease-out delay-100 ${
+              <h1
+              className={`text-5xl lg:text-6xl font-bold font-serif text-gray-900 dark:text-white leading-tight transition-all duration-700 ease-out delay-100 ${
                 isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
               }`}
             >
               Demystifying the Law with AI.
             </h1>
             <p
-              className={`text-xl lg:text-2xl text-gray-600 leading-relaxed transition-all duration-700 ease-out delay-200 ${
+              className={`text-xl lg:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed transition-all duration-700 ease-out delay-200 ${
                 isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
               }`}
             >
@@ -75,7 +75,7 @@ export default function HeroSection() {
               <Button
                 variant="primary"
                 size="lg"
-                className="w-full sm:w-auto shadow-lg shadow-indigo-200"
+                className="w-full sm:w-auto shadow-lg shadow-yellow-900/20"
                 onClick={() => router.push('/auth/register')}
               >
                 Get Started for Free
@@ -93,7 +93,7 @@ export default function HeroSection() {
 
           {/* Right: Carousel */}
           <div className="relative flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-xl overflow-hidden rounded-3xl bg-white/60 shadow-2xl backdrop-blur-sm border border-white/50">
+            <div className="relative w-full max-w-xl overflow-hidden rounded-3xl bg-white dark:bg-white/10 shadow-2xl backdrop-blur-sm border border-gray-200 dark:border-white/10">
               <div className="relative h-[420px]">
                 {slides.map((slide, index) => {
                   const isActive = index === currentIndex;
@@ -123,7 +123,7 @@ export default function HeroSection() {
                         {slide.tags.map((tag) => (
                           <span
                             key={`${slide.src}-${tag}`}
-                            className="rounded-full bg-white/80 px-3 py-1 text-xs font-semibold text-slate-800 shadow-md backdrop-blur"
+                            className="rounded-full bg-white/90 dark:bg-white/80 px-3 py-1 text-xs font-semibold text-gray-900 shadow-md backdrop-blur"
                           >
                             {tag}
                           </span>
@@ -138,14 +138,14 @@ export default function HeroSection() {
                 <button
                   aria-label="Previous slide"
                   onClick={handlePrev}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-transparent text-white/80 hover:bg-indigo-600 hover:text-white transition-all duration-200 z-10"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-transparent text-white/80 hover:bg-yellow-600 hover:text-gray-900 transition-all duration-200 z-10"
                 >
                   ←
                 </button>
                 <button
                   aria-label="Next slide"
                   onClick={handleNext}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-transparent text-white/80 hover:bg-indigo-600 hover:text-white transition-all duration-200 z-10"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-transparent text-white/80 hover:bg-yellow-600 hover:text-gray-900 transition-all duration-200 z-10"
                 >
                   →
                 </button>
@@ -156,7 +156,7 @@ export default function HeroSection() {
                   <span
                     key={index}
                     className={`h-1.5 w-8 rounded-full transition-all ${
-                      index === currentIndex ? 'bg-indigo-600' : 'bg-slate-200'
+                      index === currentIndex ? 'bg-yellow-600 dark:bg-yellow-500' : 'bg-gray-300 dark:bg-gray-600'
                     }`}
                   />
                 ))}

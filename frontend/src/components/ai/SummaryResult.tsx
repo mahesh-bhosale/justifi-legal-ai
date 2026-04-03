@@ -41,26 +41,26 @@ export default function SummaryResult({
   const getLevelBadgeColor = (level: string) => {
     switch (level.toLowerCase()) {
       case 'short':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
       case 'medium':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-yellow-100/50 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
       case 'long':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
       case 'very_long':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
     }
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-200">
+      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <svg
-              className="w-6 h-6 text-blue-600"
+              className="w-6 h-6 text-yellow-600 dark:text-yellow-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -72,7 +72,7 @@ export default function SummaryResult({
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            <h3 className="text-lg font-semibold text-gray-900">AI Summary</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">AI Summary</h3>
             <span
               className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
                 getLevelBadgeColor(level)
@@ -86,7 +86,7 @@ export default function SummaryResult({
           <div className="flex items-center space-x-2">
             <button
               onClick={handleCopy}
-              className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+              className="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors"
             >
               {copySuccess ? (
                 <>
@@ -126,7 +126,7 @@ export default function SummaryResult({
             <button
               onClick={handleDownload}
               disabled={downloadLoading}
-              className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {downloadLoading ? (
                 <>
@@ -178,16 +178,16 @@ export default function SummaryResult({
       {/* Summary Content */}
       <div className="px-6 py-6">
         <div className="prose max-w-none">
-          <div className="text-gray-800 leading-relaxed whitespace-pre-wrap">
+          <div className="text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">
             {summary}
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-lg">
+      <div className="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 rounded-b-lg">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4 text-sm text-gray-500">
+          <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
             <span>Generated: {new Date().toLocaleString()}</span>
             <span>•</span>
             <span>{summary.split(' ').length} words</span>
@@ -198,7 +198,7 @@ export default function SummaryResult({
           {onStartChat && (
             <button
               onClick={onStartChat}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-yellow-700 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/40 hover:bg-yellow-200 dark:hover:bg-yellow-900/60 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors"
             >
               <svg
                 className="w-4 h-4 mr-2"
