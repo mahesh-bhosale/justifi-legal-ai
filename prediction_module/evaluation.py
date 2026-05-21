@@ -144,13 +144,23 @@ def plot_confidence_distribution(df: pd.DataFrame) -> None:
     correct = y_true == y_pred
 
     plt.figure(figsize=(6, 4))
-    sns.histplot(
-        df["y_prob"],
+    # Use plain matplotlib histograms to avoid seaborn hue/wide-form issues
+    # across different seaborn/pandas versions.
+    plt.hist(
+        df.loc[correct, "y_prob"].astype(float),
         bins=20,
-        hue=pd.Series(correct, name="correct"),
-        multiple="stack",
-        palette={True: "seagreen", False: "indianred"},
+        alpha=0.6,
+        label="Correct",
+        color="seagreen",
     )
+    plt.hist(
+        df.loc[~correct, "y_prob"].astype(float),
+        bins=20,
+        alpha=0.6,
+        label="Incorrect",
+        color="indianred",
+    )
+    plt.legend()
     plt.xlabel("Model Confidence (probability for ACCEPT)")
     plt.ylabel("Count")
     plt.title("Confidence Distribution (Correct vs Incorrect)")
