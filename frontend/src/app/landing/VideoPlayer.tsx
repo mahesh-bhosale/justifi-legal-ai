@@ -12,6 +12,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ className = '' }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [showOverlay, setShowOverlay] = useState(true);
+  const [useYoutubeFallback, setUseYoutubeFallback] = useState(false);
 
   const togglePlay = () => {
     if (videoRef.current) {
@@ -22,6 +23,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ className = '' }) => {
         videoRef.current.play().catch((error) => {
           console.error('Error playing video:', error);
           setHasError(true);
+          setUseYoutubeFallback(true);
           setIsLoading(false);
         });
       }
@@ -76,12 +78,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ className = '' }) => {
       console.log('Video buffering');
       setIsLoading(true);
       
-      // If it takes more than 15s to buffer, we can show a warning or timeout
+      // If it takes more than 15s to buffer, fallback to YouTube
       clearTimeout(loadingTimeout);
       loadingTimeout = setTimeout(() => {
         if (videoRef.current && !videoRef.current.paused) {
-          console.warn('Video loading timeout - showing video anyway');
+          console.warn('Video loading timeout - falling back to YouTube');
           setIsLoading(false);
+          setUseYoutubeFallback(true);
         }
       }, 15000);
     };
@@ -99,6 +102,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ className = '' }) => {
         event: e
       });
       setHasError(true);
+      setUseYoutubeFallback(true);
       setIsLoading(false);
       clearTimeout(loadingTimeout);
     };
@@ -141,6 +145,25 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ className = '' }) => {
       video.removeEventListener('loadstart', handleLoadStart);
     };
   }, []);
+
+  if (useYoutubeFallback) {
+    return (
+      <div className={`relative rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-black transition-colors ${className}`}>
+        <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
+          <iframe 
+            width="100%" 
+            height="100%" 
+            src="https://www.youtube.com/embed/xKsWNeTxwfs?autoplay=1" 
+            title="JustiFi Project Demo" 
+            frameBorder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowFullScreen
+            className="absolute top-0 left-0 w-full h-full rounded-lg"
+          ></iframe>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`relative rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-black transition-colors ${className}`}>
