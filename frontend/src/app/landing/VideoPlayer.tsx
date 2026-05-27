@@ -9,18 +9,22 @@ interface VideoPlayerProps {
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ className = '' }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [showOverlay, setShowOverlay] = useState(true);
+  const [useYoutubeFallback, setUseYoutubeFallback] = useState(false);
 
   const togglePlay = () => {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
       } else {
+        setIsLoading(true);
         videoRef.current.play().catch((error) => {
           console.error('Error playing video:', error);
           setHasError(true);
+          setUseYoutubeFallback(true);
+          setIsLoading(false);
         });
       }
     }
@@ -36,11 +40,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ className = '' }) => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Set a timeout to stop showing loading after 10 seconds
-    const loadingTimeout = setTimeout(() => {
-      setIsLoading(false);
-      console.warn('Video loading timeout - showing video anyway');
-    }, 10000);
+    let loadingTimeout: NodeJS.Timeout;
 
     const handlePlay = () => {
       setIsPlaying(true);
@@ -60,8 +60,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ className = '' }) => {
 
     const handleLoadedMetadata = () => {
       console.log('Video metadata loaded');
-      setIsLoading(false);
-      clearTimeout(loadingTimeout);
     };
 
     const handleCanPlay = () => {
@@ -76,6 +74,26 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ className = '' }) => {
       clearTimeout(loadingTimeout);
     };
 
+    const handleWaiting = () => {
+      console.log('Video buffering');
+      setIsLoading(true);
+      
+      // If it takes more than 15s to buffer, fallback to YouTube
+      clearTimeout(loadingTimeout);
+      loadingTimeout = setTimeout(() => {
+        if (videoRef.current && !videoRef.current.paused) {
+          console.warn('Video loading timeout - falling back to YouTube');
+          setIsLoading(false);
+          setUseYoutubeFallback(true);
+        }
+      }, 15000);
+    };
+
+    const handlePlaying = () => {
+      setIsLoading(false);
+      clearTimeout(loadingTimeout);
+    };
+
     const handleError = (e: Event) => {
       const error = video.error;
       console.error('Video error:', {
@@ -84,13 +102,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ className = '' }) => {
         event: e
       });
       setHasError(true);
+      setUseYoutubeFallback(true);
       setIsLoading(false);
       clearTimeout(loadingTimeout);
     };
 
     const handleLoadStart = () => {
       console.log('Video load started');
-      setIsLoading(true);
       setHasError(false);
     };
 
@@ -107,18 +125,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ className = '' }) => {
     video.addEventListener('loadeddata', handleLoadedData);
     video.addEventListener('canplay', handleCanPlay);
     video.addEventListener('canplaythrough', handleCanPlayThrough);
+    video.addEventListener('waiting', handleWaiting);
+    video.addEventListener('playing', handlePlaying);
     video.addEventListener('error', handleError);
     video.addEventListener('loadstart', handleLoadStart);
-
-    // Check if video is already loaded
-    if (video.readyState >= 2) {
-      console.log('Video already loaded, readyState:', video.readyState);
-      setIsLoading(false);
-      clearTimeout(loadingTimeout);
-    }
-
-    // Force load the video
-    video.load();
 
     return () => {
       clearTimeout(loadingTimeout);
@@ -129,10 +139,31 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ className = '' }) => {
       video.removeEventListener('loadeddata', handleLoadedData);
       video.removeEventListener('canplay', handleCanPlay);
       video.removeEventListener('canplaythrough', handleCanPlayThrough);
+      video.removeEventListener('waiting', handleWaiting);
+      video.removeEventListener('playing', handlePlaying);
       video.removeEventListener('error', handleError);
       video.removeEventListener('loadstart', handleLoadStart);
     };
   }, []);
+
+  if (useYoutubeFallback) {
+    return (
+      <div className={`relative rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-black transition-colors ${className}`}>
+        <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
+          <iframe 
+            width="100%" 
+            height="100%" 
+            src="https://www.youtube.com/embed/xKsWNeTxwfs?autoplay=1" 
+            title="JustiFi Project Demo" 
+            frameBorder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowFullScreen
+            className="absolute top-0 left-0 w-full h-full rounded-lg"
+          ></iframe>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`relative rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-black transition-colors ${className}`}>
@@ -142,7 +173,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ className = '' }) => {
           className="w-full h-full object-contain rounded-lg" 
           controls 
           poster="/video/poster.png"
-          preload="auto"
+          preload="none"
           playsInline
         >
           <source src="/video/demo.mp4" type="video/mp4" />
