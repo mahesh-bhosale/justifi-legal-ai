@@ -51,30 +51,82 @@ The legal domain generates a vast amount of complex textual data such as court j
 - **Search & Discovery:** Find lawyers based on expertise, ratings, and location.
 
 ---
+# 📊 Results & Performance Metrics
 
-## 📊 Results & Performance Metrics
+Our legal outcome prediction model (**InLegalBERT**) was trained and evaluated on real-world Indian legal case documents.
 
-Our case outcome prediction model (**InLegalBERT**) was trained and evaluated on real-world legal case documents. The model uses a chunking approach to overcome token limits, averaging probabilities across document segments to generate a final prediction. 
+Since legal documents are often longer than the 512-token limit of transformer models, a **chunk-based inference pipeline** was implemented. Each document is divided into overlapping chunks, predictions are generated for every chunk, and probabilities are aggregated to obtain the final prediction.
 
-* **Overall Accuracy:** ~70%
-* **Classification:** Binary (ACCEPT / REJECT)
+### 🔹 Model Performance
 
-### Model Evaluation Results
+| Metric | Score |
+|--------|--------|
+| Accuracy | ~0.70 |
+| Precision | ~0.71 |
+| Recall | ~0.71 |
+| F1 Score | ~0.71 |
+
+### 🔹 Classification Labels
+
+```python
+0 → REJECT
+1 → ACCEPT
+```
+
+---
+
+# 🤗 Hugging Face Model
+
+### Model Repository
+
+👉 https://huggingface.co/vikas-maurya/justifi-inlegalbert-outcome-predictor
+
+### Quick Inference Example
+
+```python
+from transformers import pipeline
+
+classifier = pipeline(
+    "text-classification",
+    model="vikas-maurya/justifi-inlegalbert-outcome-predictor"
+)
+
+result = classifier(
+    "Legal case text here"
+)
+
+print(result)
+```
+
+---
+
+# 📊 Model Evaluation Results
 
 <div align="center">
-  <img src="prediction_module/results/accuracy_vs_epoch.png" alt="Accuracy vs Epoch" width="45%" />
-  <img src="prediction_module/results/precision_vs_recall.png" alt="Precision vs Recall" width="45%" />
+
+| Accuracy vs Epoch | Precision vs Recall |
+|---|---|
+| <img src="prediction_module/results/accuracy_vs_epoch.png" width="100%"> | <img src="prediction_module/results/precision_vs_recall.png" width="100%"> |
+
+| Confusion Matrix | Confidence Distribution |
+|---|---|
+| <img src="prediction_module/results/confusion_matrix.png" width="100%"> | <img src="prediction_module/results/confidence_distribution.png" width="100%"> |
+
 </div>
 
-<div align="center">
-  <img src="prediction_module/results/confusion_matrix.png" alt="Confusion Matrix" width="45%" />
-  <img src="prediction_module/results/confidence_distribution.png" alt="Confidence Distribution" width="45%" />
-</div>
+---
+
+# ⚡ System Performance
 
 <div align="center">
-  <br/>
-  <img src="prediction_module/results/response_time_vs_doc_length.png" alt="Response Time vs Document Length" width="60%" />
+<img src="prediction_module/results/response_time_vs_doc_length.png" width="70%">
 </div>
+
+<p align="center">
+Prediction latency increases gradually with document length due to chunk-based processing.
+</p>
+
+---
 
 ### Training Progression
 
@@ -83,6 +135,23 @@ Our case outcome prediction model (**InLegalBERT**) was trained and evaluated on
   <img src="docs/images/Fig.%206.2.2%20Precision–Recall%20Trade-off%20During%20Training.png" alt="Precision-Recall Trade-off During Training" width="45%" />
 </div>
 
+---
+
+# 🧠 Key Highlights
+
+Fine-tuned InLegalBERT for legal NLP
+
+Long-document chunk-based prediction
+
+FastAPI deployment pipeline
+
+PDF-based legal document processing
+
+GPU-supported inference
+
+Evaluation and performance visualization
+
+---
 ---
 
 ## 💻 Application Interface (UI)
