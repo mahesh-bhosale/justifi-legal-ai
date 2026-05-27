@@ -1,393 +1,347 @@
-# ⚖️ JustiFi - AI-Powered Legal Simplifier & Case Outcome Predictor
+<div align="center">
+
+# ⚖️ JustiFi: AI-Powered Legal Simplifier & Case Outcome Predictor
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-blue?style=for-the-badge)](https://justifi-legal-ai.vercel.app/)
 ![Status](https://img.shields.io/badge/Status-Development-yellow?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+![Node.js](https://img.shields.io/badge/Node.js-18+-green?style=for-the-badge&logo=node.js)
+![Python](https://img.shields.io/badge/Python-3.9+-blue?style=for-the-badge&logo=python)
 
 An end-to-end AI-powered legal platform that simplifies complex legal documents and predicts possible case outcomes using **NLP, ML, and LLMs**.
 
-Built as a **Major Project (B.E. Computer Engineering)** under the University of Mumbai, 2025-2026.
+*Built as a Major Project (B.E. Computer Engineering) under the University of Mumbai, 2025-2026.*
+
+<br/>
+
+### 📖 Published Research Paper
+Our work, **"AI Based Legal Simplification and Case Outcome Prediction"**, has been officially published in the *International Journal of Advanced Research in Computer and Communication Engineering (IJARCCE)* (Peer-reviewed & Refereed).
+
+**DOI:** [10.17148/IJARCCE.2026.153112](https://doi.org/10.17148/IJARCCE.2026.153112) | **Volume:** 15, Issue 3 (March 2026) | **Impact Factor:** 8.471
+
+</div>
+
+<br />
+
+## 📖 Overview & Problem Statement
+
+The legal domain generates a vast amount of complex textual data such as court judgments, petitions, contracts, and case files. These documents are written in technical language, making them difficult for common citizens to understand. Even legal professionals spend significant time analyzing lengthy documents and predicting case outcomes.
+
+**JustiFi** bridges this gap by providing an intelligent, user-friendly legal assistance system. The platform integrates Natural Language Processing (NLP) and Machine Learning (ML) techniques to perform two primary tasks: 
+1. **Legal Document Summarization:** Generates concise and context-aware summaries from lengthy legal documents using transformer-based models (LED).
+2. **Case Outcome Prediction:** Analyzes legal texts and classifies case outcomes as ACCEPT or REJECT using a chunking and probability aggregation strategy via the **InLegalBERT** model.
 
 ---
 
-## 📌 Table of Contents
-
-* [Abstract](#abstract)
-* [Features](#features)
-* [Tech Stack](#tech-stack)
-* [System Architecture](#system-architecture)
-* [Installation](#installation)
-* [Usage](#usage)
-* [Project Structure](#project-structure)
-* [API Documentation](#api-documentation)
-* [Team & Institution](#team--institution)
-* [Future Scope](#future-scope)
-* [License](#license)
-
----
-
-## 📄 Abstract
-
-In recent years, Artificial Intelligence (AI) has emerged as a transformative technology in the legal domain, offering innovative solutions for managing and analyzing vast volumes of legal documents. The AI-Powered Legal Assistant developed in this project aims to simplify and modernize legal research, case prediction, and citizen–lawyer interaction through intelligent automation.
-
-The proposed system integrates Natural Language Processing (NLP) and Machine Learning (ML) techniques to perform two major tasks: legal document summarization and case outcome prediction. Using transformer-based language models, the system extracts concise and relevant summaries from lengthy case documents. Additionally, supervised learning algorithms are used to predict probable case outcomes based on historical data.
-
-The application is implemented as a web-based platform built using Next.js, Node.js, and PostgreSQL, providing an interactive interface for citizens, lawyers, and administrators.
-
----
-
-## ✨ Features
+## ✨ Key Features & Capabilities
 
 ### 🤖 AI Capabilities
-- **Legal Document Summarization** - Condenses lengthy legal texts using transformer models
-- **Case Outcome Prediction** - ML-powered predictions with confidence scores
-- **Explainable AI** - Rationales and evidence for predictions
+- **Legal Document Summarization:** Condenses lengthy legal texts using transformer models.
+- **Case Outcome Prediction:** ML-powered predictions with confidence scores.
+- **Explainable AI:** Rationales and evidence provided alongside predictions.
 
 ### 👥 Multi-Role System
-- **Citizens** - Upload documents, create cases, search lawyers, get AI predictions
-- **Lawyers** - Manage profiles, submit proposals, interact with clients, publish blogs
-- **Admins** - Verify lawyers, manage users, monitor platform integrity
+- **Citizens:** Upload documents, create cases, search lawyers, and receive AI predictions.
+- **Lawyers:** Manage professional profiles, submit proposals to citizens, interact with clients, and publish blogs.
+- **Admins:** Verify lawyer registrations, manage users, and monitor platform integrity.
 
 ### 🔧 Platform Features
-- **Real-time Chat** - Secure messaging between lawyers and citizens
-- **Document Management** - Upload, store, and process legal documents
-- **Search & Discovery** - Find lawyers based on expertise, ratings, and location
-- **Blog System** - Legal knowledge sharing platform
-- **Review System** - Rate and review legal services
+- **Real-time Chat:** Secure messaging between lawyers and citizens.
+- **Document Management:** Upload, store, and process legal documents securely.
+- **Search & Discovery:** Find lawyers based on expertise, ratings, and location.
+
+---
+
+## 📊 Results & Performance Metrics
+
+Our case outcome prediction model (**InLegalBERT**) was trained and evaluated on real-world legal case documents. The model uses a chunking approach to overcome token limits, averaging probabilities across document segments to generate a final prediction. 
+
+* **Overall Accuracy:** ~70%
+* **Classification:** Binary (ACCEPT / REJECT)
+
+### Model Evaluation Results
+
+<div align="center">
+  <img src="prediction_module/results/accuracy_vs_epoch.png" alt="Accuracy vs Epoch" width="45%" />
+  <img src="prediction_module/results/precision_vs_recall.png" alt="Precision vs Recall" width="45%" />
+</div>
+
+<div align="center">
+  <img src="prediction_module/results/confusion_matrix.png" alt="Confusion Matrix" width="45%" />
+  <img src="prediction_module/results/confidence_distribution.png" alt="Confidence Distribution" width="45%" />
+</div>
+
+<div align="center">
+  <br/>
+  <img src="prediction_module/results/response_time_vs_doc_length.png" alt="Response Time vs Document Length" width="60%" />
+</div>
+
+### Training Progression
+
+<div align="center">
+  <img src="docs/images/Fig.%206.2.1%20Training%20vs%20Validation%20Loss.png" alt="Training vs Validation Loss" width="45%" />
+  <img src="docs/images/Fig.%206.2.2%20Precision–Recall%20Trade-off%20During%20Training.png" alt="Precision-Recall Trade-off During Training" width="45%" />
+</div>
+
+---
+
+## 💻 Application Interface (UI)
+
+*Our responsive web interface is built using Next.js and Tailwind CSS. Since some of these pages contain a lot of information, they are placed in collapsible sections below.*
+
+<details>
+<summary><strong>1. Landing Page (Click to expand)</strong></summary>
+<br/>
+<div align="center">
+  <img src="docs/images/Fig.%206.1.1%20Landing%20Page.png" alt="Landing Page" width="80%" />
+</div>
+</details>
+
+<details>
+<summary><strong>2. Citizen Cases Page (Click to expand)</strong></summary>
+<br/>
+<div align="center">
+  <img src="docs/images/Fig.%206.1.4%20Citizen%20Cases%20Pages.png" alt="Citizen Cases Page" width="80%" />
+</div>
+</details>
+
+<details>
+<summary><strong>3. Authentication (Signup & Login)</strong></summary>
+<br/>
+<div align="center">
+  <img src="docs/images/Fig.%206.1.2%20Signup%20Page.png" alt="Signup Page" width="45%" />
+  <img src="docs/images/Fig.%206.1.3%20Login%20Page.png" alt="Login Page" width="45%" />
+</div>
+</details>
+
+<details>
+<summary><strong>4. AI Summarizer & QA Assistant</strong></summary>
+<br/>
+<div align="center">
+  <img src="docs/images/Fig.%206.1.5%20AI%20Summarizer%20and%20QA.png" alt="AI Summarizer" width="80%" />
+</div>
+</details>
+
+<details>
+<summary><strong>5. Chatbot Assistant & Communication</strong></summary>
+<br/>
+<div align="center">
+  <img src="docs/images/Fig.%206.1.6%20Chatbot%20Assistant.png" alt="Chatbot Assistant" width="80%" />
+</div>
+</details>
+
+<details>
+<summary><strong>6. Case Outcome Prediction Interface</strong></summary>
+<br/>
+<div align="center">
+  <img src="docs/images/Fig.%206.1.7%20Case%20Outcome%20Prediction.png" alt="Case Outcome Prediction" width="80%" />
+</div>
+</details>
+
+<br/>
+
+### 🎥 Live Video Demonstration
+
+*Click below to view the application in action!*
+
+<div align="center">
+  <!-- NOTE: Since the video is over 100MB, consider uploading to YouTube/Vimeo and replacing the link below with a YouTube thumbnail link! -->
+  <video src="frontend/public/video/demo.mp4" width="80%" controls="controls">
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+---
+
+## 🏗 System Architecture & Design
+
+Our system follows an **Incremental Software Model** (see <a href="docs/images/Fig%203.1%20Development%20Model.png">Fig 3.1 Development Model</a>), combining a React/Next.js frontend with a Node.js/Express backend, all interacting with Python-based AI services.
+
+### High-Level Architecture
+<div align="center">
+  <img src="docs/images/Fig.%203.3.2%20System%20Architecture.png" alt="System Architecture" width="80%" />
+</div>
+
+### System Flow & Documentation
+
+<details>
+<summary><strong>Data Flow Diagrams (DFD)</strong></summary>
+<br/>
+<div align="center">
+  <img src="docs/images/Fig.%203.3.3(a)%20DFD%20Level%200.png" alt="DFD Level 0" width="45%" />
+  <img src="docs/images/Fig%203.3.3(b)%20DFD%20Level%201.png" alt="DFD Level 1" width="45%" />
+</div>
+<br/>
+<div align="center">
+  <img src="docs/images/Fig.%203.3.3(c)%20DFD%20Level%202%20Summarization.png" alt="DFD Level 2 Summarization" width="45%" />
+  <img src="docs/images/Fig.%203.3.3(d)%20DFD%20Level%202%20Prediction.png" alt="DFD Level 2 Prediction" width="45%" />
+</div>
+<br/>
+<div align="center">
+  <img src="docs/images/Fig.%203.3.3(e)%20DFD%20Level%202%20Lawyer%20Profile.png" alt="DFD Level 2 Lawyer Profile" width="60%" />
+</div>
+</details>
+
+<details>
+<summary><strong>System Design Diagrams (UML & Database)</strong></summary>
+<br/>
+<div align="center">
+  <h4>Use-Case Diagram</h4>
+  <img src="docs/images/Fig.%203.3.4%20Use-Case%20Diagram.png" alt="Use Case Diagram" width="70%" />
+  <br/>
+  <h4>Sequence Diagram</h4>
+  <img src="docs/images/Fig.%203.3.5%20Sequence%20diagram.png" alt="Sequence Diagram" width="70%" />
+  <br/>
+  <h4>Deployment & Database Design</h4>
+  <img src="docs/images/Fig.%203.3.6%20Deployment%20Diagram.png" alt="Deployment Diagram" width="45%" />
+  <img src="docs/images/Fig.%203.3.7%20Database%20Design%20Diagram.png" alt="Database Diagram" width="45%" />
+</div>
+</details>
+
 
 ---
 
 ## 🛠 Tech Stack
 
 ### **Frontend**
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white) ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 
 ### **Backend**
-![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
-![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
-![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white)
-![Drizzle ORM](https://img.shields.io/badge/Drizzle%20ORM-000000?style=for-the-badge)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white) ![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white) ![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white) ![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white) ![Drizzle ORM](https://img.shields.io/badge/Drizzle%20ORM-000000?style=for-the-badge)
 
 ### **AI/ML Services**
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
-![Hugging Face](https://img.shields.io/badge/Hugging%20Face-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)
-![Scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white) ![Hugging Face](https://img.shields.io/badge/Hugging%20Face-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black) ![Scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white) ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
 
 ### **Infrastructure & Tools**
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
-![ngrok](https://img.shields.io/badge/ngrok-000000?style=for-the-badge)
-![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white) ![ngrok](https://img.shields.io/badge/ngrok-000000?style=for-the-badge)
 
 ---
 
-## 🏗 System Architecture
+## 🚀 Getting Started
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     Frontend (Next.js)                      │
-│                    http://localhost:3000                    │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           │ REST API
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│                     Backend (Node.js)                       │
-│                    http://localhost:5000                    │
-│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐         │
-│  │ Auth    │  │ Cases   │  │ Chat    │  │ AI      │         │
-│  │ Module  │  │ Module  │  │ Module  │  │ Gateway │         │
-│  └─────────┘  └─────────┘  └─────────┘  └────┬────┘         │
-└──────────────────────────┬────────────────────┼─────────────┘
-                           │                    │
-                    ┌──────┴──────┐     ┌──────▼──────┐
-                    │ PostgreSQL  │     │   Redis     │
-                    │ (Supabase)  │     │  (Cache)    │
-                    └─────────────┘     └─────────────┘
-                           │                    │
-                           └──────┬──────┬──────┘
-                                  │      │
-                           ┌──────▼──────▼──────┐
-                           │    AI Services     │
-                           └────────────────────┘
-                                  │      │
-                       ┌──────────▼──────▼──────────┐
-                       │ Summarization   Prediction │
-                       │   Service        Service   │
-                       │ (Google Colab/  (Local/    │
-                       │    Kaggle)       Colab)    │
-                       └────────────────────────────┘
-```
-
----
-
-## 🚀 Installation
-
-### Prerequisites
-- **Node.js** (v18 or higher)
-- **Python** (3.9 or higher)
-- **Docker** (for Redis)
-- **Supabase Account** (for PostgreSQL)
-- **ngrok Account** (for exposing ML services)
-- **Google Colab or Kaggle Account** (for AI services)
-
-### Step 1: Clone the Repository
+### 1. Prerequisites & Services
+Ensure you have Docker installed and run the following commands to start the required services (Redis, Kafka, etc.):
 ```bash
-git clone https://github.com/mahesh-bhosale/justifi-legal-ai.git
-cd justifi-legal-ai
-```
+docker compose up -d
+docker compose start
 
-### Step 2: Set Up Environment Variables
-
-#### Backend (.env)
-```env
-# backend/.env
-DATABASE_URL="postgresql://postgres:[password]@[host]:5432/postgres"
-PORT=5000
-JWT_SECRET=your_secure_jwt_secret
-JWT_EXPIRES_IN=24h
-NGROK_QA=https://your-ngrok-url.ngrok-free.dev
-NGROK_SUMMARY=https://your-ngrok-url.ngrok-free.dev
-REDIS_URL=redis://localhost:6379
-NODE_ENV=development
-```
-
-#### Frontend (.env.local)
-```env
-# frontend/.env.local
-NEXT_PUBLIC_API_URL=http://localhost:5000
-```
-
-### Step 3: Start Redis with Docker
-```bash
+# Alternatively, to run Redis standalone:
 docker run -d --name redis-server -p 6379:6379 redis
 docker start redis-server
 ```
 
-### Step 4: Set Up Python Environment
-```bash
-# Create virtual environment
-python -m venv legal_venv
+### 2. Environment Variables Setup
+Create the necessary `.env` files in both the `backend` and `frontend` directories based on the templates below.
 
-# Activate (Windows)
-legal_venv\Scripts\activate
+<details>
+<summary><strong>Example <code>backend/.env</code></strong></summary>
 
-# Activate (Linux/Mac)
-source legal_venv/bin/activate
-
-# Install Python dependencies
-pip install -r requirements.txt
+```env
+DATABASE_URL="postgresql://postgres:password@host:6543/postgres"
+PORT=5000
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=15m
+NGROK_QA=https://your-qa-url.ngrok-free.dev
+NGROK_SUMMARY=https://your-summary-url.ngrok-free.app
+REDIS_URL=redis://localhost:6379
+SUMMARY_CACHE_TTL_HOURS=96
+NODE_ENV=development
+KAFKA_CLIENT_ID=justifi-legal-ai
+KAFKA_GROUP_ID=justifi-backend-group
+KAFKA_BROKER=localhost:9092
+KAFKA_SSL=false
+SUPABASE_CASE_DOCUMENTS_BUCKET=case-documents
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+SUPABASE_STORAGE_BUCKET=case-files
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_AVATARS_BUCKET=avatars
+MESSAGE_ENCRYPTION_KEY=your_aes_256_key
+FRONTEND_URL=http://localhost:3000
+IP_HASH_SALT=your_ip_hash_salt
+PREDICTION_SERVICE_URL=https://your-prediction-url.ngrok-free.app
 ```
+</details>
 
-### Step 5: Install Backend Dependencies
+<details>
+<summary><strong>Example <code>frontend/.env.local</code></strong></summary>
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000
+```
+</details>
+
+### 3. Google Colab Notebook
+**Important:** Before running the backend, you must run the Colab notebook to start the model for Question Answering (PDF and Text).
+Open and run all cells in: `ml_model/notebooks/legal_assistant.ipynb`
+
+### 4. Setup Backend & Database
 ```bash
 cd backend
 npm install
-
-# Set up database with Drizzle ORM
-npm run db:generate
-npm run db:push
-npm run db:studio  # Optional: Database GUI
-```
-
-### Step 6: Install Frontend Dependencies
-```bash
-cd ../frontend
-npm install
-```
-
-### Step 7: Set Up AI Services via Google Colab/Kaggle
-
-#### Method A: Google Colab (Recommended)
-1. Open Google Colab: https://colab.research.google.com/
-2. Upload `ml_model/notebooks/legal_assistant.ipynb`
-3. Run all cells in the notebook
-4. Look for the ngrok URL output (will look like: `https://subplacental-maryjo-polytonally.ngrok-free.dev`)
-5. Copy this URL and update both `NGROK_QA` and `NGROK_SUMMARY` in `backend/.env`
-
-#### Method B: Kaggle
-1. Upload `ml_model/notebooks/legal_assistant.ipynb` to Kaggle
-2. Run the notebook in Kaggle
-3. Get the ngrok URL from output
-4. Update `backend/.env` with the URL
-
-### Step 8: Run ML Services
-```bash
-# Activate virtual environment if not already activated
-source legal_venv/bin/activate  # or legal_venv\Scripts\activate
-
-# Run ML model server
-cd ml_model
-python run_server.py
-```
-
-### Step 9: Expose ML Services with ngrok
-```bash
-# In a new terminal
-ngrok http 8000
-```
-Copy the ngrok URL and update `NGROK_QA` and `NGROK_SUMMARY` in `backend/.env`
-
-### Step 10: Start All Services
-
-#### Terminal 1: Backend
-```bash
-cd backend
+npm run db:migrate  # or: npm run db:push
 npm run dev
 ```
 
-#### Terminal 2: Frontend
+### 5. Setup Frontend
 ```bash
 cd frontend
+npm install
 npm run dev
 ```
 
-#### Terminal 3: ML Service (if not running)
+### 6. Setup Summary Model
 ```bash
+python -m venv legal_env
+legal_env\Scripts\activate
+pip install -r requirements.txt
 cd ml_model
 python run_server.py
 ```
 
----
-
-## 📖 Usage
-
-### Access URLs
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:5000
-- **ML Service**: http://127.0.0.1:8000
-- **Drizzle Studio**: http://localhost:4983 (after running `npm run db:studio`)
-
-### User Roles & Features
-
-#### 👤 Citizen
-1. Register/Login as Citizen
-2. Upload legal documents for summarization
-3. Create new legal cases
-4. Search for lawyers by expertise
-5. Receive AI-powered case predictions
-6. Chat with lawyers in real-time
-
-#### ⚖️ Lawyer
-1. Register/Login as Lawyer (requires admin verification)
-2. Complete professional profile
-3. Browse open cases and submit proposals
-4. Communicate with clients via chat
-5. Publish legal blogs/articles
-6. Manage active cases
-
-#### 👑 Admin
-1. Verify lawyer registrations
-2. Manage users and content
-3. Monitor platform activity
-4. Moderate blogs and reviews
-
----
-
-## 📁 Project Structure
-
-```
-justifi-legal-ai/
-├── backend/                    # Node.js + Express + TypeScript API
-│   ├── src/
-│   │   ├── controllers/       # Request handlers
-│   │   ├── services/          # Business logic
-│   │   ├── middleware/        # Auth & validation
-│   │   ├── routes/           # API endpoints
-│   │   └── db/              # Database schema & models
-│   ├── drizzle.config.ts     # Drizzle ORM configuration
-│   └── package.json         # Backend dependencies
-│
-├── frontend/                  # Next.js 14 + TypeScript
-│   ├── src/app/             # App router pages
-│   ├── components/          # Reusable UI components
-│   ├── contexts/            # React contexts (Auth, etc.)
-│   ├── lib/                # Utility functions & API clients
-│   └── package.json        # Frontend dependencies
-│
-├── ml_model/                 # AI Summarization service (Python)
-│   ├── notebooks/           # Jupyter notebooks
-│   │   └── legal_assistant.ipynb
-│   ├── run_server.py       # FastAPI server for summarization
-│   └── requirements.txt    # Python dependencies
-│
-├── prediction_module/        # Case outcome prediction service
-│   ├── prediction.py        # ML prediction logic
-│   └── requirements.txt    # Python dependencies
-│
-├── legal_venv/              # Python virtual environment (create this)
-├── requirements.txt         # Shared Python dependencies
-└── README.md               # This file
+### 7. Setup Prediction Model
+```bash
+legal_env\Scripts\activate
+cd prediction_module
+python prediction.py
 ```
 
 ---
 
 ## 🔌 API Documentation
 
-Once the backend is running, access the following:
-
-### Base URL: `http://localhost:5000`
-
-### Key Endpoints
+Once the backend is running (`http://localhost:5000`), key endpoints include:
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
-| POST | `/api/auth/register` | User registration | No |
-| POST | `/api/auth/login` | User login | No |
-| POST | `/api/documents/summarize` | Summarize legal document | Yes |
-| POST | `/api/ai/predict` | Predict case outcome | Yes |
-| GET | `/api/lawyers` | Search lawyers | No |
-| POST | `/api/cases` | Create legal case | Yes |
-| GET | `/api/cases/:id/chat` | Get case messages | Yes |
-| POST | `/api/blogs` | Create blog post | Yes (Lawyer/Admin) |
+| `POST` | `/api/auth/register` | User registration | No |
+| `POST` | `/api/auth/login` | User login | No |
+| `POST` | `/api/documents/summarize` | Summarize legal document | Yes |
+| `POST` | `/api/ai/predict` | Predict case outcome | Yes |
+| `POST` | `/api/cases` | Create a legal case | Yes |
 
-### Testing with Postman
-1. Import the collection from `backend/API_Documentation.md`
-2. Set base URL to `http://localhost:5000`
-3. Use login endpoint to get JWT token
-4. Add token to Authorization header: `Bearer <token>`
+*(Import the Postman collection from `backend/API_Documentation.md` for full testing capabilities).*
 
 ---
 
-### 👨‍💻 Team Members
+## 👨‍💻 Project Team
 
-- **Mahesh Bhosale** — [github.com/mahesh-bhosale](https://github.com/mahesh-bhosale)
-- **Vikas Maurya** — [github.com/vikas-maurya](https://github.com/vikasmaurya9769)
-- **Intaza Chaudhary** — [github.com/intaza-chaudhary](https://github.com/Intaza)
-- **Mausam Yadav** — [github.com/mausam-yadav](https://github.com/omyadav0410-jpg)
+- **Mahesh Bhosale** — [GitHub](https://github.com/mahesh-bhosale)
+- **Vikas Maurya** — [GitHub](https://github.com/vikasmaurya9769)
+- **Intaza Chaudhary** — [GitHub](https://github.com/Intaza)
+- **Mausam Yadav** — [GitHub](https://github.com/omyadav0410-jpg)
+
 ---
 
 ## 🔮 Future Scope
-
-### 🚀 Short-term Enhancements
-- **Mobile Application** - React Native/iOS/Android apps
-- **Advanced AI Models** - Fine-tuned legal-specific LLMs
-- **Video Consultations** - Integrated video calling feature
-- **Payment Integration** - Secure payment gateway for legal services
-
-### 🌟 Long-term Vision
-- **Blockchain Integration** - For document verification and smart contracts
-- **Multilingual Expansion** - Support for all Indian regional languages
-- **AR/VR Courtroom Simulations** - For legal education and preparation
-- **Predictive Analytics Dashboard** - For law firms and courts
-- **Global Legal Database** - Integration with international case laws
+- **Mobile Application:** React Native / iOS / Android.
+- **Advanced AI Models:** Fine-tuned legal-specific LLMs for higher accuracy.
+- **Multilingual Support:** Expansion to support regional languages.
+- **Blockchain Integration:** Secure document verification and smart contracts.
 
 ---
 
-## 📄 License
+## 📄 License & Disclaimer
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+**License:** This project is licensed under the MIT License - see the `LICENSE` file for details.
 
----
-
-## ⚠️ Disclaimer
-
-**Important**: This system provides AI-assisted legal information and predictions for **educational purposes only**. It does **NOT** constitute legal advice. Always consult with a qualified legal professional for actual legal matters. The predictions and summaries are generated by AI models and may contain inaccuracies.
+**Disclaimer:** This system provides AI-assisted legal information and predictions for **educational purposes only**. It does **NOT** constitute legal advice. Always consult with a qualified legal professional for actual legal matters. 
