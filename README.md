@@ -142,15 +142,21 @@ Our case outcome prediction model (**InLegalBERT**) was trained and evaluated on
 
 ### 🎥 Live Video Demonstration
 
-*Click below to view the application in action!*
+*Click below to watch the complete project demonstration on YouTube!*
 
 <div align="center">
-  <!-- NOTE: Since the video is over 100MB, consider uploading to YouTube/Vimeo and replacing the link below with a YouTube thumbnail link! -->
-  <video src="frontend/public/video/demo.mp4" width="80%" controls="controls">
-    Your browser does not support the video tag.
-  </video>
-</div>
+  <a href="https://youtu.be/xKsWNeTxwfs" target="_blank">
+    <img 
+      src="https://img.youtube.com/vi/xKsWNeTxwfs/maxresdefault.jpg" 
+      alt="JustiFi Project Demo"
+      width="80%"
+    />
+  </a>
 
+  <br/>
+  <br/>
+
+</div>
 ---
 
 ## 🏗 System Architecture & Design
